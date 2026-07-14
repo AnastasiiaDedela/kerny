@@ -1,6 +1,11 @@
-import { Accordion } from '@/components/ui/accordion';
-import { Button } from '@/components/ui/button';
+import { Banner } from '@/components/home/Banner';
 
 export default function Home() {
-  return <div></div>;
+  return (
+    <div className="flex min-h-screen flex-col items-center justify-between">
+      <div className="w-full">
+        <Banner />
+      </div>
+    </div>
+  );
 }

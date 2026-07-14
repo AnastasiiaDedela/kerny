@@ -10,7 +10,7 @@ const navLinks = [
 
 export function Header() {
   return (
-    <header className="bg-background fixed top-0 right-0 left-0 z-50 mt-7.5">
+    <header className="bg-background py-7.5">
       <div className="mx-auto flex w-full max-w-330 items-center justify-between px-5">
         <Link href="/" className="text-foreground text-lg font-bold">
           Kerny
