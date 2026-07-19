@@ -1,11 +1,21 @@
 import { Banner } from '@/components/home/Banner';
+import { WhatIsVps } from '@/components/home/WhatIsVps';
+import { WhyOurService } from '@/components/home/WhyOurService';
+import { DataCenterRegions } from '@/components/home/DataCenterRegions';
+import { OperationSystems } from '@/components/home/OperationSystems';
+import { Faq } from '@/components/home/Faq';
+import { CtaBanner } from '@/components/home/CtaBanner';
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-between">
-      <div className="w-full">
-        <Banner />
-      </div>
-    </div>
+    <>
+      <Banner />
+      <WhatIsVps />
+      <WhyOurService />
+      <DataCenterRegions />
+      <OperationSystems />
+      <Faq />
+      <CtaBanner />
+    </>
   );
 }
