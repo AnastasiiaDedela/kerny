@@ -79,29 +79,29 @@ export function Header() {
             </button>
           </div>
 
-          <nav className="mt-10 flex flex-col gap-4">
+          <nav className="mt-4 flex flex-col gap-2.5">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 onClick={() => setOpen(false)}
-                className="border-border text-foreground flex h-14 items-center justify-center rounded-2xl border text-base transition-colors hover:bg-[#1a1a1a]"
+                className="text-foreground flex h-[50px] items-center justify-center rounded-[10px] border-[0.5px] border-white/20 text-base transition-colors hover:bg-[#1a1a1a]"
               >
                 {link.label}
               </Link>
             ))}
           </nav>
 
-          <div className="border-border my-6 border-t" />
+          <div className="border-border my-5 border-t" />
 
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-2.5">
             <Button
               variant="outline"
-              className="bg-background text-foreground hover:bg-muted h-14 w-full rounded-2xl text-base"
+              className="bg-background text-foreground hover:bg-muted h-[50px] w-full rounded-[10px] border-[0.5px] border-white/20 text-base dark:border-white/20 dark:bg-transparent"
             >
               Log In
             </Button>
-            <Button className="h-14 w-full rounded-2xl text-base">Sign Up</Button>
+            <Button className="h-[50px] w-full rounded-[10px] text-base">Sign Up</Button>
           </div>
         </div>
       )}

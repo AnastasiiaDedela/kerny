@@ -26,10 +26,10 @@ export function Footer() {
           </div>
 
           {/* Right — nav columns */}
-          <div className="flex gap-16">
+          <div className="flex flex-col gap-10 md:flex-row md:gap-16">
             <div>
-              <p className="mb-3 text-right text-sm font-semibold">Services</p>
-              <ul className="space-y-2 text-right">
+              <p className="mb-3 text-left text-sm font-semibold md:text-right">Services</p>
+              <ul className="space-y-2 text-left md:text-right">
                 {services.map((item) => (
                   <li key={item} className="leading-[17px]">
                     <Link
@@ -43,8 +43,8 @@ export function Footer() {
               </ul>
             </div>
             <div>
-              <p className="mb-3 text-right text-sm font-semibold">Company</p>
-              <ul className="space-y-2 text-right">
+              <p className="mb-3 text-left text-sm font-semibold md:text-right">Company</p>
+              <ul className="space-y-2 text-left md:text-right">
                 {company.map((item) => (
                   <li key={item} className="leading-[17px]">
                     <Link
@@ -62,7 +62,7 @@ export function Footer() {
 
         <div className="border-border flex flex-col items-center justify-between gap-4 border-t pt-6 md:flex-row">
           <p className="text-muted-foreground text-xs">© Kerny 2026. All Right Reserved</p>
-          <div className="flex gap-12.5">
+          <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 md:gap-12.5">
             {['Acceptable Use Policy', 'Refund Policy', 'Consumer Resolution & Complaints'].map(
               (item) => (
                 <Link
