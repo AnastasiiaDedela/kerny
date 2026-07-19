@@ -7,7 +7,7 @@ export function Banner() {
   return (
     <section className="mx-auto w-full max-w-340 px-5 pb-10">
       <div className="relative overflow-hidden rounded-3xl bg-[#454CEE] bg-gradient-to-br from-[#5257F2] via-[#454CEE] to-[#3A40CB]">
-        <div className="flex flex-col items-center gap-8 px-6 py-1 md:flex-row md:gap-6 md:px-12 md:py-14">
+        <div className="flex flex-col items-center gap-8 px-6 py-8 md:flex-row md:gap-6 md:px-12 md:py-14">
           {/* Left — copy */}
           <div className="flex-1 text-white">
             <div className="flex flex-wrap gap-2">
@@ -55,7 +55,7 @@ export function Banner() {
           </div>
 
           {/* Right — illustration */}
-          <div className="flex flex-1 items-center justify-center">
+          <div className="hidden flex-1 items-center justify-center md:flex">
             <Image
               src="/images/hero-server.png"
               alt="Isometric illustration of a VPS server connected to distributed nodes"

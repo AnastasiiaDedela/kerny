@@ -17,8 +17,14 @@ const systems: Os[] = [
 
 function OsCard({ name, src, width, height }: Os) {
   return (
-    <div className="flex size-[152px] flex-col items-center justify-center gap-3 rounded-[15px] bg-[#161616] ring-1 ring-white/5">
-      <Image src={src} alt={name} width={width} height={height} className="max-h-19.5 w-auto" />
+    <div className="flex aspect-square w-full flex-col items-center justify-center gap-2 rounded-[15px] bg-[#161616] ring-1 ring-white/5 md:aspect-auto md:size-[152px] md:gap-3">
+      <Image
+        src={src}
+        alt={name}
+        width={width}
+        height={height}
+        className="max-h-12 w-auto md:max-h-19.5"
+      />
       <span className="text-center text-xs font-medium">{name}</span>
     </div>
   );
@@ -27,7 +33,7 @@ function OsCard({ name, src, width, height }: Os) {
 export function OperationSystems() {
   return (
     <section className="mx-auto w-full max-w-340 px-5 py-10">
-      <div className="flex flex-col gap-16 md:flex-row md:items-center">
+      <div className="flex flex-col gap-10 md:flex-row md:items-center md:gap-16">
         {/* Left — copy */}
         <div className="flex-1">
           <h2 className="text-4xl font-bold md:text-5xl md:leading-[58px]">
@@ -41,17 +47,20 @@ export function OperationSystems() {
             Viverra quisque sagittis sed urna sed cursus id. Purus morbi ridiculus quam sed
             elementum. Maecenas sem arcu purus ipsum accumsan sit.
           </p>
-          <div className="mt-8">
+          <div className="mt-8 hidden md:block">
             <Button size="lg">Get Started</Button>
           </div>
         </div>
 
         {/* Right — OS grid */}
         <div className="shrink-0">
-          <div className="grid grid-cols-[repeat(3,152px)] justify-center gap-5 md:justify-end">
+          <div className="grid grid-cols-3 gap-3 md:grid-cols-[repeat(3,152px)] md:justify-end md:gap-5">
             {systems.map((os) => (
               <OsCard key={os.name} {...os} />
             ))}
+          </div>
+          <div className="mt-8 flex justify-center md:hidden">
+            <Button size="lg">Get Started</Button>
           </div>
         </div>
       </div>

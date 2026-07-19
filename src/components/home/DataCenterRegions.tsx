@@ -72,7 +72,7 @@ function GroupHeader({ title, showMore }: { title: string; showMore?: boolean })
 export function DataCenterRegions() {
   return (
     <section className="mx-auto w-full max-w-340 px-5 py-10">
-      <h2 className="text-center text-3xl font-extrabold tracking-tight md:text-4xl">
+      <h2 className="text-left text-3xl font-extrabold tracking-tight md:text-center md:text-4xl">
         32 Cloud Data Center Regions
       </h2>
 

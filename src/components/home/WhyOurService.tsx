@@ -32,7 +32,7 @@ function TallCard({ title, image }: { title: string; image: Illustration }) {
 
 function RowCard({ title, image }: { title: string; image: Illustration }) {
   return (
-    <div className="flex min-h-0 flex-1 items-center gap-[23px] rounded-[15px] bg-[#161616] py-6 pr-6 pl-9.5 ring-1 ring-white/5">
+    <div className="flex min-h-0 flex-1 flex-col items-center gap-4 rounded-[15px] bg-[#161616] p-6 ring-1 ring-white/5 md:flex-row md:gap-[23px] md:pl-9.5">
       <div className="relative flex h-[115px] w-[120px] shrink-0 items-center justify-center">
         <Image
           src={image.src}
@@ -42,7 +42,7 @@ function RowCard({ title, image }: { title: string; image: Illustration }) {
           className="relative h-[115px] w-auto max-w-full object-contain"
         />
       </div>
-      <div>
+      <div className="w-full md:w-auto">
         <h3 className="text-base font-bold">{title}</h3>
         <p className="text-muted-foreground mt-2 text-left text-sm leading-tight font-normal">
           {rowDescription}
@@ -55,7 +55,7 @@ function RowCard({ title, image }: { title: string; image: Illustration }) {
 export function WhyOurService() {
   return (
     <section className="mx-auto w-full max-w-340 px-5 py-10">
-      <div className="mx-auto text-center">
+      <div className="mx-auto text-left md:text-center">
         <h2 className="text-3xl font-extrabold tracking-tight md:text-4xl">Why Our Service?</h2>
         <p className="text-foreground mt-5 text-sm leading-relaxed">
           Lorem ipsum dolor sit amet consectetur. Pellentesque malesuada gravida eget amet cursus
