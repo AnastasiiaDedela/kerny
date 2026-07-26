@@ -27,7 +27,7 @@ export function OurAdvantages() {
             <AccordionItem
               key={item}
               value={item}
-              className="data-open:border-l-primary border-0 transition-all data-open:border-l-3 data-open:pl-4"
+              className="data-open:border-l-primary transition-all data-open:border-l-3 data-open:pl-4"
             >
               <AccordionTrigger className="py-2 text-lg font-normal hover:no-underline aria-expanded:font-bold **:data-[slot=accordion-trigger-icon]:hidden">
                 {title}
@@ -39,13 +39,15 @@ export function OurAdvantages() {
           ))}
         </Accordion>
 
-        <div className="flex aspect-[610/364] w-full max-w-[610px] items-center justify-center justify-self-center rounded-[20px] bg-[radial-gradient(ellipse_at_center,#2B237C_0%,#180D5B_100%)] p-6 md:justify-self-end">
+        <div className="relative aspect-[610/364] w-full max-w-[610px] justify-self-center rounded-[30px] bg-[radial-gradient(44.19%_58.93%_at_23.5%_34%,#2D2381_0%,#1A0C5F_100%)] md:justify-self-end">
+          {/* Figma insets the artwork 10.82% horizontally and ~4% vertically */}
           <Image
             src="/images/about-us-img/advantages-laptops.png"
             alt="Laptops connected to a cloud network"
             width={956}
             height={670}
-            className="h-full w-auto max-w-full object-contain"
+            quality={100}
+            className="absolute top-1/2 left-1/2 w-[78.36%] -translate-x-1/2 -translate-y-1/2"
           />
         </div>
       </div>

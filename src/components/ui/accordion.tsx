@@ -13,14 +13,8 @@ function Accordion({ className, ...props }: AccordionPrimitive.Root.Props) {
   );
 }
 
-function AccordionItem({ className, ...props }: AccordionPrimitive.Item.Props) {
-  return (
-    <AccordionPrimitive.Item
-      data-slot="accordion-item"
-      className={cn('not-last:border-b', className)}
-      {...props}
-    />
-  );
+function AccordionItem(props: AccordionPrimitive.Item.Props) {
+  return <AccordionPrimitive.Item data-slot="accordion-item" {...props} />;
 }
 
 function AccordionTrigger({ className, children, ...props }: AccordionPrimitive.Trigger.Props) {
@@ -29,7 +23,7 @@ function AccordionTrigger({ className, children, ...props }: AccordionPrimitive.
       <AccordionPrimitive.Trigger
         data-slot="accordion-trigger"
         className={cn(
-          'group/accordion-trigger focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:after:border-ring **:data-[slot=accordion-trigger-icon]:text-white/30 relative flex flex-1 items-start justify-between rounded-lg border border-transparent py-2.5 text-left text-sm font-medium transition-all outline-none hover:underline focus-visible:ring-3 aria-disabled:pointer-events-none aria-disabled:opacity-50 **:data-[slot=accordion-trigger-icon]:ml-auto **:data-[slot=accordion-trigger-icon]:size-4',
+          'group/accordion-trigger focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:after:border-ring relative flex flex-1 items-start justify-between rounded-lg border border-transparent py-2.5 text-left text-sm font-medium transition-all outline-none hover:underline focus-visible:ring-3 aria-disabled:pointer-events-none aria-disabled:opacity-50 **:data-[slot=accordion-trigger-icon]:ml-auto **:data-[slot=accordion-trigger-icon]:size-4 **:data-[slot=accordion-trigger-icon]:text-white/30',
           className
         )}
         {...props}

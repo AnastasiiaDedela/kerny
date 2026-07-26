@@ -49,10 +49,10 @@ const audiences: Audience[] = [
 
 function AudienceCard({ title, icon }: Audience) {
   return (
-    <div className="flex items-center justify-between gap-6 rounded-[15px] bg-[#161616] p-6 ring-1 ring-white/5">
+    <div className="flex items-center justify-between gap-11 rounded-[15px] bg-[#161616] py-6 pr-8.25 pl-6 ring-1 ring-white/5">
       <div>
-        <h3 className="text-base font-bold">{title}</h3>
-        <p className="text-muted-foreground mt-3 text-left text-sm leading-tight font-normal">
+        <h3 className="text-base leading-[22px] font-bold">{title}</h3>
+        <p className="text-muted-foreground mt-2 text-left text-sm leading-tight font-normal">
           {description}
         </p>
       </div>
@@ -62,7 +62,7 @@ function AudienceCard({ title, icon }: Audience) {
           alt={icon.alt}
           width={icon.width}
           height={icon.height}
-          className="h-auto w-full max-w-16 object-contain opacity-25 md:max-w-20"
+          className="h-auto w-full max-w-16 object-contain md:max-w-20"
         />
       </div>
     </div>
@@ -71,10 +71,10 @@ function AudienceCard({ title, icon }: Audience) {
 
 export function OurAudience() {
   return (
-    <section className="mx-auto w-full max-w-340 px-5 pt-16 pb-10 md:pt-20">
+    <section className="mx-auto w-full max-w-340 px-5 pb-10">
       <div className="mx-auto text-left md:text-center">
         <h1 className="text-3xl font-extrabold tracking-tight md:text-4xl">Our Audience</h1>
-        <p className="text-foreground mx-auto mt-5 max-w-[1000px] text-sm leading-relaxed">
+        <p className="text-foreground mx-auto mt-5 text-sm leading-relaxed">
           Lorem ipsum dolor sit amet consectetur. Pellentesque malesuada gravida eget amet cursus
           sagittis. In orci tortor ut tincidunt consectetur elementum suspendisse sed. Auctor
           maecenas consectetur pharetra ut dui morbi. Elementum amet dignissim diam dui sed. Eget
