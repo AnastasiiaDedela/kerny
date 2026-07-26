@@ -13,26 +13,26 @@ const content =
 export function OurAdvantages() {
   return (
     <section className="mx-auto w-full max-w-340 px-5 py-10">
-      <h2 className="text-3xl font-extrabold tracking-tight md:text-4xl">Our Advantages</h2>
-      <p className="text-foreground mt-5 text-sm leading-relaxed">
+      <h2 className="text-4xl font-bold md:text-5xl md:leading-[58px]">Our Advantages</h2>
+      <p className="text-foreground mt-2.5 text-sm leading-6">
         Lorem ipsum dolor sit amet consectetur. Pellentesque malesuada gravida eget amet cursus
         sagittis. In orci tortor ut tincidunt consectetur elementum suspendisse sed. Auctor maecenas
         consectetur pharetra ut dui morbi. Elementum amet dignissim diam dui sed. Eget penatibus
         malesuada sagittis luctus id.
       </p>
 
-      <div className="mt-10 grid items-center gap-10 md:grid-cols-2 md:gap-16">
+      <div className="mt-7.5 grid items-center gap-10 md:grid-cols-[minmax(0,680fr)_minmax(0,610fr)] md:gap-7.5">
         <Accordion defaultValue={[0]} className="flex w-full flex-col gap-3">
           {[0, 1, 2, 3, 4].map((item) => (
             <AccordionItem
               key={item}
               value={item}
-              className="data-open:border-l-primary transition-all data-open:border-l-3 data-open:pl-4"
+              className="data-open:border-l-primary transition-all data-open:border-l-2 data-open:pl-4.5"
             >
-              <AccordionTrigger className="py-2 text-lg font-normal hover:no-underline aria-expanded:font-bold **:data-[slot=accordion-trigger-icon]:hidden">
+              <AccordionTrigger className="py-2 text-lg leading-[22px] font-medium hover:no-underline aria-expanded:font-semibold **:data-[slot=accordion-trigger-icon]:hidden">
                 {title}
               </AccordionTrigger>
-              <AccordionContent className="text-sm leading-relaxed font-normal text-white/70">
+              <AccordionContent className="text-sm leading-[17px] font-normal text-white/80">
                 {content}
               </AccordionContent>
             </AccordionItem>

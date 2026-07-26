@@ -18,8 +18,8 @@ type FooterVariant = keyof typeof policies;
 function NavColumn({ title, items }: { title: string; items: string[] }) {
   return (
     <div>
-      <p className="mb-3 text-left text-sm font-semibold md:text-right">{title}</p>
-      <ul className="space-y-2 text-left md:text-right">
+      <p className="mb-3 text-left text-base leading-[19px] font-semibold md:text-right">{title}</p>
+      <ul className="space-y-2.5 text-left md:text-right">
         {items.map((item) => (
           <li key={item} className="leading-[17px]">
             <Link
@@ -58,8 +58,8 @@ export function Footer({ variant = 'legal' }: { variant?: FooterVariant }) {
     <footer className="border-border text-foreground border-t">
       <div className="mx-auto max-w-340 px-5 py-10">
         <div className="flex flex-col justify-between gap-10 pb-6 md:flex-row md:items-start">
-          <div className="flex flex-col gap-3">
-            <span className="text-base font-bold">Kerny</span>
+          <div className="flex flex-col gap-2.5">
+            <span className="text-lg leading-[22px] font-bold">Kerny</span>
             {variant === 'legal' ? (
               <LegalDetails />
             ) : (
@@ -70,13 +70,13 @@ export function Footer({ variant = 'legal' }: { variant?: FooterVariant }) {
           </div>
 
           {/* Right — nav columns */}
-          <div className="flex flex-col gap-10 md:flex-row md:gap-16">
+          <div className="flex flex-col gap-10 md:flex-row md:gap-12.5">
             <NavColumn title="Services" items={services} />
             <NavColumn title="Company" items={company} />
           </div>
         </div>
 
-        <div className="border-border flex flex-col items-center justify-between gap-4 border-t pt-6 md:flex-row">
+        <div className="flex flex-col items-center justify-between gap-4 border-t-[0.5px] border-white/16 pt-6 md:flex-row">
           <p className="text-muted-foreground text-sm">© Kerny 2026. All Right Reserved</p>
           <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 md:gap-12.5">
             {policies[variant].map((item) => (

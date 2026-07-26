@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 export function CtaBanner() {
   return (
     <section className="mx-auto w-full max-w-340 px-5 py-10">
-      <div className="relative overflow-hidden rounded-3xl bg-[#434CF7] bg-[linear-gradient(102.39deg,#434CF7_0%,#262C8D_100%)] px-8 py-10 md:p-15">
+      <div className="relative overflow-hidden rounded-[50px] bg-[#434CF7] bg-[linear-gradient(102.39deg,#434CF7_0%,#262C8D_100%)] px-8 py-10 md:p-15">
         {/* Dotted world map decoration */}
         <Image
           src="/images/world-dots.png"
@@ -25,7 +25,11 @@ export function CtaBanner() {
             </h2>
           </div>
 
-          <Button variant="default" size="lg" className="shrink-0">
+          <Button
+            variant="default"
+            size="lg"
+            className="min-w-[150px] shrink-0 text-sm font-medium"
+          >
             Get Started <ArrowRight className="size-4" />
           </Button>
         </div>

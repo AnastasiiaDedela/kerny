@@ -49,14 +49,14 @@ const audiences: Audience[] = [
 
 function AudienceCard({ title, icon }: Audience) {
   return (
-    <div className="flex items-center justify-between gap-11 rounded-[15px] bg-[#161616] py-6 pr-8.25 pl-6 ring-1 ring-white/5">
+    <div className="flex items-center justify-between gap-14 rounded-[15px] bg-white/4 py-6 pr-8.25 pl-6">
       <div>
-        <h3 className="text-base leading-[22px] font-bold">{title}</h3>
-        <p className="text-muted-foreground mt-2 text-left text-sm leading-tight font-normal">
+        <h3 className="text-lg leading-[22px] font-semibold">{title}</h3>
+        <p className="text-muted-foreground mt-2 text-left text-sm leading-[17px] font-normal">
           {description}
         </p>
       </div>
-      <div className="flex w-24 shrink-0 items-center justify-center">
+      <div className="flex w-20 shrink-0 items-center justify-center">
         <Image
           src={icon.src}
           alt={icon.alt}
@@ -73,8 +73,8 @@ export function OurAudience() {
   return (
     <section className="mx-auto w-full max-w-340 px-5 pb-10">
       <div className="mx-auto text-left md:text-center">
-        <h1 className="text-3xl font-extrabold tracking-tight md:text-4xl">Our Audience</h1>
-        <p className="text-foreground mx-auto mt-5 text-sm leading-relaxed">
+        <h1 className="text-4xl font-bold md:text-5xl md:leading-[58px]">Our Audience</h1>
+        <p className="text-foreground mx-auto mt-2.5 text-sm leading-6">
           Lorem ipsum dolor sit amet consectetur. Pellentesque malesuada gravida eget amet cursus
           sagittis. In orci tortor ut tincidunt consectetur elementum suspendisse sed. Auctor
           maecenas consectetur pharetra ut dui morbi. Elementum amet dignissim diam dui sed. Eget
@@ -82,7 +82,7 @@ export function OurAudience() {
         </p>
       </div>
 
-      <div className="mt-8 grid gap-5 md:grid-cols-2">
+      <div className="mt-7.5 grid gap-x-5 gap-y-6 md:grid-cols-2">
         {audiences.map((audience) => (
           <AudienceCard key={audience.title} {...audience} />
         ))}
