@@ -10,6 +10,9 @@
   --font-sans: var(--font-sans);
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-sans);
+  /* Brand logo face. Falls back to Inter until the Nekst files are added to
+     public/fonts and registered with next/font/local. */
+  --font-logo: 'Nekst', var(--font-inter), sans-serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -58,14 +61,14 @@
   --popover: #1a1a1a;
   --popover-foreground: oklch(1 0 0);
 
-  --primary: #454cee;
+  --primary: #434cf7;
   --primary-foreground: oklch(1 0 0);
 
   --secondary: #1f1f1f;
   --secondary-foreground: oklch(1 0 0);
 
   --muted: #2a2a2a;
-  --muted-foreground: oklch(0.65 0 0);
+  --muted-foreground: oklch(1 0 0 / 50%);
 
   --accent: #2a2a2a;
   --accent-foreground: oklch(1 0 0);
@@ -74,9 +77,9 @@
 
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
-  --ring: #454cee;
+  --ring: #434cf7;
 
-  --chart-1: #454cee;
+  --chart-1: #434cf7;
   --chart-2: oklch(0.65 0 0);
   --chart-3: oklch(0.5 0 0);
   --chart-4: oklch(0.35 0 0);
@@ -86,12 +89,12 @@
 
   --sidebar: #1a1a1a;
   --sidebar-foreground: oklch(1 0 0);
-  --sidebar-primary: #454cee;
+  --sidebar-primary: #434cf7;
   --sidebar-primary-foreground: oklch(1 0 0);
   --sidebar-accent: #2a2a2a;
   --sidebar-accent-foreground: oklch(1 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: #454cee;
+  --sidebar-ring: #434cf7;
 
   --font-sans: var(--font-inter), sans-serif;
 }

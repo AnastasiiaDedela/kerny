@@ -36,11 +36,7 @@ export function Faq() {
             className="flex w-full flex-col gap-0.5 overflow-hidden rounded-[15px] md:w-175"
           >
             {[1, 2, 3, 4, 5, 6].map((item, i) => (
-              <AccordionItem
-                key={i}
-                value={i}
-                className="bg-white/[0.04] px-6 not-last:border-white/[0]"
-              >
+              <AccordionItem key={i} value={i} className="bg-white/[0.04] px-6">
                 <AccordionTrigger className="py-6 text-lg font-normal hover:no-underline">
                   {title}
                 </AccordionTrigger>

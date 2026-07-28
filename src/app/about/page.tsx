@@ -1,7 +1,20 @@
+import type { Metadata } from 'next';
+import { OurAudience } from '@/components/about/OurAudience';
+import { OurAdvantages } from '@/components/about/OurAdvantages';
+import { JoinTeam } from '@/components/about/JoinTeam';
+import { CtaBanner } from '@/components/home/CtaBanner';
+
+export const metadata: Metadata = {
+  title: 'About Us — Kerny',
+};
+
 export default function AboutPage() {
   return (
-    <section className="mx-auto w-full max-w-340 px-5 py-24">
-      <h1 className="text-3xl font-extrabold tracking-tight md:text-4xl">About Us</h1>
-    </section>
+    <>
+      <OurAudience />
+      <OurAdvantages />
+      <JoinTeam />
+      <CtaBanner />
+    </>
   );
 }

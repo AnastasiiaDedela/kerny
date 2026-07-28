@@ -18,17 +18,20 @@ export function Header() {
   return (
     <header className="bg-background py-7.5">
       <div className="mx-auto flex w-full max-w-340 items-center justify-between px-5">
-        <Link href="/" className="text-foreground text-lg font-bold">
+        <Link
+          href="/"
+          className="text-foreground font-logo text-lg font-extrabold max-md:text-xl max-md:leading-6"
+        >
           Kerny
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden items-center gap-8 md:flex">
+        <nav className="hidden items-center gap-12.5 md:flex">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="text-foreground text-sm leading-none transition-colors hover:text-[#454CEE]"
+              className="text-foreground hover:text-primary text-sm leading-none transition-colors"
             >
               {link.label}
             </Link>
@@ -36,15 +39,15 @@ export function Header() {
         </nav>
 
         {/* Desktop actions */}
-        <div className="hidden items-center gap-3 md:flex">
+        <div className="hidden items-center gap-2.5 md:flex">
           <Button
             variant="outline"
             size="default"
-            className="bg-background text-foreground hover:bg-muted"
+            className="bg-background text-foreground hover:bg-muted border-[0.5px] border-white/20 font-medium"
           >
             Log In
           </Button>
-          <Button>Sign Up</Button>
+          <Button className="font-medium">Sign Up</Button>
         </div>
 
         {/* Mobile trigger */}
@@ -65,7 +68,7 @@ export function Header() {
             <Link
               href="/"
               onClick={() => setOpen(false)}
-              className="text-foreground text-lg font-bold"
+              className="text-foreground font-logo text-xl leading-6 font-extrabold"
             >
               Kerny
             </Link>
