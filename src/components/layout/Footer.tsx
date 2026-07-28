@@ -57,9 +57,9 @@ export function Footer({ variant = 'legal' }: { variant?: FooterVariant }) {
   return (
     <footer className="border-border text-foreground border-t">
       <div className="mx-auto max-w-340 px-5 py-10">
-        <div className="flex flex-col justify-between gap-10 pb-6 md:flex-row md:items-start">
+        <div className="flex flex-col justify-between gap-7.5 pb-7.5 md:flex-row md:items-start md:gap-10 md:pb-6">
           <div className="flex flex-col gap-2.5">
-            <span className="text-lg leading-[22px] font-bold">Kerny</span>
+            <span className="font-logo text-lg leading-[22px] font-extrabold">Kerny</span>
             {variant === 'legal' ? (
               <LegalDetails />
             ) : (
@@ -70,15 +70,16 @@ export function Footer({ variant = 'legal' }: { variant?: FooterVariant }) {
           </div>
 
           {/* Right — nav columns */}
-          <div className="flex flex-col gap-10 md:flex-row md:gap-12.5">
+          <div className="flex flex-col gap-7.5 md:flex-row md:gap-12.5">
             <NavColumn title="Services" items={services} />
             <NavColumn title="Company" items={company} />
           </div>
         </div>
 
-        <div className="flex flex-col items-center justify-between gap-4 border-t-[0.5px] border-white/16 pt-6 md:flex-row">
+        {/* Mobile puts the policy links above the copyright line (col-reverse) */}
+        <div className="flex flex-col-reverse items-start justify-between gap-6 border-t-[0.5px] border-white/16 pt-6 md:flex-row md:items-center md:gap-4">
           <p className="text-muted-foreground text-sm">© Kerny 2026. All Right Reserved</p>
-          <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 md:gap-12.5">
+          <div className="flex w-full flex-wrap justify-between gap-x-6 gap-y-2 md:w-auto md:justify-center md:gap-12.5">
             {policies[variant].map((item) => (
               <Link
                 key={item}

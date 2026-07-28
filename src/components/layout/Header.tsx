@@ -18,7 +18,10 @@ export function Header() {
   return (
     <header className="bg-background py-7.5">
       <div className="mx-auto flex w-full max-w-340 items-center justify-between px-5">
-        <Link href="/" className="text-foreground text-lg font-bold">
+        <Link
+          href="/"
+          className="text-foreground font-logo text-lg font-extrabold max-md:text-xl max-md:leading-6"
+        >
           Kerny
         </Link>
 
@@ -65,7 +68,7 @@ export function Header() {
             <Link
               href="/"
               onClick={() => setOpen(false)}
-              className="text-foreground text-lg font-bold"
+              className="text-foreground font-logo text-xl leading-6 font-extrabold"
             >
               Kerny
             </Link>

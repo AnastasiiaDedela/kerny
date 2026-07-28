@@ -49,20 +49,20 @@ const audiences: Audience[] = [
 
 function AudienceCard({ title, icon }: Audience) {
   return (
-    <div className="flex items-center justify-between gap-14 rounded-[15px] bg-white/4 py-6 pr-8.25 pl-6">
-      <div>
+    <div className="flex flex-col gap-6 rounded-[15px] bg-white/4 p-6 md:flex-row md:items-center md:justify-between md:gap-14 md:py-6 md:pr-8.25 md:pl-6">
+      <div className="order-2 w-full md:order-1 md:w-auto">
         <h3 className="text-lg leading-[22px] font-semibold">{title}</h3>
         <p className="text-muted-foreground mt-2 text-left text-sm leading-[17px] font-normal">
           {description}
         </p>
       </div>
-      <div className="flex w-20 shrink-0 items-center justify-center">
+      <div className="order-1 flex w-full shrink-0 items-center justify-center md:order-2 md:w-20">
         <Image
           src={icon.src}
           alt={icon.alt}
           width={icon.width}
           height={icon.height}
-          className="h-auto w-full max-w-16 object-contain md:max-w-20"
+          className="h-27 w-auto object-contain md:h-auto md:w-full md:max-w-20"
         />
       </div>
     </div>
@@ -76,9 +76,13 @@ export function OurAudience() {
         <h1 className="text-4xl font-bold md:text-5xl md:leading-[58px]">Our Audience</h1>
         <p className="text-foreground mx-auto mt-2.5 text-sm leading-6">
           Lorem ipsum dolor sit amet consectetur. Pellentesque malesuada gravida eget amet cursus
-          sagittis. In orci tortor ut tincidunt consectetur elementum suspendisse sed. Auctor
-          maecenas consectetur pharetra ut dui morbi. Elementum amet dignissim diam dui sed. Eget
-          penatibus malesuada sagittis luctus id.
+          sagittis. In orci tortor ut tincidunt consectetur
+          {/* Figma trims the intro copy to three lines on mobile */}
+          <span className="max-md:hidden">
+            {' '}
+            elementum suspendisse sed. Auctor maecenas consectetur pharetra ut dui morbi. Elementum
+            amet dignissim diam dui sed. Eget penatibus malesuada sagittis luctus id.
+          </span>
         </p>
       </div>
 
