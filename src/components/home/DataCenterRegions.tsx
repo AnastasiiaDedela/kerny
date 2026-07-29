@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 
 type Region = { city: string; country: string; code: string };
@@ -58,12 +59,12 @@ function GroupHeader({ title, showMore }: { title: string; showMore?: boolean })
     <div className="mb-3 flex items-center justify-between">
       <h3 className="text-2xl leading-none font-bold">{title}</h3>
       {showMore && (
-        <button
-          type="button"
+        <Link
+          href="/data-centers"
           className="text-muted-foreground hover:text-foreground flex items-center gap-1 text-xs underline underline-offset-4 transition-colors"
         >
           Show More <ArrowRight className="size-3 no-underline" />
-        </button>
+        </Link>
       )}
     </div>
   );
