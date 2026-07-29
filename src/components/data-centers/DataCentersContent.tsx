@@ -87,17 +87,19 @@ export function DataCentersContent() {
   const activeRegions = tabs.find((t) => t.value === activeTab)!.regions;
 
   return (
-    <section className="mx-auto w-full max-w-340 px-5 pb-20">
-      <h1 className="text-center text-5xl leading-[58px] font-bold">Our Data Center Regions</h1>
+    <section className="mx-auto w-full max-w-340 px-5 pt-7.5 pb-20 md:pt-0">
+      <h1 className="text-left text-[32px] leading-[39px] font-bold md:text-center md:text-5xl md:leading-[58px]">
+        Our Data Center Regions
+      </h1>
 
-      <div className="mt-7.5 flex gap-3">
+      <div className="mt-7.5 flex flex-col gap-3 md:flex-row">
         {tabs.map((tab) => (
           <button
             key={tab.value}
             type="button"
             onClick={() => setActiveTab(tab.value)}
             className={cn(
-              'flex h-[50px] flex-1 items-center justify-center rounded-[10px] px-[18px] text-sm font-medium transition-colors',
+              'flex h-[50px] md:flex-1 items-center justify-center rounded-[10px] px-[18px] text-sm font-medium transition-colors',
               activeTab === tab.value
                 ? 'border-primary bg-primary/20 border text-white'
                 : 'bg-white/[0.06] text-white/50 hover:text-white'
@@ -108,7 +110,7 @@ export function DataCentersContent() {
         ))}
       </div>
 
-      <div className="mt-7.5 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+      <div className="mt-7.5 grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 md:gap-4 lg:grid-cols-5">
         {activeRegions.map((region) => (
           <RegionCard key={`${region.city}-${region.country}`} {...region} />
         ))}
