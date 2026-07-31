@@ -1,6 +1,9 @@
+'use client';
+
 // components/layout/Footer.tsx
 import Image from 'next/image';
 import Link from 'next/link';
+import { useContactModal } from '@/components/layout/ContactModalProvider';
 
 const services = ['Server Rental', 'Monitoring', 'Backups', 'Policies'];
 const company = ['Home', 'About Us', 'Services', 'Pricing', 'Contact Us'];
@@ -16,18 +19,25 @@ const brandSummary =
 type FooterVariant = keyof typeof policies;
 
 function NavColumn({ title, items }: { title: string; items: string[] }) {
+  const openContactModal = useContactModal();
+  const linkClassName =
+    'text-foreground hover:text-foreground text-sm leading-[17px] transition-colors';
+
   return (
     <div>
       <p className="mb-3 text-left text-base leading-[19px] font-semibold md:text-right">{title}</p>
       <ul className="space-y-2.5 text-left md:text-right">
         {items.map((item) => (
           <li key={item} className="leading-[17px]">
-            <Link
-              href="#"
-              className="text-foreground hover:text-foreground text-sm leading-[17px] transition-colors"
-            >
-              {item}
-            </Link>
+            {item === 'Contact Us' ? (
+              <button type="button" onClick={openContactModal} className={linkClassName}>
+                {item}
+              </button>
+            ) : (
+              <Link href="#" className={linkClassName}>
+                {item}
+              </Link>
+            )}
           </li>
         ))}
       </ul>

@@ -1,3 +1,5 @@
+'use client';
+
 import { Button } from '@/components/ui/button';
 import {
   Accordion,
@@ -5,12 +7,15 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import { useContactModal } from '@/components/layout/ContactModalProvider';
 
 const title = 'What is this VPS?';
 const content =
   'Lorem ipsum dolor sit amet consectetur. Etiam mattis sed morbi sed eget dui. Purus lacus tincidunt tellus mauris lorem aliquet non. Pretium ligula interdum egestas integer. Sagittis ornare dignissim diam magna sed id sagittis. Rutrum mauris in mauris at magna.';
 
 export function Faq() {
+  const openContactModal = useContactModal();
+
   return (
     <section className="mx-auto w-full max-w-340 px-5 py-10">
       <div className="flex flex-col gap-10 md:flex-row md:justify-between md:gap-[125px]">
@@ -25,7 +30,9 @@ export function Faq() {
             sagittis. In orci tortor ut tincidunt consectetur
           </p>
           <div className="mt-8 hidden md:block">
-            <Button size="lg">Contact Us</Button>
+            <Button size="lg" onClick={openContactModal}>
+              Contact Us
+            </Button>
           </div>
         </div>
 
@@ -47,7 +54,7 @@ export function Faq() {
             ))}
           </Accordion>
           <div className="mt-8 md:hidden">
-            <Button size="lg" className="w-full">
+            <Button size="lg" className="w-full" onClick={openContactModal}>
               Contact Us
             </Button>
           </div>

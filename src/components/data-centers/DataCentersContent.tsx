@@ -99,7 +99,7 @@ export function DataCentersContent() {
             type="button"
             onClick={() => setActiveTab(tab.value)}
             className={cn(
-              'flex h-[50px] md:flex-1 items-center justify-center rounded-[10px] px-[18px] text-sm font-medium transition-colors',
+              'flex h-[50px] items-center justify-center rounded-[10px] px-[18px] text-sm font-medium transition-colors md:flex-1',
               activeTab === tab.value
                 ? 'border-primary bg-primary/20 border text-white'
                 : 'bg-white/[0.06] text-white/50 hover:text-white'
