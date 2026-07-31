@@ -29,15 +29,10 @@ export function Faq() {
             Lorem ipsum dolor sit amet consectetur. Pellentesque malesuada gravida eget amet cursus
             sagittis. In orci tortor ut tincidunt consectetur
           </p>
-<<<<<<< HEAD
-          <div className="mt-8 hidden md:block">
+          <div className="mt-8 hidden lg:block">
             <Button size="lg" onClick={openContactModal}>
               Contact Us
             </Button>
-=======
-          <div className="mt-8 hidden lg:block">
-            <Button size="lg">Contact Us</Button>
->>>>>>> main
           </div>
         </div>
 
@@ -58,13 +53,8 @@ export function Faq() {
               </AccordionItem>
             ))}
           </Accordion>
-<<<<<<< HEAD
-          <div className="mt-8 md:hidden">
-            <Button size="lg" className="w-full" onClick={openContactModal}>
-=======
           <div className="mt-8 lg:hidden">
-            <Button size="lg" className="w-full">
->>>>>>> main
+            <Button size="lg" className="w-full" onClick={openContactModal}>
               Contact Us
             </Button>
           </div>

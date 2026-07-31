@@ -52,10 +52,10 @@ export function ContactModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         showCloseButton={false}
-        className="bg-background max-w-[749px] gap-0 rounded-[30px] border-0 p-7.5 ring-0 sm:max-w-[749px]"
+        className="bg-background max-w-[min(749px,calc(100%-20px))] gap-0 rounded-[30px] border-0 px-5 py-7.5 ring-0 sm:max-w-[min(749px,calc(100%-20px))] lg:p-7.5"
       >
-        <div className="flex gap-7.5">
-          <div className="w-100 shrink-0">
+        <div className="flex flex-col gap-7.5 lg:flex-row">
+          <div className="w-full lg:w-100 lg:shrink-0">
             <div className="flex items-start justify-between">
               <h2 className="text-foreground text-2xl leading-[29px] font-semibold">Contact Us</h2>
               <button
@@ -67,7 +67,7 @@ export function ContactModal({
                 <X className="size-3" />
               </button>
             </div>
-            <p className="text-muted-foreground mt-2 max-w-100 text-sm leading-[17px]">
+            <p className="text-muted-foreground mt-2 text-sm leading-[17px] lg:max-w-100">
               {description}
             </p>
 
@@ -97,7 +97,7 @@ export function ContactModal({
             </form>
           </div>
 
-          <div className="flex w-[259px] flex-col justify-center gap-7.5">
+          <div className="hidden w-[259px] flex-col justify-center gap-7.5 lg:flex">
             <div className="flex flex-col gap-8">
               {contactInfo.map(({ icon, width, height, label, value }) => (
                 <div key={label} className="flex items-center gap-3">
