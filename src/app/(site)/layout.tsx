@@ -4,7 +4,7 @@ export default function SiteLayout({ children }: Readonly<{ children: React.Reac
   return (
     <>
       <main className="flex-1">{children}</main>
-      <Footer />
+      <Footer variant="brand" />
     </>
   );
 }
