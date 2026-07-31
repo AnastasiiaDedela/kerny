@@ -352,7 +352,7 @@ export function CloudServerBuilder() {
     <section className="mx-auto w-full max-w-340 px-5 py-10">
       <h2 className="mb-8 text-center text-4xl font-bold md:text-5xl">Build Your Perfect Server</h2>
 
-      <div className="grid grid-cols-1 gap-[60px] md:gap-5 md:grid-cols-[860px_440px]">
+      <div className="grid grid-cols-1 gap-[60px] lg:gap-5 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
         {/* Left – server cards */}
         <div className="flex flex-col gap-5">
           {servers.map((s, i) => (

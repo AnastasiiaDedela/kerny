@@ -49,8 +49,8 @@ export function TariffTable({ data, selectedId, onSelect }: TariffTableProps) {
 
   return (
     <>
-      {/* Mobile: stacked cards */}
-      <div className="md:hidden rounded-[8px] bg-[#0F0F0F] p-4 flex flex-col gap-3">
+      {/* Mobile/tablet: stacked cards */}
+      <div className="lg:hidden rounded-[8px] bg-[#0F0F0F] p-4 flex flex-col gap-3">
         {data.map((row) => {
           const selected = row.id === selectedId;
           return (
@@ -99,7 +99,7 @@ export function TariffTable({ data, selectedId, onSelect }: TariffTableProps) {
       </div>
 
       {/* Desktop: horizontal table */}
-      <div className="hidden md:block overflow-x-auto rounded-[8px] bg-[#0F0F0F]">
+      <div className="hidden lg:block overflow-x-auto rounded-[8px] bg-[#0F0F0F]">
         <div className="min-w-[560px] p-5">
           {/* Header */}
           <div className={cn(GRID, 'h-[50px] rounded-[8px] bg-white/[0.04]')}>
