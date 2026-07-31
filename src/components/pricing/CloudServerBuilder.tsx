@@ -173,7 +173,7 @@ function ServerCard({
   }
 
   return (
-    <div className="rounded-[15px] bg-white/[0.04] p-5 md:p-[30px]">
+    <div className="rounded-[15px] bg-white/[0.04] p-6 md:p-[30px]">
       {/* Header */}
       <div className="mb-5 flex items-center justify-between">
         <span className="text-2xl font-bold text-white">Cloud Server #{index + 1}</span>
@@ -184,7 +184,7 @@ function ServerCard({
       </div>
 
       {/* OS + Region */}
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 sm:gap-5 sm:grid-cols-2">
         <div>
           <p className="mb-2.5 text-base font-medium text-white/50">Operation System</p>
           <Dropdown
@@ -216,7 +216,7 @@ function ServerCard({
       </div>
 
       {/* Tariff table */}
-      <div className="mt-5">
+      <div className="mt-4 md:mt-5">
         <p className="mb-2.5 text-base font-medium text-white/50">Tariff</p>
         <TariffTable
           data={tariffs}
@@ -273,7 +273,7 @@ function CostPanel({
   return (
     <div className="flex flex-col gap-5">
       {/* Cost card */}
-      <div className="rounded-[15px] bg-white/[0.04] p-[30px]">
+      <div className="rounded-[15px] bg-white/[0.04] p-6 md:p-[30px]">
         <p className="mb-3 text-base font-medium text-white/50">Total cost with VAT</p>
 
         <div className="mb-5 flex h-10 items-center rounded-[8px] bg-[#0F0F0F] p-1">
@@ -303,7 +303,7 @@ function CostPanel({
       </div>
 
       {/* Servers list */}
-      <div className="rounded-[15px] bg-white/[0.04] p-[30px]">
+      <div className="rounded-[15px] bg-white/[0.04] p-6 md:p-[30px]">
         <p className="mb-3 text-base font-medium text-white/50">Cloud Servers</p>
         <div className="flex flex-col gap-2">
           {servers.map((s, i) => (
@@ -352,7 +352,7 @@ export function CloudServerBuilder() {
     <section className="mx-auto w-full max-w-340 px-5 py-10">
       <h2 className="mb-8 text-center text-4xl font-bold md:text-5xl">Build Your Perfect Server</h2>
 
-      <div className="grid grid-cols-1 gap-5 md:grid-cols-[860px_440px]">
+      <div className="grid grid-cols-1 gap-[60px] lg:gap-5 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
         {/* Left – server cards */}
         <div className="flex flex-col gap-5">
           {servers.map((s, i) => (

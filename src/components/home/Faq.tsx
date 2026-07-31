@@ -13,18 +13,18 @@ const content =
 export function Faq() {
   return (
     <section className="mx-auto w-full max-w-340 px-5 py-10">
-      <div className="flex flex-col gap-10 md:flex-row md:justify-between md:gap-[125px]">
+      <div className="flex flex-col gap-10 lg:flex-row lg:justify-between lg:gap-[125px]">
         {/* Left — copy */}
-        <div className="max-w-[495px] md:w-2/5">
-          <h2 className="text-4xl font-bold md:text-5xl md:leading-[58px]">
+        <div className="max-w-[495px] lg:w-2/5">
+          <h2 className="text-4xl font-bold lg:text-5xl lg:leading-[58px]">
             Questions,
-            <br className="hidden md:block" /> answers
+            <br className="hidden lg:block" /> answers
           </h2>
           <p className="text-foreground mt-6 text-sm leading-relaxed">
             Lorem ipsum dolor sit amet consectetur. Pellentesque malesuada gravida eget amet cursus
             sagittis. In orci tortor ut tincidunt consectetur
           </p>
-          <div className="mt-8 hidden md:block">
+          <div className="mt-8 hidden lg:block">
             <Button size="lg">Contact Us</Button>
           </div>
         </div>
@@ -33,7 +33,7 @@ export function Faq() {
         <div className="flex flex-col align-bottom">
           <Accordion
             defaultValue={[1]}
-            className="flex w-full flex-col gap-0.5 overflow-hidden rounded-[15px] md:w-175"
+            className="flex w-full flex-col gap-0.5 overflow-hidden rounded-[15px] lg:w-175"
           >
             {[1, 2, 3, 4, 5, 6].map((item, i) => (
               <AccordionItem key={i} value={i} className="bg-white/[0.04] px-6">
@@ -46,7 +46,7 @@ export function Faq() {
               </AccordionItem>
             ))}
           </Accordion>
-          <div className="mt-8 md:hidden">
+          <div className="mt-8 lg:hidden">
             <Button size="lg" className="w-full">
               Contact Us
             </Button>
