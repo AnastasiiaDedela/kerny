@@ -28,7 +28,7 @@ export function CtaBanner() {
           <Button
             variant="default"
             size="lg"
-            className="shrink-0 text-sm font-medium min-w-[150px] max-md:w-[200px]"
+            className="min-w-[150px] shrink-0 text-sm font-medium max-md:w-[200px]"
           >
             Get Started <ArrowRight className="size-4" />
           </Button>

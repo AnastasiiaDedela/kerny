@@ -4,16 +4,17 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useContactModal } from '@/components/layout/ContactModalProvider';
 
 const navLinks = [
   { label: 'Home', href: '/' },
   { label: 'About Us', href: '/about' },
   { label: 'Pricing', href: '/pricing' },
-  { label: 'Contact Us', href: '/contact' },
 ];
 
 export function Header() {
   const [open, setOpen] = useState(false);
+  const openContactModal = useContactModal();
 
   return (
     <header className="bg-background py-7.5">
@@ -36,6 +37,13 @@ export function Header() {
               {link.label}
             </Link>
           ))}
+          <button
+            type="button"
+            onClick={openContactModal}
+            className="text-foreground hover:text-primary text-sm leading-none transition-colors"
+          >
+            Contact Us
+          </button>
         </nav>
 
         {/* Desktop actions */}
@@ -93,6 +101,16 @@ export function Header() {
                 {link.label}
               </Link>
             ))}
+            <button
+              type="button"
+              onClick={() => {
+                setOpen(false);
+                openContactModal();
+              }}
+              className="text-foreground flex h-[50px] items-center justify-center rounded-[10px] border-[0.5px] border-white/20 text-base transition-colors hover:bg-[#1a1a1a]"
+            >
+              Contact Us
+            </button>
           </nav>
 
           <div className="border-border my-5 border-t" />
