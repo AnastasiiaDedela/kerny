@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { CirclePlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ServerTable, type ServerRow } from '@/components/workspace/ServerTable';
@@ -50,7 +51,7 @@ export default function WorkspacePage() {
     <div>
       <div className="flex items-center justify-between gap-4">
         <h1 className="text-[28px] leading-[34px] font-bold text-white">Cloud Servers</h1>
-        <Button>
+        <Button render={<Link href="/workspace/new-server" />} nativeButton={false}>
           <CirclePlus className="size-4" strokeWidth={1.5} />
           New Server
         </Button>
