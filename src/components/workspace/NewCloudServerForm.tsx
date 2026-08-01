@@ -226,14 +226,14 @@ export function NewCloudServerForm() {
         {/* 01 Operation System */}
         <section>
           <SectionHeading number="01" title="Operation System" />
-          <div className="grid grid-cols-3 items-start gap-3 lg:grid-cols-5 lg:gap-[10px]">
+          <div className="grid grid-cols-3 items-start gap-3 min-[1300px]:grid-cols-5 min-[1300px]:gap-[10px]">
             {osOptions.map((os) => (
               <button
                 key={os.label}
                 type="button"
                 onClick={() => setSelectedOs(os.label)}
                 className={cn(
-                  'flex min-h-[110px] w-full flex-col items-center justify-start gap-[13px] rounded-[10px] px-2 pt-4 pb-3 text-center transition-colors lg:aspect-square lg:min-h-0 lg:justify-center lg:gap-[14px] lg:p-4',
+                  'flex min-h-[110px] w-full flex-col items-center justify-start gap-[13px] rounded-[10px] px-2 pt-4 pb-3 text-center transition-colors min-[1300px]:aspect-square min-[1300px]:min-h-0 min-[1300px]:justify-center min-[1300px]:gap-[14px] min-[1300px]:p-4',
                   selectedOs === os.label
                     ? 'border-primary bg-primary/10 border'
                     : 'bg-white/[0.04] hover:bg-white/[0.06]'
@@ -244,11 +244,11 @@ export function NewCloudServerForm() {
                   alt=""
                   width={70}
                   height={70}
-                  className="size-[54px] object-contain lg:size-[70px]"
+                  className="size-[54px] object-contain min-[1300px]:size-[70px]"
                 />
                 <span
                   className={cn(
-                    'text-white lg:text-xs lg:leading-[15px]',
+                    'text-white min-[1300px]:text-xs min-[1300px]:leading-[15px]',
                     os.label === 'Flatcar Container Linux'
                       ? 'text-[10px] leading-[12px]'
                       : 'text-xs leading-[15px]'
@@ -264,8 +264,8 @@ export function NewCloudServerForm() {
         {/* 02 Region */}
         <section>
           <SectionHeading number="02" title="Region" />
-          <div className="flex flex-col gap-4 lg:flex-row">
-            <div className="grid grid-cols-3 gap-2 lg:flex lg:w-40 lg:shrink-0 lg:flex-col lg:gap-2.5">
+          <div className="flex flex-col gap-4 min-[1300px]:flex-row">
+            <div className="grid grid-cols-3 gap-2 min-[1300px]:flex min-[1300px]:w-40 min-[1300px]:shrink-0 min-[1300px]:flex-col min-[1300px]:gap-2.5">
               {continents.map((continent) => (
                 <button
                   key={continent}
@@ -283,7 +283,7 @@ export function NewCloudServerForm() {
               ))}
             </div>
 
-            <div className="grid flex-1 grid-cols-2 gap-2.5 sm:grid-cols-3">
+            <div className="grid flex-1 grid-cols-2 gap-2.5 min-[1090px]:grid-cols-3">
               {regionCards.map((card) => (
                 <RegionCard
                   key={card.id}

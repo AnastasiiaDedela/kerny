@@ -58,7 +58,12 @@ export function TariffTable({ data, selectedId, onSelect, showHourly = false }: 
   return (
     <>
       {/* Mobile/tablet: stacked cards */}
-      <div className="flex flex-col gap-3 rounded-[8px] bg-[#0F0F0F] lg:hidden">
+      <div
+        className={cn(
+          'flex flex-col gap-3 rounded-[8px] bg-[#0F0F0F]',
+          showHourly ? 'min-[1380px]:hidden' : 'lg:hidden'
+        )}
+      >
         {data.map((row) => {
           const selected = row.id === selectedId;
           return (
@@ -108,7 +113,7 @@ export function TariffTable({ data, selectedId, onSelect, showHourly = false }: 
 
       {/* Desktop: horizontal table */}
       {showHourly ? (
-        <div className="hidden overflow-x-auto lg:block">
+        <div className="hidden overflow-x-auto min-[1380px]:block">
           <div className="min-w-[700px]">
             {/* Header */}
             <div className="flex h-[50px] items-center rounded-[8px] bg-white/[0.04] px-5">
