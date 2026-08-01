@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import { Header } from '@/components/layout/Header';
 import { AuthModalProvider } from '@/components/layout/AuthModalProvider';
 import { ContactModalProvider } from '@/components/layout/ContactModalProvider';
 
@@ -26,10 +25,7 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col">
         <ContactModalProvider>
-          <AuthModalProvider>
-            <Header />
-            {children}
-          </AuthModalProvider>
+          <AuthModalProvider>{children}</AuthModalProvider>
         </ContactModalProvider>
       </body>
     </html>
