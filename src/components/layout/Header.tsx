@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useAuthModal } from '@/components/layout/AuthModalProvider';
 import { useContactModal } from '@/components/layout/ContactModalProvider';
 
 const navLinks = [
@@ -15,6 +16,7 @@ const navLinks = [
 export function Header() {
   const [open, setOpen] = useState(false);
   const openContactModal = useContactModal();
+  const { openSignUp, openLogIn } = useAuthModal();
 
   return (
     <header className="bg-background py-7.5">
@@ -51,11 +53,14 @@ export function Header() {
           <Button
             variant="outline"
             size="default"
+            onClick={openLogIn}
             className="bg-background text-foreground hover:bg-muted border-[0.5px] border-white/20 font-medium"
           >
             Log In
           </Button>
-          <Button className="font-medium">Sign Up</Button>
+          <Button onClick={openSignUp} className="font-medium">
+            Sign Up
+          </Button>
         </div>
 
         {/* Mobile trigger */}
@@ -118,11 +123,23 @@ export function Header() {
           <div className="flex flex-col gap-2.5">
             <Button
               variant="outline"
+              onClick={() => {
+                setOpen(false);
+                openLogIn();
+              }}
               className="bg-background text-foreground hover:bg-muted h-[50px] w-full rounded-[10px] border-[0.5px] border-white/20 text-base dark:border-white/20 dark:bg-transparent"
             >
               Log In
             </Button>
-            <Button className="h-[50px] w-full rounded-[10px] text-base">Sign Up</Button>
+            <Button
+              onClick={() => {
+                setOpen(false);
+                openSignUp();
+              }}
+              className="h-[50px] w-full rounded-[10px] text-base"
+            >
+              Sign Up
+            </Button>
           </div>
         </div>
       )}
