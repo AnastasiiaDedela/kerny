@@ -1,8 +1,9 @@
 'use client';
 
+import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -26,6 +27,7 @@ const profileLinks = [
 ];
 
 export function WorkspaceHeader() {
+  const [open, setOpen] = useState(false);
   const { logOut } = useAuthModal();
 
   return (
@@ -35,10 +37,12 @@ export function WorkspaceHeader() {
           href="/"
           className="text-foreground font-logo flex items-center gap-2 text-lg font-extrabold"
         >
-          Kerny <span className="text-primary">»</span> <span className="font-sans">Workspace</span>
+          Kerny <span className="text-primary hidden md:inline">»</span>{' '}
+          <span className="hidden font-sans md:inline">Workspace</span>
         </Link>
 
-        <div className="flex items-center gap-6">
+        {/* Desktop actions */}
+        <div className="hidden items-center gap-6 md:flex">
           <div className="text-right">
             <p className="text-sm leading-[17px] text-white/50">Your Balance</p>
             <p className="text-base leading-[19px] font-medium text-white">999 €</p>
@@ -83,7 +87,75 @@ export function WorkspaceHeader() {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
+
+        {/* Mobile trigger */}
+        <button
+          type="button"
+          aria-label="Open menu"
+          onClick={() => setOpen(true)}
+          className="text-foreground md:hidden"
+        >
+          <Menu className="size-7" />
+        </button>
       </div>
+
+      {/* Mobile menu overlay */}
+      {open && (
+        <div className="bg-background fixed inset-0 z-50 flex flex-col px-5 py-7.5 md:hidden">
+          <div className="flex items-center justify-between">
+            <Link
+              href="/"
+              onClick={() => setOpen(false)}
+              className="text-foreground font-logo text-xl leading-6 font-extrabold"
+            >
+              Kerny
+            </Link>
+            <button
+              type="button"
+              aria-label="Close menu"
+              onClick={() => setOpen(false)}
+              className="text-foreground"
+            >
+              <X className="size-7" />
+            </button>
+          </div>
+
+          <div className="mt-6 flex items-center justify-between rounded-[10px] border-[0.5px] border-white/20 px-4 py-3">
+            <div>
+              <p className="text-sm leading-[17px] text-white/50">Your Balance</p>
+              <p className="text-base leading-[19px] font-medium text-white">999 €</p>
+            </div>
+            <Button size="default" className="min-w-0 px-4" onClick={() => setOpen(false)}>
+              Deposit
+            </Button>
+          </div>
+
+          <div className="mt-4 flex flex-col gap-2.5">
+            {profileLinks.map((link) => (
+              <Link
+                key={link.label}
+                href={link.href}
+                onClick={() => setOpen(false)}
+                className="text-foreground flex h-[50px] items-center gap-2 rounded-[10px] border-[0.5px] border-white/20 px-4 text-base transition-colors hover:bg-[#1a1a1a]"
+              >
+                <Image src={link.icon} alt="" width={link.width} height={link.height} />
+                {link.label}
+              </Link>
+            ))}
+            <button
+              type="button"
+              onClick={() => {
+                setOpen(false);
+                logOut();
+              }}
+              className="text-foreground/30 flex h-[50px] items-center gap-2 rounded-[10px] border-[0.5px] border-white/20 px-4 text-base transition-colors hover:bg-[#1a1a1a]"
+            >
+              <Image src="/images/user-img/log-out.svg" alt="" width={14} height={14} />
+              Log Out
+            </button>
+          </div>
+        </div>
+      )}
     </header>
   );
 }

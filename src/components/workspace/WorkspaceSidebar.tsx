@@ -43,8 +43,29 @@ const navItems = [
 
 export function WorkspaceSidebar() {
   return (
-    <aside className="w-60 shrink-0 self-start rounded-[15px] bg-white/[0.04] p-6">
-      <nav className="flex flex-col gap-5">
+    <aside className="w-full shrink-0 self-start min-[1240px]:w-60">
+      {/* Mobile/tablet: stacked boxed nav */}
+      <nav className="flex flex-col gap-1.5 rounded-[15px] bg-white/[0.04] p-5 min-[1240px]:hidden">
+        {navItems.map((item) => (
+          <Link
+            key={item.label}
+            href={item.href}
+            className={cn(
+              'flex h-[50px] items-center justify-center rounded-[8px] px-2.5 text-sm leading-[17px] transition-colors',
+              item.gap,
+              item.active
+                ? 'border-primary bg-primary/10 border font-medium text-white'
+                : 'bg-white/[0.04] font-normal text-white/50 hover:text-white'
+            )}
+          >
+            <Image src={item.icon} alt="" width={item.width} height={item.height} />
+            {item.label}
+          </Link>
+        ))}
+      </nav>
+
+      {/* Desktop: single card, plain links */}
+      <nav className="hidden flex-col gap-5 rounded-[15px] bg-white/[0.04] p-6 min-[1240px]:flex">
         {navItems.map((item) => (
           <Link
             key={item.label}
