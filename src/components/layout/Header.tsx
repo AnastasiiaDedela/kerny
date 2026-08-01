@@ -1,11 +1,31 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
-import { Menu, X } from 'lucide-react';
+import { ChevronDown, Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { useAuthModal } from '@/components/layout/AuthModalProvider';
 import { useContactModal } from '@/components/layout/ContactModalProvider';
+
+const profileLinks = [
+  { label: 'Control Panel', href: '#', icon: '/images/user-img/table.svg', width: 14, height: 12 },
+  {
+    label: 'Balance & Payments',
+    href: '#',
+    icon: '/images/user-img/balance.svg',
+    width: 14,
+    height: 16,
+  },
+  { label: 'Settings', href: '#', icon: '/images/user-img/settings.svg', width: 14, height: 14 },
+];
 
 const navLinks = [
   { label: 'Home', href: '/' },
@@ -16,7 +36,7 @@ const navLinks = [
 export function Header() {
   const [open, setOpen] = useState(false);
   const openContactModal = useContactModal();
-  const { openSignUp, openLogIn } = useAuthModal();
+  const { openSignUp, openLogIn, isLoggedIn, logOut } = useAuthModal();
 
   return (
     <header className="bg-background py-7.5">
@@ -49,18 +69,57 @@ export function Header() {
         </nav>
 
         {/* Desktop actions */}
-        <div className="hidden items-center gap-2.5 md:flex">
-          <Button
-            variant="outline"
-            size="default"
-            onClick={openLogIn}
-            className="bg-background text-foreground hover:bg-muted border-[0.5px] border-white/20 font-medium"
-          >
-            Log In
-          </Button>
-          <Button onClick={openSignUp} className="font-medium">
-            Sign Up
-          </Button>
+        <div className="hidden items-center md:flex">
+          {isLoggedIn ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger className="flex items-center gap-2 outline-none">
+                <Image src="/images/user-img/user-icon.svg" alt="" width={42} height={42} />
+                <span className="flex size-5 items-center justify-center rounded-full bg-white/[0.04]">
+                  <ChevronDown className="size-3 text-white/30" />
+                </span>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="end"
+                sideOffset={8}
+                className="w-47.5 rounded-[10px] border-0 bg-[#181818] p-4 shadow-[0px_91px_36px_rgba(0,0,0,0.02),0px_51px_31px_rgba(0,0,0,0.08),0px_23px_23px_rgba(0,0,0,0.13),0px_6px_12px_rgba(0,0,0,0.15)] ring-0"
+              >
+                <div className="flex flex-col gap-3">
+                  {profileLinks.map((link) => (
+                    <DropdownMenuItem
+                      key={link.label}
+                      className="text-foreground gap-2 p-0 text-sm leading-[17px] focus:bg-transparent focus:text-inherit"
+                      render={<Link href={link.href} />}
+                    >
+                      <Image src={link.icon} alt="" width={link.width} height={link.height} />
+                      {link.label}
+                    </DropdownMenuItem>
+                  ))}
+                </div>
+                <DropdownMenuSeparator className="my-3 bg-white/[0.16]" />
+                <DropdownMenuItem
+                  onClick={logOut}
+                  className="text-foreground/30 hover:text-foreground/60 gap-2 p-0 text-sm leading-[17px] focus:bg-transparent focus:text-inherit"
+                >
+                  <Image src="/images/user-img/log-out.svg" alt="" width={14} height={14} />
+                  Log Out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <div className="flex items-center gap-2.5">
+              <Button
+                variant="outline"
+                size="default"
+                onClick={openLogIn}
+                className="bg-background text-foreground hover:bg-muted border-[0.5px] border-white/20 font-medium"
+              >
+                Log In
+              </Button>
+              <Button onClick={openSignUp} className="font-medium">
+                Sign Up
+              </Button>
+            </div>
+          )}
         </div>
 
         {/* Mobile trigger */}
@@ -120,27 +179,55 @@ export function Header() {
 
           <div className="border-border my-5 border-t" />
 
-          <div className="flex flex-col gap-2.5">
-            <Button
-              variant="outline"
-              onClick={() => {
-                setOpen(false);
-                openLogIn();
-              }}
-              className="bg-background text-foreground hover:bg-muted h-[50px] w-full rounded-[10px] border-[0.5px] border-white/20 text-base dark:border-white/20 dark:bg-transparent"
-            >
-              Log In
-            </Button>
-            <Button
-              onClick={() => {
-                setOpen(false);
-                openSignUp();
-              }}
-              className="h-[50px] w-full rounded-[10px] text-base"
-            >
-              Sign Up
-            </Button>
-          </div>
+          {isLoggedIn ? (
+            <div className="flex flex-col gap-2.5">
+              <span className="text-foreground text-base">Profile</span>
+              {profileLinks.map((link) => (
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  onClick={() => setOpen(false)}
+                  className="text-foreground flex h-[50px] items-center justify-center gap-2 rounded-[10px] border-[0.5px] border-white/20 text-base transition-colors hover:bg-[#1a1a1a]"
+                >
+                  <Image src={link.icon} alt="" width={link.width} height={link.height} />
+                  {link.label}
+                </Link>
+              ))}
+              <button
+                type="button"
+                onClick={() => {
+                  setOpen(false);
+                  logOut();
+                }}
+                className="text-foreground/30 flex h-[50px] items-center justify-center gap-2 rounded-[10px] border-[0.5px] border-white/20 text-base transition-colors hover:bg-[#1a1a1a]"
+              >
+                <Image src="/images/user-img/log-out.svg" alt="" width={14} height={14} />
+                Log Out
+              </button>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-2.5">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setOpen(false);
+                  openLogIn();
+                }}
+                className="bg-background text-foreground hover:bg-muted h-[50px] w-full rounded-[10px] border-[0.5px] border-white/20 text-base dark:border-white/20 dark:bg-transparent"
+              >
+                Log In
+              </Button>
+              <Button
+                onClick={() => {
+                  setOpen(false);
+                  openSignUp();
+                }}
+                className="h-[50px] w-full rounded-[10px] text-base"
+              >
+                Sign Up
+              </Button>
+            </div>
+          )}
         </div>
       )}
     </header>

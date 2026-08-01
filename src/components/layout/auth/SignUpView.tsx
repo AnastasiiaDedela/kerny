@@ -11,13 +11,27 @@ import {
   SecondaryButton,
 } from '@/components/layout/auth/shared';
 
-export function SignUpView({ onClose, onLogIn }: { onClose: () => void; onLogIn: () => void }) {
+export function SignUpView({
+  onClose,
+  onLogIn,
+  onSubmit,
+}: {
+  onClose: () => void;
+  onLogIn: () => void;
+  onSubmit: () => void;
+}) {
   return (
     <>
       <AuthModalHeader title="Sign Up" onClose={onClose} />
       <AuthModalDescription>{description}</AuthModalDescription>
 
-      <form className="mt-4 flex flex-col">
+      <form
+        className="mt-4 flex flex-col"
+        onSubmit={(event) => {
+          event.preventDefault();
+          onSubmit();
+        }}
+      >
         <div className="flex flex-col gap-2.5">
           <Input placeholder="Email" type="email" className={fieldClassName} />
           <Input placeholder="Password" type="password" className={fieldClassName} />

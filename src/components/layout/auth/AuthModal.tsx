@@ -12,9 +12,11 @@ import { cn } from '@/lib/utils';
 export function AuthModal({
   step,
   onStepChange,
+  onAuthenticated,
 }: {
   step: AuthStep | null;
   onStepChange: (step: AuthStep | null) => void;
+  onAuthenticated: () => void;
 }) {
   const close = () => onStepChange(null);
 
@@ -30,13 +32,24 @@ export function AuthModal({
         )}
       >
         {step === 'sign-up' && (
-          <SignUpView onClose={close} onLogIn={() => onStepChange('log-in')} />
+          <SignUpView
+            onClose={close}
+            onLogIn={() => onStepChange('log-in')}
+            onSubmit={() => {
+              onAuthenticated();
+              close();
+            }}
+          />
         )}
         {step === 'log-in' && (
           <LogInView
             onClose={close}
             onSignUp={() => onStepChange('sign-up')}
             onForgotPassword={() => onStepChange('reset-password')}
+            onSubmit={() => {
+              onAuthenticated();
+              close();
+            }}
           />
         )}
         {step === 'reset-password' && (

@@ -9,13 +9,7 @@ import { TariffTable, type TariffRow } from './TariffTable';
 
 // ── Static data ──────────────────────────────────────────────────────────────
 
-const osList = [
-  'Ubuntu 24.04',
-  'Ubuntu 24.04',
-  'Ubuntu 24.04',
-  'Ubuntu 24.04',
-  'Ubuntu 24.04',
-];
+const osList = ['Ubuntu 24.04', 'Ubuntu 24.04', 'Ubuntu 24.04', 'Ubuntu 24.04', 'Ubuntu 24.04'];
 
 const regions = [
   { city: 'Chicago', code: 'us' },
@@ -28,12 +22,54 @@ const regions = [
 ];
 
 const tariffs: TariffRow[] = [
-  { id: 1, cpu: '1 × 3.3 GHz', ram: '1 GB', nvme: '15 GB', channel: '1 Gbit / Sec', costPerMonth: 50 },
-  { id: 2, cpu: '1 × 3.3 GHz', ram: '2 GB', nvme: '30 GB', channel: '1 Gbit / Sec', costPerMonth: 80 },
-  { id: 3, cpu: '2 × 3.3 GHz', ram: '4 GB', nvme: '60 GB', channel: '1 Gbit / Sec', costPerMonth: 140 },
-  { id: 4, cpu: '2 × 3.3 GHz', ram: '8 GB', nvme: '120 GB', channel: '1 Gbit / Sec', costPerMonth: 220 },
-  { id: 5, cpu: '4 × 3.3 GHz', ram: '16 GB', nvme: '240 GB', channel: '1 Gbit / Sec', costPerMonth: 380 },
-  { id: 6, cpu: '8 × 3.3 GHz', ram: '32 GB', nvme: '480 GB', channel: '1 Gbit / Sec', costPerMonth: 650 },
+  {
+    id: 1,
+    cpu: '1 × 3.3 GHz',
+    ram: '1 GB',
+    nvme: '15 GB',
+    channel: '1 Gbit / Sec',
+    costPerMonth: 50,
+  },
+  {
+    id: 2,
+    cpu: '1 × 3.3 GHz',
+    ram: '2 GB',
+    nvme: '30 GB',
+    channel: '1 Gbit / Sec',
+    costPerMonth: 80,
+  },
+  {
+    id: 3,
+    cpu: '2 × 3.3 GHz',
+    ram: '4 GB',
+    nvme: '60 GB',
+    channel: '1 Gbit / Sec',
+    costPerMonth: 140,
+  },
+  {
+    id: 4,
+    cpu: '2 × 3.3 GHz',
+    ram: '8 GB',
+    nvme: '120 GB',
+    channel: '1 Gbit / Sec',
+    costPerMonth: 220,
+  },
+  {
+    id: 5,
+    cpu: '4 × 3.3 GHz',
+    ram: '16 GB',
+    nvme: '240 GB',
+    channel: '1 Gbit / Sec',
+    costPerMonth: 380,
+  },
+  {
+    id: 6,
+    cpu: '8 × 3.3 GHz',
+    ram: '32 GB',
+    nvme: '480 GB',
+    channel: '1 Gbit / Sec',
+    costPerMonth: 650,
+  },
 ];
 
 const addons = [
@@ -87,9 +123,7 @@ function Dropdown<T extends string>({
         onClick={() => setOpen((o) => !o)}
         className="flex h-[50px] w-full items-center justify-between rounded-[8px] bg-[#0F0F0F] px-4 text-left text-base text-white"
       >
-        <span className="flex items-center gap-2">
-          {renderValue ? renderValue(value) : value}
-        </span>
+        <span className="flex items-center gap-2">{renderValue ? renderValue(value) : value}</span>
         <ChevronDown
           strokeWidth={1.5}
           className={cn('size-4 shrink-0 text-white/30 transition-transform', open && 'rotate-180')}
@@ -97,15 +131,18 @@ function Dropdown<T extends string>({
       </button>
 
       {open && (
-        <div className="absolute top-full left-0 right-0 z-20 mt-1 max-h-[220px] overflow-y-auto rounded-[8px] bg-[#0F0F0F]">
+        <div className="absolute top-full right-0 left-0 z-20 mt-1 max-h-[220px] overflow-y-auto rounded-[8px] bg-[#0F0F0F]">
           {options.map((opt) => (
             <button
               key={opt}
               type="button"
-              onClick={() => { onChange(opt); setOpen(false); }}
+              onClick={() => {
+                onChange(opt);
+                setOpen(false);
+              }}
               className={cn(
                 'flex w-full items-center gap-2 border border-white/10 px-3 py-2.5 text-base text-white transition-colors hover:bg-white/[0.06]',
-                opt === value && 'bg-white/[0.06]',
+                opt === value && 'bg-white/[0.06]'
               )}
             >
               {renderOption ? renderOption(opt) : opt}
@@ -134,13 +171,13 @@ function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean
       onClick={() => onChange(!checked)}
       className={cn(
         'relative h-[26px] w-[44px] shrink-0 rounded-full transition-colors',
-        checked ? 'bg-[#434CF7]' : 'bg-white/[0.06]',
+        checked ? 'bg-[#434CF7]' : 'bg-white/[0.06]'
       )}
     >
       <span
         className={cn(
           'absolute top-1 h-[18px] w-[18px] rounded-full bg-white transition-[left] duration-150',
-          checked ? 'left-[22px]' : 'left-1',
+          checked ? 'left-[22px]' : 'left-1'
         )}
       />
     </button>
@@ -178,13 +215,25 @@ function ServerCard({
       <div className="mb-5 flex items-center justify-between">
         <span className="text-2xl font-bold text-white">Cloud Server #{index + 1}</span>
         <button type="button" onClick={onRemove} className="group">
-          <Image src="/icons/inactive-bin.svg" alt="Remove server" width={30} height={30} className="block group-hover:hidden" />
-          <Image src="/icons/active-bin.svg" alt="Remove server" width={30} height={30} className="hidden group-hover:block" />
+          <Image
+            src="/icons/inactive-bin.svg"
+            alt="Remove server"
+            width={30}
+            height={30}
+            className="block group-hover:hidden"
+          />
+          <Image
+            src="/icons/active-bin.svg"
+            alt="Remove server"
+            width={30}
+            height={30}
+            className="hidden group-hover:block"
+          />
         </button>
       </div>
 
       {/* OS + Region */}
-      <div className="grid grid-cols-1 gap-4 sm:gap-5 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5">
         <div>
           <p className="mb-2.5 text-base font-medium text-white/50">Operation System</p>
           <Dropdown
@@ -234,8 +283,7 @@ function ServerCard({
               onChange={(v) => toggleAddon(addon.id, v)}
             />
             <span className="text-sm font-medium text-white">
-              {addon.name}{' '}
-              <span className="text-white/30">+{addon.price} €</span>
+              {addon.name} <span className="text-white/30">+{addon.price} €</span>
             </span>
           </div>
         ))}
@@ -244,13 +292,7 @@ function ServerCard({
   );
 }
 
-function CostPanel({
-  servers,
-  onRemove,
-}: {
-  servers: Server[];
-  onRemove: (id: number) => void;
-}) {
+function CostPanel({ servers, onRemove }: { servers: Server[]; onRemove: (id: number) => void }) {
   const [period, setPeriod] = useState<Period>('Day');
 
   const totalPerMonth = servers.reduce((sum, s) => {
@@ -284,7 +326,7 @@ function CostPanel({
               onClick={() => setPeriod(p)}
               className={cn(
                 'flex h-8 flex-1 items-center justify-center rounded-[5px] text-sm font-normal transition-colors',
-                period === p ? 'bg-white/[0.06] text-white' : 'text-white/50 hover:text-white/80',
+                period === p ? 'bg-white/[0.06] text-white' : 'text-white/50 hover:text-white/80'
               )}
             >
               {p}
@@ -292,9 +334,8 @@ function CostPanel({
           ))}
         </div>
 
-        <p className="mb-5 text-[28px] font-semibold leading-[34px] text-white">
-          {displayCost} €{' '}
-          <span className="text-base font-normal text-white/70">{periodLabel}</span>
+        <p className="mb-5 text-[28px] leading-[34px] font-semibold text-white">
+          {displayCost} € <span className="text-base font-normal text-white/70">{periodLabel}</span>
         </p>
 
         <Button className="w-full" size="lg">
@@ -309,7 +350,7 @@ function CostPanel({
           {servers.map((s, i) => (
             <div
               key={s.id}
-              className="flex h-[50px] items-center justify-between rounded-[8px] bg-[#0F0F0F] pl-4 pr-2.5"
+              className="flex h-[50px] items-center justify-between rounded-[8px] bg-[#0F0F0F] pr-2.5 pl-4"
             >
               <span className="text-base font-medium text-white">Cloud Server #{i + 1}</span>
               <button type="button" onClick={() => onRemove(s.id)}>
@@ -329,14 +370,26 @@ export function CloudServerBuilder() {
   const nextId = useRef(2);
 
   const [servers, setServers] = useState<Server[]>([
-    { id: 1, os: 'Ubuntu 24.04', region: 'Chicago', selectedTariffId: null, enabledAddons: new Set() },
+    {
+      id: 1,
+      os: 'Ubuntu 24.04',
+      region: 'Chicago',
+      selectedTariffId: null,
+      enabledAddons: new Set(),
+    },
   ]);
 
   function addServer() {
     const id = nextId.current++;
     setServers((prev) => [
       ...prev,
-      { id, os: 'Ubuntu 24.04', region: 'Chicago', selectedTariffId: null, enabledAddons: new Set() },
+      {
+        id,
+        os: 'Ubuntu 24.04',
+        region: 'Chicago',
+        selectedTariffId: null,
+        enabledAddons: new Set(),
+      },
     ]);
   }
 
@@ -352,7 +405,7 @@ export function CloudServerBuilder() {
     <section className="mx-auto w-full max-w-340 px-5 py-10">
       <h2 className="mb-8 text-center text-4xl font-bold md:text-5xl">Build Your Perfect Server</h2>
 
-      <div className="grid grid-cols-1 gap-[60px] lg:gap-5 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+      <div className="grid grid-cols-1 gap-[60px] lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] lg:gap-5">
         {/* Left – server cards */}
         <div className="flex flex-col gap-5">
           {servers.map((s, i) => (
@@ -373,7 +426,15 @@ export function CloudServerBuilder() {
           >
             <svg
               aria-hidden
-              style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', overflow: 'visible', pointerEvents: 'none' }}
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                overflow: 'visible',
+                pointerEvents: 'none',
+              }}
             >
               <rect
                 x="0.5"
