@@ -1,4 +1,9 @@
+<<<<<<< HEAD
+import Link from 'next/link';
+import { CirclePlus } from 'lucide-react';
+=======
 import Image from 'next/image';
+>>>>>>> main
 import { Button } from '@/components/ui/button';
 import { ServerTable, type ServerRow } from '@/components/workspace/ServerTable';
 
@@ -50,8 +55,8 @@ export default function WorkspacePage() {
     <div>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-[28px] leading-[34px] font-bold text-white">Cloud Servers</h1>
-        <Button className="w-full sm:w-auto">
-          <Image src="/icons/plus-circle.svg" alt="" width={14} height={14} />
+        <Button render={<Link href="/workspace/new-server" />} nativeButton={false}>
+          <CirclePlus className="size-4" strokeWidth={1.5} />
           New Server
         </Button>
       </div>
