@@ -8,22 +8,27 @@ import type { AuthStep } from '@/components/layout/auth/shared';
 type AuthModalContextValue = {
   openSignUp: () => void;
   openLogIn: () => void;
+  isLoggedIn: boolean;
+  logOut: () => void;
 };
 
 const AuthModalContext = createContext<AuthModalContextValue | null>(null);
 
 export function AuthModalProvider({ children }: { children: ReactNode }) {
   const [step, setStep] = useState<AuthStep | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   return (
     <AuthModalContext.Provider
       value={{
         openSignUp: () => setStep('sign-up'),
         openLogIn: () => setStep('log-in'),
+        isLoggedIn,
+        logOut: () => setIsLoggedIn(false),
       }}
     >
       {children}
-      <AuthModal step={step} onStepChange={setStep} />
+      <AuthModal step={step} onStepChange={setStep} onAuthenticated={() => setIsLoggedIn(true)} />
     </AuthModalContext.Provider>
   );
 }
