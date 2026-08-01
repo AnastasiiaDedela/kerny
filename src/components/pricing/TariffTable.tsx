@@ -123,9 +123,10 @@ export function TariffTable({ data, selectedId, onSelect, showHourly = false }: 
               <span className={cn(HOURLY_CELL, 'ml-10 w-[30px] text-white/50')}>RAM</span>
               <span className={cn(HOURLY_CELL, 'ml-10 w-[39px] text-white/50')}>NVME</span>
               <span className={cn(HOURLY_CELL, 'ml-10 w-[76px] text-white/50')}>Channel</span>
-              <span className={cn(HOURLY_CELL, 'ml-[100px] w-[216px] text-right text-white/50')}>
-                Cost
-              </span>
+              <div className="ml-auto flex items-center gap-[70px]">
+                <span className={cn(HOURLY_CELL, 'w-[78px] text-white/50')}>Cost</span>
+                <span className="w-[68px]" aria-hidden="true" />
+              </div>
             </div>
 
             {/* Rows */}
@@ -150,12 +151,14 @@ export function TariffTable({ data, selectedId, onSelect, showHourly = false }: 
                     <span className={cn(HOURLY_CELL, 'ml-10 w-[76px] text-white')}>
                       {row.channel}
                     </span>
-                    <span className={cn(HOURLY_CELL, 'ml-[100px] w-[78px] text-white')}>
-                      {row.costPerMonth} € <span className="text-white/50">/ month</span>
-                    </span>
-                    <span className={cn(HOURLY_CELL, 'ml-[70px] w-[68px] text-right text-white')}>
-                      {row.costPerMonth} € <span className="text-white/50">/ hour</span>
-                    </span>
+                    <div className="ml-auto flex items-center gap-[70px]">
+                      <span className={cn(HOURLY_CELL, 'w-[78px] text-white')}>
+                        {row.costPerMonth} € <span className="text-white/50">/ month</span>
+                      </span>
+                      <span className={cn(HOURLY_CELL, 'w-[68px] text-right text-white')}>
+                        {row.costPerMonth} € <span className="text-white/50">/ hour</span>
+                      </span>
+                    </div>
                   </div>
                 );
               })}
