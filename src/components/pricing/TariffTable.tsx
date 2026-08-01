@@ -58,7 +58,7 @@ export function TariffTable({ data, selectedId, onSelect, showHourly = false }: 
   return (
     <>
       {/* Mobile/tablet: stacked cards */}
-      <div className="flex flex-col gap-3 rounded-[8px] bg-[#0F0F0F] p-4 lg:hidden">
+      <div className="flex flex-col gap-3 rounded-[8px] bg-[#0F0F0F] lg:hidden">
         {data.map((row) => {
           const selected = row.id === selectedId;
           return (
@@ -97,15 +97,8 @@ export function TariffTable({ data, selectedId, onSelect, showHourly = false }: 
               {/* Cost */}
               <div className="flex items-center justify-between rounded-[5px] border-[0.5px] border-white/30 px-3 py-2.5">
                 <span className="text-sm text-white/50">Cost</span>
-                <span className="flex items-center gap-3 text-sm font-medium text-white">
-                  <span>
-                    {row.costPerMonth} € <span className="text-white/50">/ month</span>
-                  </span>
-                  {showHourly && (
-                    <span>
-                      {row.costPerMonth} € <span className="text-white/50">/ hour</span>
-                    </span>
-                  )}
+                <span className="text-sm font-medium text-white">
+                  {row.costPerMonth} € <span className="text-white/50">/ month</span>
                 </span>
               </div>
             </div>

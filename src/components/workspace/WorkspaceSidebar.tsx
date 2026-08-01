@@ -2,7 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 
-const navItems = [
+export const navItems = [
   {
     label: 'Cloud Servers',
     href: '/workspace',
@@ -43,7 +43,7 @@ const navItems = [
 
 export function WorkspaceSidebar() {
   return (
-    <aside className="w-60 shrink-0 self-start rounded-[15px] bg-white/[0.04] p-6">
+    <aside className="hidden w-60 shrink-0 self-start rounded-[15px] bg-white/[0.04] p-6 lg:block">
       <nav className="flex flex-col gap-5">
         {navItems.map((item) => (
           <Link

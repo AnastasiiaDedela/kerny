@@ -226,14 +226,14 @@ export function NewCloudServerForm() {
         {/* 01 Operation System */}
         <section>
           <SectionHeading number="01" title="Operation System" />
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 lg:gap-[10px]">
+          <div className="grid grid-cols-3 items-start gap-3 lg:grid-cols-5 lg:gap-[10px]">
             {osOptions.map((os) => (
               <button
                 key={os.label}
                 type="button"
                 onClick={() => setSelectedOs(os.label)}
                 className={cn(
-                  'flex min-h-[110px] flex-col items-center justify-center gap-3 rounded-[10px] p-4 text-center transition-colors lg:aspect-square lg:min-h-0 lg:gap-[14px]',
+                  'flex min-h-[110px] w-full flex-col items-center justify-start gap-[13px] rounded-[10px] px-2 pt-4 pb-3 text-center transition-colors lg:aspect-square lg:min-h-0 lg:justify-center lg:gap-[14px] lg:p-4',
                   selectedOs === os.label
                     ? 'border-primary bg-primary/10 border'
                     : 'bg-white/[0.04] hover:bg-white/[0.06]'
@@ -244,9 +244,16 @@ export function NewCloudServerForm() {
                   alt=""
                   width={70}
                   height={70}
-                  className="size-10 object-contain lg:size-[70px]"
+                  className="size-[54px] object-contain lg:size-[70px]"
                 />
-                <span className="text-sm leading-[17px] text-white lg:text-xs lg:leading-[15px]">
+                <span
+                  className={cn(
+                    'text-white lg:text-xs lg:leading-[15px]',
+                    os.label === 'Flatcar Container Linux'
+                      ? 'text-[10px] leading-[12px]'
+                      : 'text-xs leading-[15px]'
+                  )}
+                >
                   {os.label}
                 </span>
               </button>
@@ -258,14 +265,14 @@ export function NewCloudServerForm() {
         <section>
           <SectionHeading number="02" title="Region" />
           <div className="flex flex-col gap-4 lg:flex-row">
-            <div className="flex gap-2 overflow-x-auto pb-1 lg:w-40 lg:shrink-0 lg:flex-col lg:gap-2.5 lg:overflow-visible lg:pb-0">
+            <div className="grid grid-cols-3 gap-2 lg:flex lg:w-40 lg:shrink-0 lg:flex-col lg:gap-2.5">
               {continents.map((continent) => (
                 <button
                   key={continent}
                   type="button"
                   onClick={() => setSelectedContinent(continent)}
                   className={cn(
-                    'flex h-10 w-full min-w-[130px] shrink-0 items-center justify-center rounded-[10px] text-sm transition-colors lg:min-w-0',
+                    'flex h-10 w-full items-center justify-center rounded-[10px] text-sm transition-colors',
                     selectedContinent === continent
                       ? 'border-primary bg-primary/10 border text-white'
                       : 'bg-white/[0.04] text-white/50 hover:text-white'

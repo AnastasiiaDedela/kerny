@@ -1,8 +1,9 @@
 'use client';
 
+import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -12,6 +13,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useAuthModal } from '@/components/layout/AuthModalProvider';
+import { navItems } from '@/components/workspace/WorkspaceSidebar';
+import { cn } from '@/lib/utils';
 
 const profileLinks = [
   { label: 'Control Panel', href: '#', icon: '/images/user-img/table.svg', width: 14, height: 12 },
@@ -26,6 +29,7 @@ const profileLinks = [
 ];
 
 export function WorkspaceHeader() {
+  const [open, setOpen] = useState(false);
   const { logOut } = useAuthModal();
 
   return (
@@ -35,10 +39,12 @@ export function WorkspaceHeader() {
           href="/"
           className="text-foreground font-logo flex items-center gap-2 text-lg font-extrabold"
         >
-          Kerny <span className="text-primary">»</span> <span className="font-sans">Workspace</span>
+          Kerny
+          <span className="text-primary hidden lg:inline">»</span>
+          <span className="hidden font-sans lg:inline">Workspace</span>
         </Link>
 
-        <div className="flex items-center gap-6">
+        <div className="hidden items-center gap-6 lg:flex">
           <div className="text-right">
             <p className="text-sm leading-[17px] text-white/50">Your Balance</p>
             <p className="text-base leading-[19px] font-medium text-white">999 €</p>
@@ -83,7 +89,96 @@ export function WorkspaceHeader() {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
+
+        <button
+          type="button"
+          aria-label="Open menu"
+          onClick={() => setOpen(true)}
+          className="text-foreground lg:hidden"
+        >
+          <Menu className="size-7" />
+        </button>
       </div>
+
+      {/* Mobile menu overlay */}
+      {open && (
+        <div className="bg-background fixed inset-0 z-50 flex flex-col overflow-y-auto px-5 py-7.5 lg:hidden">
+          <div className="flex items-center justify-between">
+            <Link
+              href="/"
+              onClick={() => setOpen(false)}
+              className="text-foreground font-logo text-xl leading-6 font-extrabold"
+            >
+              Kerny
+            </Link>
+            <button
+              type="button"
+              aria-label="Close menu"
+              onClick={() => setOpen(false)}
+              className="text-foreground"
+            >
+              <X className="size-7" />
+            </button>
+          </div>
+
+          <nav className="mt-6 flex flex-col gap-2.5">
+            {navItems.map((item) => (
+              <Link
+                key={item.label}
+                href={item.href}
+                onClick={() => setOpen(false)}
+                className={cn(
+                  'flex h-[50px] items-center gap-3 rounded-[10px] border-[0.5px] border-white/20 px-4 text-base transition-colors hover:bg-[#1a1a1a]',
+                  item.active ? 'text-foreground font-medium' : 'text-foreground/50'
+                )}
+              >
+                <Image src={item.icon} alt="" width={item.width} height={item.height} />
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+
+          <div className="border-border my-5 border-t" />
+
+          <div className="flex items-center justify-between rounded-[10px] border-[0.5px] border-white/20 px-4 py-3">
+            <div>
+              <p className="text-sm leading-[17px] text-white/50">Your Balance</p>
+              <p className="text-base leading-[19px] font-medium text-white">999 €</p>
+            </div>
+            <Button size="default" className="min-w-0 px-4">
+              Deposit
+            </Button>
+          </div>
+
+          <div className="border-border my-5 border-t" />
+
+          <div className="flex flex-col gap-2.5">
+            <span className="text-foreground text-base">Profile</span>
+            {profileLinks.map((link) => (
+              <Link
+                key={link.label}
+                href={link.href}
+                onClick={() => setOpen(false)}
+                className="text-foreground flex h-[50px] items-center justify-center gap-2 rounded-[10px] border-[0.5px] border-white/20 text-base transition-colors hover:bg-[#1a1a1a]"
+              >
+                <Image src={link.icon} alt="" width={link.width} height={link.height} />
+                {link.label}
+              </Link>
+            ))}
+            <button
+              type="button"
+              onClick={() => {
+                setOpen(false);
+                logOut();
+              }}
+              className="text-foreground/30 flex h-[50px] items-center justify-center gap-2 rounded-[10px] border-[0.5px] border-white/20 text-base transition-colors hover:bg-[#1a1a1a]"
+            >
+              <Image src="/images/user-img/log-out.svg" alt="" width={14} height={14} />
+              Log Out
+            </button>
+          </div>
+        </div>
+      )}
     </header>
   );
 }
