@@ -29,7 +29,7 @@ export function ChangePasswordModal({
         }}
         className="mt-5 lg:mt-4"
       >
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-4 lg:gap-3">
           <ModalField
             id="currentPassword"
             label="Current Password"

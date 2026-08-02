@@ -26,7 +26,7 @@ export function ConfirmModal({
           e.preventDefault();
           close();
         }}
-        className="mt-5 lg:mt-4"
+        className="mt-3 lg:mt-4"
       >
         <p className="text-sm leading-[17px] font-normal text-white/80">{description}</p>
 

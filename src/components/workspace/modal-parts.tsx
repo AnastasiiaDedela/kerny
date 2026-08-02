@@ -7,7 +7,8 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 
 /** 373px card with a 30px radius on mobile (10px gutters on the 393px design frame), inset 20px
-    with a deeper 40px under the buttons; 448px with a 24px inset and a 20px radius from lg up. */
+    horizontally around a 333px content column and 30px top and bottom; 448px with a 24px inset and
+    a 20px radius from lg up. */
 export function ModalShell({
   open,
   onOpenChange,
@@ -23,7 +24,7 @@ export function ModalShell({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         showCloseButton={false}
-        className="bg-background flex max-w-[min(373px,calc(100%-20px))] flex-col gap-0 rounded-[30px] border-0 px-5 pt-5 pb-10 ring-0 sm:max-w-[min(373px,calc(100%-20px))] lg:max-w-[448px] lg:rounded-[20px] lg:bg-[#121212] lg:p-6"
+        className="bg-background flex max-w-[min(373px,calc(100%-20px))] flex-col gap-0 rounded-[30px] border-0 px-5 py-[30px] ring-0 sm:max-w-[min(373px,calc(100%-20px))] lg:max-w-[448px] lg:rounded-[20px] lg:bg-[#121212] lg:p-6"
       >
         <h2 className="text-xl leading-6 font-semibold text-white">{title}</h2>
         {children}
@@ -71,7 +72,7 @@ export function ModalField({
         readOnly={readOnly}
         autoComplete="off"
         className={cn(
-          'h-[46px] w-full rounded-[8px] bg-white/[0.04] px-4 py-[7px] text-sm leading-[17px] font-normal text-white outline-none placeholder:text-white/30',
+          'h-[46px] w-full rounded-[8px] bg-white/[0.04] px-4 py-[7px] text-sm leading-[17px] font-normal text-white outline-none placeholder:text-white/50 lg:placeholder:text-white/30',
           readOnly && 'text-white/50'
         )}
       />
