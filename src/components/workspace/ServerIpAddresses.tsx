@@ -71,12 +71,32 @@ const columnsWithType = [
 
 const rightAligned = new Set(['ptr', 'type']);
 
+/* Narrow layout stacks one field per line, except PTR and Type, which share the last line. */
+const inlineIds = new Set(['ptr', 'type']);
+
 function Card({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="rounded-[10px] bg-[#0F0F0F] p-5">
       <h2 className="text-sm leading-[17px] font-semibold text-white">{title}</h2>
       {children}
     </section>
+  );
+}
+
+function Field({
+  label,
+  children,
+  className,
+}: {
+  label: React.ReactNode;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <div className={cn('flex flex-col gap-2 text-xs leading-[15px] font-medium', className)}>
+      <span className="text-white/30">{label}</span>
+      <span className="text-white">{children}</span>
+    </div>
   );
 }
 
@@ -90,13 +110,21 @@ function IpTable({ title, rows }: IpAddressGroup) {
     .map((column) => `${column.getSize()}fr`)
     .join(' ');
 
+  /* The stacked layout has no header row, so each field repeats its column header as its label. */
+  const labels = new Map(
+    headerGroup.headers.map((header) => [
+      header.column.id,
+      flexRender(header.column.columnDef.header, header.getContext()),
+    ])
+  );
+
   const rowClass =
     'grid h-9 items-center rounded-[5px] border-[0.5px] border-white/12 px-3 text-xs leading-[15px] font-medium whitespace-nowrap';
 
   return (
     <Card title={title}>
-      {/* Rows keep the design's 662px width; a narrower card scrolls instead of crushing columns. */}
-      <div className="mt-2.5 overflow-x-auto">
+      {/* Wide: rows keep the design's 662px width, which needs a 702px card. */}
+      <div className="mt-2.5 hidden overflow-x-auto @min-[702px]:block">
         <div className="flex min-w-[662px] flex-col gap-2.5">
           <div className={cn(rowClass, 'text-white/30')} style={{ gridTemplateColumns }}>
             {headerGroup.headers.map((header) => (
@@ -127,6 +155,41 @@ function IpTable({ title, rows }: IpAddressGroup) {
           ))}
         </div>
       </div>
+
+      {/* Narrow: the row's cells stack as labelled fields inside one bordered box. */}
+      <div className="mt-3 flex flex-col gap-3 @min-[702px]:hidden">
+        {table.getRowModel().rows.map((row) => {
+          const cells = row.getVisibleCells();
+          const stacked = cells.filter((cell) => !inlineIds.has(cell.column.id));
+          const inline = cells.filter((cell) => inlineIds.has(cell.column.id));
+
+          return (
+            <div
+              key={row.id}
+              className="flex flex-col gap-3 rounded-[5px] border-[0.5px] border-white/12 p-4"
+            >
+              {stacked.map((cell) => (
+                <Field key={cell.id} label={labels.get(cell.column.id)}>
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </Field>
+              ))}
+
+              <div className="flex gap-3">
+                {inline.map((cell, index) => (
+                  <Field
+                    key={cell.id}
+                    label={labels.get(cell.column.id)}
+                    /* PTR keeps its 24px design column so Type starts at a fixed offset. */
+                    className={cn(index < inline.length - 1 && 'w-6 shrink-0')}
+                  >
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </Field>
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </Card>
   );
 }
@@ -138,8 +201,9 @@ export function ServerIpAddresses({
   groups: IpAddressGroup[];
   instruction: string[];
 }) {
+  // Keyed to the card, not the viewport — the lg two-column layout squeezes it below 702px too.
   return (
-    <div className="mt-5 flex flex-col gap-3">
+    <div className="@container mt-5 flex flex-col gap-3">
       {groups.map((group) => (
         <IpTable key={group.title} {...group} />
       ))}

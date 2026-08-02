@@ -77,7 +77,7 @@ export function ServerInformation({
   const [activeTab, setActiveTab] = useState<Tab>('Information');
 
   return (
-    <section className="h-full rounded-[10px] bg-white/[0.04] p-6">
+    <section className="h-full rounded-[10px] bg-white/[0.04] p-5 lg:p-6">
       {/* Server identity */}
       <div className="flex items-center gap-6">
         <span className="bg-primary/20 flex size-[100px] shrink-0 items-center justify-center rounded-[8.33px]">
