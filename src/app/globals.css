@@ -99,6 +99,22 @@
   --font-sans: var(--font-inter), sans-serif;
 }
 
+/* 1px white thumb, matching the scroll indicator in the server history design.
+   Deliberately no `scrollbar-width`/`scrollbar-color`: Chrome honours those over
+   ::-webkit-scrollbar and its narrowest `thin` is ~9px, which breaks the hairline. */
+@utility scrollbar-hairline {
+  &::-webkit-scrollbar {
+    width: 1px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #ffffff;
+    border-radius: 10px;
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

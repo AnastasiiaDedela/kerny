@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import { ServerHistory, type HistoryEntry } from '@/components/workspace/ServerHistory';
 import { cn } from '@/lib/utils';
 
 export interface ServerInfo {
@@ -23,7 +24,15 @@ export interface ServerInfo {
   connection: string;
 }
 
-const tabs = ['Information', 'History', 'IP-addresses', 'Backups'];
+/** IP-addresses and Backups have no design yet, so they stay disabled. */
+const tabs = [
+  { label: 'Information', enabled: true },
+  { label: 'History', enabled: true },
+  { label: 'IP-addresses', enabled: false },
+  { label: 'Backups', enabled: false },
+] as const;
+
+type Tab = (typeof tabs)[number]['label'];
 
 function Row({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -53,8 +62,14 @@ function CopyButton({ value, label }: { value: string; label: string }) {
   );
 }
 
-export function ServerInformation({ server }: { server: ServerInfo }) {
-  const [revealed, setRevealed] = useState(false);
+export function ServerInformation({
+  server,
+  history,
+}: {
+  server: ServerInfo;
+  history: HistoryEntry[];
+}) {
+  const [activeTab, setActiveTab] = useState<Tab>('Information');
 
   return (
     <section className="h-full rounded-[10px] bg-white/[0.04] p-6">
@@ -82,99 +97,109 @@ export function ServerInformation({ server }: { server: ServerInfo }) {
           keyed to the card, not the viewport, because the lg two-column layout squeezes it. */}
       <div className="@container mt-[30px]">
         <div className="grid grid-cols-2 gap-2.5 @min-[580px]:flex">
-          {tabs.map((tab, i) => (
+          {tabs.map((tab) => (
             <button
-              key={tab}
+              key={tab.label}
               type="button"
+              disabled={!tab.enabled}
+              onClick={() => setActiveTab(tab.label)}
               className={cn(
                 'flex min-h-10 min-w-0 flex-1 items-center justify-center rounded-full px-4 py-2.5 text-center text-base leading-[19px] font-medium transition-colors',
-                i === 0
-                  ? 'bg-primary text-white'
-                  : 'bg-white/[0.06] text-white/50 hover:bg-white/[0.1] hover:text-white'
+                activeTab === tab.label ? 'bg-primary text-white' : 'bg-white/[0.06] text-white/50',
+                tab.enabled && activeTab !== tab.label && 'hover:bg-white/[0.1] hover:text-white',
+                !tab.enabled && 'cursor-not-allowed'
               )}
             >
-              {tab}
+              {tab.label}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Information */}
-      <div className="mt-5 flex flex-col gap-2.5">
-        <Row label="IP">
-          <span className="flex items-center gap-2.5">
-            <Value>{server.ip}</Value>
-            <CopyButton value={server.ip} label="IP" />
-          </span>
-        </Row>
-
-        <Row label="Login">
-          <span className="flex items-center gap-2.5">
-            <Value>{server.login}</Value>
-            <CopyButton value={server.login} label="login" />
-          </span>
-        </Row>
-
-        <Row label="Password">
-          <span className="flex items-center gap-2.5">
-            <Value>{revealed ? server.password : '*************'}</Value>
-            <button
-              type="button"
-              onClick={() => setRevealed((v) => !v)}
-              aria-label={revealed ? 'Hide password' : 'Show password'}
-              className="shrink-0 transition-opacity hover:opacity-60"
-            >
-              <Image
-                src={
-                  revealed
-                    ? '/icons/server-info-icons/eye-off.svg'
-                    : '/icons/server-info-icons/eye.svg'
-                }
-                alt=""
-                width={16}
-                height={12}
-              />
-            </button>
-          </span>
-        </Row>
-
-        <Row label="Status">
-          <span className="flex items-center gap-1.5">
-            <span
-              className={cn(
-                'size-1 rounded-full',
-                server.status === 'Active' ? 'bg-[#00F551]' : 'bg-destructive'
-              )}
-            />
-            <Value>{server.status}</Value>
-          </span>
-        </Row>
-
-        <Row label="Cost">
-          <Value>{server.cost}</Value>
-        </Row>
-        <Row label="Valid until">
-          <Value>{server.validUntil}</Value>
-        </Row>
-        <Row label="Tariff">
-          <Value>{server.tariff}</Value>
-        </Row>
-        <Row label="System">
-          <Value>{server.system}</Value>
-        </Row>
-        <Row label="CPU">
-          <Value>{server.cpu}</Value>
-        </Row>
-        <Row label="RAM">
-          <Value>{server.ram}</Value>
-        </Row>
-        <Row label="Storage">
-          <Value>{server.storage}</Value>
-        </Row>
-        <Row label="Connection">
-          <Value>{server.connection}</Value>
-        </Row>
-      </div>
+      {activeTab === 'Information' && <InformationPanel server={server} />}
+      {activeTab === 'History' && <ServerHistory data={history} />}
     </section>
+  );
+}
+
+function InformationPanel({ server }: { server: ServerInfo }) {
+  const [revealed, setRevealed] = useState(false);
+
+  return (
+    <div className="mt-5 flex flex-col gap-2.5">
+      <Row label="IP">
+        <span className="flex items-center gap-2.5">
+          <Value>{server.ip}</Value>
+          <CopyButton value={server.ip} label="IP" />
+        </span>
+      </Row>
+
+      <Row label="Login">
+        <span className="flex items-center gap-2.5">
+          <Value>{server.login}</Value>
+          <CopyButton value={server.login} label="login" />
+        </span>
+      </Row>
+
+      <Row label="Password">
+        <span className="flex items-center gap-2.5">
+          <Value>{revealed ? server.password : '*************'}</Value>
+          <button
+            type="button"
+            onClick={() => setRevealed((v) => !v)}
+            aria-label={revealed ? 'Hide password' : 'Show password'}
+            className="shrink-0 transition-opacity hover:opacity-60"
+          >
+            <Image
+              src={
+                revealed
+                  ? '/icons/server-info-icons/eye-off.svg'
+                  : '/icons/server-info-icons/eye.svg'
+              }
+              alt=""
+              width={16}
+              height={12}
+            />
+          </button>
+        </span>
+      </Row>
+
+      <Row label="Status">
+        <span className="flex items-center gap-1.5">
+          <span
+            className={cn(
+              'size-1 rounded-full',
+              server.status === 'Active' ? 'bg-[#00F551]' : 'bg-destructive'
+            )}
+          />
+          <Value>{server.status}</Value>
+        </span>
+      </Row>
+
+      <Row label="Cost">
+        <Value>{server.cost}</Value>
+      </Row>
+      <Row label="Valid until">
+        <Value>{server.validUntil}</Value>
+      </Row>
+      <Row label="Tariff">
+        <Value>{server.tariff}</Value>
+      </Row>
+      <Row label="System">
+        <Value>{server.system}</Value>
+      </Row>
+      <Row label="CPU">
+        <Value>{server.cpu}</Value>
+      </Row>
+      <Row label="RAM">
+        <Value>{server.ram}</Value>
+      </Row>
+      <Row label="Storage">
+        <Value>{server.storage}</Value>
+      </Row>
+      <Row label="Connection">
+        <Value>{server.connection}</Value>
+      </Row>
+    </div>
   );
 }

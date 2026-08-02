@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
 import { ServerInformation, type ServerInfo } from '@/components/workspace/ServerInformation';
 import { ServerManagement } from '@/components/workspace/ServerManagement';
+import type { HistoryEntry } from '@/components/workspace/ServerHistory';
 
 const server: ServerInfo = {
   name: 'Server Name',
@@ -22,6 +23,13 @@ const server: ServerInfo = {
   connection: 'up to 300 MB/s',
 };
 
+const history: HistoryEntry[] = Array.from({ length: 14 }, (_, i) => ({
+  id: `entry-${i}`,
+  action: 'Service extension #151',
+  time: '03.02.2026 00:30:55',
+  amount: '€ -999.00',
+}));
+
 export default function ServerPage() {
   return (
     <div>
@@ -37,7 +45,7 @@ export default function ServerPage() {
       </div>
 
       <div className="mt-8 grid grid-cols-1 items-stretch gap-5 lg:min-h-[958px] lg:grid-cols-[minmax(0,1fr)_280px]">
-        <ServerInformation server={server} />
+        <ServerInformation server={server} history={history} />
         <ServerManagement />
       </div>
     </div>
