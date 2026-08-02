@@ -43,7 +43,7 @@ export const navItems = [
 
 export function WorkspaceSidebar() {
   return (
-    <aside className="hidden w-60 shrink-0 self-start rounded-[15px] bg-white/[0.04] p-6 lg:block">
+    <aside className="hidden w-[246px] shrink-0 self-start rounded-[15px] bg-white/[0.04] p-6 lg:block">
       <nav className="flex flex-col gap-5">
         {navItems.map((item) => (
           <Link
