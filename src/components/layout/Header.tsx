@@ -25,7 +25,7 @@ const profileLinks = [
   },
   {
     label: 'Balance & Payments',
-    href: '#',
+    href: '/workspace/balance',
     icon: '/images/user-img/balance.svg',
     width: 14,
     height: 16,

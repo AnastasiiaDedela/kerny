@@ -13,7 +13,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useAuthModal } from '@/components/layout/AuthModalProvider';
-import { navItems } from '@/components/workspace/WorkspaceSidebar';
+import { navItems, useActiveNavHref } from '@/components/workspace/WorkspaceSidebar';
 import { cn } from '@/lib/utils';
 
 const profileLinks = [
@@ -26,7 +26,7 @@ const profileLinks = [
   },
   {
     label: 'Balance & Payments',
-    href: '#',
+    href: '/workspace/balance',
     icon: '/images/user-img/balance.svg',
     width: 14,
     height: 16,
@@ -37,6 +37,7 @@ const profileLinks = [
 export function WorkspaceHeader() {
   const [open, setOpen] = useState(false);
   const { logOut } = useAuthModal();
+  const activeHref = useActiveNavHref();
 
   return (
     <header className="bg-background pt-7.5 pb-5">
@@ -56,7 +57,7 @@ export function WorkspaceHeader() {
             <p className="text-base leading-[19px] font-medium text-white">999 €</p>
           </div>
 
-          <Button size="default" className="min-w-0 px-4">
+          <Button className="h-6 min-h-0 w-16 min-w-0 rounded-[500px] px-2.5 py-0 text-xs leading-[15px] font-normal">
             Deposit
           </Button>
 
@@ -135,7 +136,7 @@ export function WorkspaceHeader() {
                 onClick={() => setOpen(false)}
                 className={cn(
                   'flex h-[50px] items-center gap-3 rounded-[10px] border-[0.5px] border-white/20 px-4 text-base transition-colors hover:bg-[#1a1a1a]',
-                  item.active ? 'text-foreground font-medium' : 'text-foreground/50'
+                  item.href === activeHref ? 'text-foreground font-medium' : 'text-foreground/50'
                 )}
               >
                 <Image src={item.icon} alt="" width={item.width} height={item.height} />
