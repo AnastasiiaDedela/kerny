@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { ServerHistory, type HistoryEntry } from '@/components/workspace/ServerHistory';
+import { ServerIpAddresses, type IpAddressGroup } from '@/components/workspace/ServerIpAddresses';
 import { cn } from '@/lib/utils';
 
 export interface ServerInfo {
@@ -24,11 +25,11 @@ export interface ServerInfo {
   connection: string;
 }
 
-/** IP-addresses and Backups have no design yet, so they stay disabled. */
+/** Backups has no design yet, so it stays disabled. */
 const tabs = [
   { label: 'Information', enabled: true },
   { label: 'History', enabled: true },
-  { label: 'IP-addresses', enabled: false },
+  { label: 'IP-addresses', enabled: true },
   { label: 'Backups', enabled: false },
 ] as const;
 
@@ -65,9 +66,13 @@ function CopyButton({ value, label }: { value: string; label: string }) {
 export function ServerInformation({
   server,
   history,
+  ipGroups,
+  instruction,
 }: {
   server: ServerInfo;
   history: HistoryEntry[];
+  ipGroups: IpAddressGroup[];
+  instruction: string[];
 }) {
   const [activeTab, setActiveTab] = useState<Tab>('Information');
 
@@ -118,6 +123,9 @@ export function ServerInformation({
 
       {activeTab === 'Information' && <InformationPanel server={server} />}
       {activeTab === 'History' && <ServerHistory data={history} />}
+      {activeTab === 'IP-addresses' && (
+        <ServerIpAddresses groups={ipGroups} instruction={instruction} />
+      )}
     </section>
   );
 }
