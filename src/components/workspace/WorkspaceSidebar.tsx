@@ -1,5 +1,8 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
 export const navItems = [
@@ -10,16 +13,14 @@ export const navItems = [
     width: 20,
     height: 14,
     gap: 'gap-2',
-    active: true,
   },
   {
     label: 'Balance & Payments',
-    href: '#',
+    href: '/workspace/balance',
     icon: '/images/user-img/balance.svg',
     width: 14,
     height: 16,
     gap: 'gap-[11px]',
-    active: false,
   },
   {
     label: 'Notifications',
@@ -28,7 +29,6 @@ export const navItems = [
     width: 12,
     height: 14,
     gap: 'gap-3',
-    active: false,
   },
   {
     label: 'Documentations',
@@ -37,11 +37,22 @@ export const navItems = [
     width: 12,
     height: 14,
     gap: 'gap-3',
-    active: false,
   },
 ];
 
+/** Longest matching href wins, so /workspace/balance doesn't also light up /workspace. */
+export function useActiveNavHref() {
+  const pathname = usePathname();
+
+  return navItems
+    .map((item) => item.href)
+    .filter((href) => href !== '#' && (pathname === href || pathname.startsWith(`${href}/`)))
+    .sort((a, b) => b.length - a.length)[0];
+}
+
 export function WorkspaceSidebar() {
+  const activeHref = useActiveNavHref();
+
   return (
     <aside className="hidden w-[246px] shrink-0 self-start rounded-[15px] bg-white/[0.04] p-6 lg:block">
       <nav className="flex flex-col gap-5">
@@ -52,7 +63,9 @@ export function WorkspaceSidebar() {
             className={cn(
               'flex items-center text-sm leading-[17px] transition-colors',
               item.gap,
-              item.active ? 'font-medium text-white' : 'font-normal text-white/50 hover:text-white'
+              item.href === activeHref
+                ? 'font-medium text-white'
+                : 'font-normal text-white/50 hover:text-white'
             )}
           >
             <Image src={item.icon} alt="" width={item.width} height={item.height} />
