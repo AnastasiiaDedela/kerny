@@ -27,7 +27,7 @@ export function AddPaymentMethodModal({
           e.preventDefault();
           close();
         }}
-        className="mt-4"
+        className="mt-5 lg:mt-4"
       >
         <div className="flex flex-col gap-4">
           <ModalField

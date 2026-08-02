@@ -25,7 +25,7 @@ function ActivatePromocodeModal({
           e.preventDefault();
           close();
         }}
-        className="mt-4"
+        className="mt-5 lg:mt-4"
       >
         <ModalField
           id="promocode"
