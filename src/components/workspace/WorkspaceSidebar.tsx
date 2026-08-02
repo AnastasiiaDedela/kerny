@@ -24,7 +24,7 @@ export const navItems = [
   },
   {
     label: 'Notifications',
-    href: '#',
+    href: '/workspace/notifications',
     icon: '/images/servers/notification.svg',
     width: 12,
     height: 14,
