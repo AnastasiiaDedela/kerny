@@ -32,7 +32,7 @@ export const navItems = [
   },
   {
     label: 'Documentations',
-    href: '#',
+    href: '/workspace/documentations',
     icon: '/images/servers/document.svg',
     width: 12,
     height: 14,
