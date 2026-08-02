@@ -1,3 +1,5 @@
+import Link from 'next/link';
+import { ChevronLeft } from 'lucide-react';
 import { ServerInformation, type ServerInfo } from '@/components/workspace/ServerInformation';
 import { ServerManagement } from '@/components/workspace/ServerManagement';
 
@@ -22,9 +24,22 @@ const server: ServerInfo = {
 
 export default function ServerPage() {
   return (
-    <div className="grid grid-cols-1 items-stretch gap-5 lg:min-h-[958px] lg:grid-cols-[minmax(0,1fr)_280px]">
-      <ServerInformation server={server} />
-      <ServerManagement />
+    <div>
+      <div className="flex items-center justify-between gap-4">
+        <h1 className="text-[28px] leading-[34px] font-bold text-white">Server Info</h1>
+        <Link
+          href="/workspace"
+          className="flex h-10 w-[140px] items-center justify-center gap-2.5 rounded-[10px] bg-white/[0.04] px-3 py-2.5 text-sm leading-[17px] font-medium text-white/50 hover:text-white"
+        >
+          <ChevronLeft size={10} strokeWidth={1.5} />
+          Go Back
+        </Link>
+      </div>
+
+      <div className="mt-8 grid grid-cols-1 items-stretch gap-5 lg:min-h-[958px] lg:grid-cols-[minmax(0,1fr)_280px]">
+        <ServerInformation server={server} />
+        <ServerManagement />
+      </div>
     </div>
   );
 }

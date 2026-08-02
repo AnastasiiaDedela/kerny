@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ChevronRight, Eye, EyeOff } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import {
   createColumnHelper,
   flexRender,
@@ -35,9 +35,16 @@ function IpValue({ ip }: { ip: string }) {
         type="button"
         onClick={() => setRevealed((v) => !v)}
         aria-label={revealed ? 'Hide IP' : 'Show IP'}
-        className="text-white/30 hover:text-white/60"
+        className="shrink-0 transition-opacity hover:opacity-60"
       >
-        {revealed ? <EyeOff className="size-3.5" /> : <Eye className="size-3.5" />}
+        <Image
+          src={
+            revealed ? '/icons/server-info-icons/eye-off.svg' : '/icons/server-info-icons/eye.svg'
+          }
+          alt=""
+          width={16}
+          height={12}
+        />
       </button>
     </span>
   );

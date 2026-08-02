@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { Copy, Eye, EyeOff } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export interface ServerInfo {
@@ -47,9 +46,9 @@ function CopyButton({ value, label }: { value: string; label: string }) {
       type="button"
       onClick={() => navigator.clipboard?.writeText(value)}
       aria-label={`Copy ${label}`}
-      className="text-white/30 transition-colors hover:text-white/60"
+      className="shrink-0 transition-opacity hover:opacity-60"
     >
-      <Copy className="size-3.5" strokeWidth={1.5} />
+      <Image src="/icons/server-info-icons/copy.svg" alt="" width={14} height={16} />
     </button>
   );
 }
@@ -79,21 +78,25 @@ export function ServerInformation({ server }: { server: ServerInfo }) {
       </div>
 
       {/* Tabs */}
-      <div className="mt-[30px] grid grid-cols-2 gap-2.5 sm:flex">
-        {tabs.map((tab, i) => (
-          <button
-            key={tab}
-            type="button"
-            className={cn(
-              'flex h-10 items-center justify-center rounded-full px-4 text-base leading-[19px] font-medium transition-colors sm:flex-1',
-              i === 0
-                ? 'bg-primary text-white'
-                : 'bg-white/[0.06] text-white/50 hover:bg-white/[0.1] hover:text-white'
-            )}
-          >
-            {tab}
-          </button>
-        ))}
+      {/* Two-up grid until the card itself is wide enough for all four tabs in one row —
+          keyed to the card, not the viewport, because the lg two-column layout squeezes it. */}
+      <div className="@container mt-[30px]">
+        <div className="grid grid-cols-2 gap-2.5 @min-[580px]:flex">
+          {tabs.map((tab, i) => (
+            <button
+              key={tab}
+              type="button"
+              className={cn(
+                'flex min-h-10 min-w-0 flex-1 items-center justify-center rounded-full px-4 py-2.5 text-center text-base leading-[19px] font-medium transition-colors',
+                i === 0
+                  ? 'bg-primary text-white'
+                  : 'bg-white/[0.06] text-white/50 hover:bg-white/[0.1] hover:text-white'
+              )}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Information */}
@@ -119,13 +122,18 @@ export function ServerInformation({ server }: { server: ServerInfo }) {
               type="button"
               onClick={() => setRevealed((v) => !v)}
               aria-label={revealed ? 'Hide password' : 'Show password'}
-              className="text-white/30 transition-colors hover:text-white/60"
+              className="shrink-0 transition-opacity hover:opacity-60"
             >
-              {revealed ? (
-                <EyeOff className="size-4" strokeWidth={1.5} />
-              ) : (
-                <Eye className="size-4" strokeWidth={1.5} />
-              )}
+              <Image
+                src={
+                  revealed
+                    ? '/icons/server-info-icons/eye-off.svg'
+                    : '/icons/server-info-icons/eye.svg'
+                }
+                alt=""
+                width={16}
+                height={12}
+              />
             </button>
           </span>
         </Row>
