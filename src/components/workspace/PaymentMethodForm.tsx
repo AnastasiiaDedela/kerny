@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { AddPaymentMethodModal } from '@/components/workspace/AddPaymentMethodModal';
 
 const fields = [
   { name: 'name', label: 'Name', type: 'text', placeholder: 'Enter your Name...' },
@@ -35,6 +36,7 @@ const emptyForm: Record<FieldName, string> = {
 
 export function PaymentMethodForm() {
   const [values, setValues] = useState(emptyForm);
+  const [cardModalOpen, setCardModalOpen] = useState(false);
 
   return (
     <section className="rounded-[10px] bg-white/[0.04] p-5 lg:p-6">
@@ -48,6 +50,7 @@ export function PaymentMethodForm() {
         </span>
         <button
           type="button"
+          onClick={() => setCardModalOpen(true)}
           className="h-10 w-[120px] shrink-0 rounded-[8px] bg-white/[0.1] text-sm leading-[17px] font-medium text-white/50 transition-colors hover:text-white lg:w-[140px] lg:text-base lg:leading-[19px]"
         >
           Add Method
@@ -82,6 +85,8 @@ export function PaymentMethodForm() {
           Save
         </Button>
       </form>
+
+      <AddPaymentMethodModal open={cardModalOpen} onOpenChange={setCardModalOpen} />
     </section>
   );
 }

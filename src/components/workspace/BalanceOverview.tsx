@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+import { ActivatePromocodeButton } from '@/components/workspace/ActivatePromocodeModal';
 import { BalanceHistoryTable } from '@/components/workspace/BalanceHistoryTable';
 import type { HistoryEntry } from '@/components/workspace/ServerHistory';
 
@@ -25,12 +26,7 @@ export function BalanceOverview({
             Deposit
           </Button>
 
-          <button
-            type="button"
-            className="mt-2.5 h-[46px] w-full rounded-[10px] bg-white/[0.06] text-sm leading-[17px] font-medium text-white/50 transition-colors hover:text-white"
-          >
-            Activate Promocode
-          </button>
+          <ActivatePromocodeButton />
         </div>
 
         <BalanceHistoryTable data={history} />
