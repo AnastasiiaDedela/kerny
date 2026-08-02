@@ -1,9 +1,5 @@
-<<<<<<< HEAD
 import Link from 'next/link';
 import { CirclePlus } from 'lucide-react';
-=======
-import Image from 'next/image';
->>>>>>> main
 import { Button } from '@/components/ui/button';
 import { ServerTable, type ServerRow } from '@/components/workspace/ServerTable';
 
