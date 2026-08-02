@@ -17,7 +17,13 @@ import { navItems } from '@/components/workspace/WorkspaceSidebar';
 import { cn } from '@/lib/utils';
 
 const profileLinks = [
-  { label: 'Control Panel', href: '#', icon: '/images/user-img/table.svg', width: 14, height: 12 },
+  {
+    label: 'Control Panel',
+    href: '/workspace',
+    icon: '/images/user-img/table.svg',
+    width: 14,
+    height: 12,
+  },
   {
     label: 'Balance & Payments',
     href: '#',
@@ -90,19 +96,11 @@ export function WorkspaceHeader() {
           </DropdownMenu>
         </div>
 
-<<<<<<< HEAD
-=======
-        {/* Mobile trigger */}
->>>>>>> main
         <button
           type="button"
           aria-label="Open menu"
           onClick={() => setOpen(true)}
-<<<<<<< HEAD
           className="text-foreground lg:hidden"
-=======
-          className="text-foreground md:hidden"
->>>>>>> main
         >
           <Menu className="size-7" />
         </button>
@@ -110,11 +108,7 @@ export function WorkspaceHeader() {
 
       {/* Mobile menu overlay */}
       {open && (
-<<<<<<< HEAD
         <div className="bg-background fixed inset-0 z-50 flex flex-col overflow-y-auto px-5 py-7.5 lg:hidden">
-=======
-        <div className="bg-background fixed inset-0 z-50 flex flex-col px-5 py-7.5 md:hidden">
->>>>>>> main
           <div className="flex items-center justify-between">
             <Link
               href="/"
@@ -133,7 +127,6 @@ export function WorkspaceHeader() {
             </button>
           </div>
 
-<<<<<<< HEAD
           <nav className="mt-6 flex flex-col gap-2.5">
             {navItems.map((item) => (
               <Link
@@ -154,40 +147,25 @@ export function WorkspaceHeader() {
           <div className="border-border my-5 border-t" />
 
           <div className="flex items-center justify-between rounded-[10px] border-[0.5px] border-white/20 px-4 py-3">
-=======
-          <div className="mt-6 flex items-center justify-between rounded-[10px] border-[0.5px] border-white/20 px-4 py-3">
->>>>>>> main
             <div>
               <p className="text-sm leading-[17px] text-white/50">Your Balance</p>
               <p className="text-base leading-[19px] font-medium text-white">999 €</p>
             </div>
-<<<<<<< HEAD
             <Button size="default" className="min-w-0 px-4">
-=======
-            <Button size="default" className="min-w-0 px-4" onClick={() => setOpen(false)}>
->>>>>>> main
               Deposit
             </Button>
           </div>
 
-<<<<<<< HEAD
           <div className="border-border my-5 border-t" />
 
           <div className="flex flex-col gap-2.5">
             <span className="text-foreground text-base">Profile</span>
-=======
-          <div className="mt-4 flex flex-col gap-2.5">
->>>>>>> main
             {profileLinks.map((link) => (
               <Link
                 key={link.label}
                 href={link.href}
                 onClick={() => setOpen(false)}
-<<<<<<< HEAD
                 className="text-foreground flex h-[50px] items-center justify-center gap-2 rounded-[10px] border-[0.5px] border-white/20 text-base transition-colors hover:bg-[#1a1a1a]"
-=======
-                className="text-foreground flex h-[50px] items-center gap-2 rounded-[10px] border-[0.5px] border-white/20 px-4 text-base transition-colors hover:bg-[#1a1a1a]"
->>>>>>> main
               >
                 <Image src={link.icon} alt="" width={link.width} height={link.height} />
                 {link.label}
@@ -199,11 +177,7 @@ export function WorkspaceHeader() {
                 setOpen(false);
                 logOut();
               }}
-<<<<<<< HEAD
               className="text-foreground/30 flex h-[50px] items-center justify-center gap-2 rounded-[10px] border-[0.5px] border-white/20 text-base transition-colors hover:bg-[#1a1a1a]"
-=======
-              className="text-foreground/30 flex h-[50px] items-center gap-2 rounded-[10px] border-[0.5px] border-white/20 px-4 text-base transition-colors hover:bg-[#1a1a1a]"
->>>>>>> main
             >
               <Image src="/images/user-img/log-out.svg" alt="" width={14} height={14} />
               Log Out

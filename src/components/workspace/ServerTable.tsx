@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { ChevronRight, Eye, EyeOff } from 'lucide-react';
+import Link from 'next/link';
+import { ChevronRight } from 'lucide-react';
 import {
   createColumnHelper,
   flexRender,
@@ -34,18 +35,23 @@ function IpValue({ ip }: { ip: string }) {
         type="button"
         onClick={() => setRevealed((v) => !v)}
         aria-label={revealed ? 'Hide IP' : 'Show IP'}
-        className="text-white/30 hover:text-white/60"
+        className="shrink-0 transition-opacity hover:opacity-60"
       >
-        {revealed ? <EyeOff className="size-3.5" /> : <Eye className="size-3.5" />}
+        <Image
+          src={
+            revealed ? '/icons/server-info-icons/eye-off.svg' : '/icons/server-info-icons/eye.svg'
+          }
+          alt=""
+          width={16}
+          height={12}
+        />
       </button>
     </span>
   );
 }
 
 function TextValue({ value }: { value: string }) {
-  return (
-    <span className="text-base leading-[19px] font-medium text-white">{value}</span>
-  );
+  return <span className="text-base leading-[19px] font-medium text-white">{value}</span>;
 }
 
 function StatusValue({ status }: { status: ServerRow['status'] }) {
@@ -99,13 +105,13 @@ export function ServerTable({ data }: ServerTableProps) {
                   {row.original.name}
                 </span>
               </div>
-              <button
-                type="button"
+              <Link
+                href={`/workspace/servers/${row.original.id}`}
                 aria-label="View server"
                 className="flex size-10 shrink-0 items-center justify-center rounded-[8px] bg-white/[0.06] hover:bg-white/[0.1]"
               >
                 <ChevronRight className="size-3.5 text-white/30" strokeWidth={1.5} />
-              </button>
+              </Link>
             </div>
 
             <div className="grid grid-cols-[auto_1fr] gap-4 md:grid-cols-4">
@@ -154,13 +160,13 @@ export function ServerTable({ data }: ServerTableProps) {
               ))}
             </div>
 
-            <button
-              type="button"
+            <Link
+              href={`/workspace/servers/${row.original.id}`}
               aria-label="View server"
               className="flex size-10 shrink-0 items-center justify-center rounded-[8px] bg-white/[0.06] hover:bg-white/[0.1]"
             >
               <ChevronRight className="size-3.5 text-white/30" strokeWidth={1.5} />
-            </button>
+            </Link>
           </div>
         </div>
       ))}

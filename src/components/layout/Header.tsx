@@ -16,7 +16,13 @@ import { useAuthModal } from '@/components/layout/AuthModalProvider';
 import { useContactModal } from '@/components/layout/ContactModalProvider';
 
 const profileLinks = [
-  { label: 'Control Panel', href: '#', icon: '/images/user-img/table.svg', width: 14, height: 12 },
+  {
+    label: 'Control Panel',
+    href: '/workspace',
+    icon: '/images/user-img/table.svg',
+    width: 14,
+    height: 12,
+  },
   {
     label: 'Balance & Payments',
     href: '#',
