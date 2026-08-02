@@ -55,21 +55,22 @@ export function BalanceHistoryTable({ data }: { data: HistoryEntry[] }) {
 
       {/* The list scrolls inside the fixed-height card; the hairline thumb sits 6px to the
           right of the rows, hence the padding + pulled-out margin. Stacked cards are far
-          taller than 218px, so below 480px the list flows instead of scrolling. */}
-      <div className="scrollbar-hairline mt-2.5 flex flex-col gap-1.5 @min-[480px]:-mr-[7px] @min-[480px]:h-[218px] @min-[480px]:overflow-y-auto @min-[480px]:pr-1.5">
+          taller than 218px, so below 480px the list flows instead of scrolling — and with
+          no header above it, it sits flush against the top of its grid cell. */}
+      <div className="scrollbar-hairline flex flex-col gap-3 @min-[480px]:mt-2.5 @min-[480px]:-mr-[7px] @min-[480px]:h-[218px] @min-[480px]:gap-1.5 @min-[480px]:overflow-y-auto @min-[480px]:pr-1.5">
         {table.getRowModel().rows.map((row) => {
           const [action, time, amount] = row.getVisibleCells();
 
           return (
             <div key={row.id} className="shrink-0">
               {/* Narrow: every value gets its own label, stacked. */}
-              <div className="flex flex-col gap-4 rounded-[10px] bg-[#0F0F0F] p-4 @min-[480px]:hidden">
+              <div className="flex flex-col gap-3 rounded-[10px] bg-[#0F0F0F] p-5 @min-[480px]:hidden">
                 {row.getVisibleCells().map((cell) => (
-                  <div key={cell.id} className="flex flex-col gap-1">
+                  <div key={cell.id} className="flex flex-col gap-1.5">
                     <span className="text-sm leading-[17px] whitespace-nowrap text-white/50">
                       {cell.column.columnDef.meta?.stackedLabel}
                     </span>
-                    <span className="text-base leading-[19px] font-medium whitespace-nowrap text-white">
+                    <span className="text-sm leading-[17px] font-medium whitespace-nowrap text-white">
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </span>
                   </div>

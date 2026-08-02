@@ -50,6 +50,56 @@ export function useActiveNavHref() {
     .sort((a, b) => b.length - a.length)[0];
 }
 
+/* The mobile nav tints the active item's icon primary, which <Image> can't do — the fill is
+   baked into the SVG — so the icon is painted as a mask of a background colour instead. */
+function NavIcon({ item, className }: { item: (typeof navItems)[number]; className?: string }) {
+  const url = `url("${encodeURI(item.icon)}")`;
+
+  return (
+    <span
+      aria-hidden
+      style={{ width: item.width, height: item.height, maskImage: url, WebkitMaskImage: url }}
+      className={cn(
+        'shrink-0 [mask-size:contain] [mask-position:center] [mask-repeat:no-repeat]',
+        className
+      )}
+    />
+  );
+}
+
+/** Mobile counterpart of the sidebar: the same nav as full-width cards above the page content. */
+export function WorkspaceMobileNav({ className }: { className?: string }) {
+  const activeHref = useActiveNavHref();
+
+  return (
+    <nav className={cn('flex flex-col gap-1.5 rounded-[15px] bg-white/[0.04] p-5', className)}>
+      {navItems.map((item) => {
+        const active = item.href === activeHref;
+
+        return (
+          <Link
+            key={item.label}
+            href={item.href}
+            className={cn(
+              'group flex h-[50px] items-center justify-center rounded-[8px] text-sm leading-[17px] transition-colors',
+              item.gap,
+              active
+                ? 'border-primary bg-primary/10 border font-medium text-white'
+                : 'bg-white/[0.04] font-normal text-white/50 hover:text-white'
+            )}
+          >
+            <NavIcon
+              item={item}
+              className={active ? 'bg-primary' : 'bg-white/50 group-hover:bg-white'}
+            />
+            {item.label}
+          </Link>
+        );
+      })}
+    </nav>
+  );
+}
+
 export function WorkspaceSidebar() {
   const activeHref = useActiveNavHref();
 

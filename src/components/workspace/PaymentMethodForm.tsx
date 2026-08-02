@@ -40,11 +40,15 @@ export function PaymentMethodForm() {
     <section className="rounded-[10px] bg-white/[0.04] p-5 lg:p-6">
       <h2 className="text-xl leading-6 font-semibold text-white">Payment Method</h2>
 
-      <div className="mt-4 flex min-h-[66px] flex-wrap items-center justify-between gap-4 rounded-[10px] bg-white/[0.04] py-[13px] pr-[13px] pl-6">
-        <span className="text-base leading-[19px] font-medium text-white">No Payment Method</span>
+      {/* One line on mobile, as in the design: the label and button drop a step in size and the
+          13px inset runs all the way round. flex-wrap only kicks in on very narrow phones. */}
+      <div className="mt-4 flex min-h-[66px] flex-wrap items-center justify-between gap-2.5 rounded-[10px] bg-white/[0.04] p-[13px] lg:gap-4 lg:pr-[13px] lg:pl-6">
+        <span className="text-sm leading-[17px] font-medium text-white lg:text-base lg:leading-[19px]">
+          No Payment Method
+        </span>
         <button
           type="button"
-          className="h-10 w-[140px] shrink-0 rounded-[8px] bg-white/[0.1] text-base leading-[19px] font-medium text-white/50 transition-colors hover:text-white"
+          className="h-10 w-[120px] shrink-0 rounded-[8px] bg-white/[0.1] text-sm leading-[17px] font-medium text-white/50 transition-colors hover:text-white lg:w-[140px] lg:text-base lg:leading-[19px]"
         >
           Add Method
         </button>
