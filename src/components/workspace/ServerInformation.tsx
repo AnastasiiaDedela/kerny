@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { ServerHistory, type HistoryEntry } from '@/components/workspace/ServerHistory';
 import { ServerIpAddresses, type IpAddressGroup } from '@/components/workspace/ServerIpAddresses';
+import { ServerBackups } from '@/components/workspace/ServerBackups';
 import { cn } from '@/lib/utils';
 
 export interface ServerInfo {
@@ -25,12 +26,11 @@ export interface ServerInfo {
   connection: string;
 }
 
-/** Backups has no design yet, so it stays disabled. */
 const tabs = [
   { label: 'Information', enabled: true },
   { label: 'History', enabled: true },
   { label: 'IP-addresses', enabled: true },
-  { label: 'Backups', enabled: false },
+  { label: 'Backups', enabled: true },
 ] as const;
 
 type Tab = (typeof tabs)[number]['label'];
@@ -68,11 +68,13 @@ export function ServerInformation({
   history,
   ipGroups,
   instruction,
+  backups,
 }: {
   server: ServerInfo;
   history: HistoryEntry[];
   ipGroups: IpAddressGroup[];
   instruction: string[];
+  backups: string[];
 }) {
   const [activeTab, setActiveTab] = useState<Tab>('Information');
 
@@ -126,6 +128,7 @@ export function ServerInformation({
       {activeTab === 'IP-addresses' && (
         <ServerIpAddresses groups={ipGroups} instruction={instruction} />
       )}
+      {activeTab === 'Backups' && <ServerBackups paragraphs={backups} />}
     </section>
   );
 }

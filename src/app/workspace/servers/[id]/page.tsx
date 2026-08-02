@@ -72,6 +72,11 @@ const instruction = [
   'Lorem ipsum dolor sit amet consectetur. Vel dolor arcu urna eu vestibulum ipsum nulla. Tincidunt tristique tellus massa parturient non. Ultrices mauris ipsum cursus nunc ut leo tempor sed',
 ];
 
+const backupsParagraph =
+  'Lorem ipsum dolor sit amet consectetur. Molestie morbi venenatis semper lorem pellentesque sed morbi in ac. Viverra ipsum enim adipiscing mollis duis faucibus nunc nisl.';
+
+const backups = [backupsParagraph, backupsParagraph, backupsParagraph];
+
 export default function ServerPage() {
   return (
     <div>
@@ -92,6 +97,7 @@ export default function ServerPage() {
           history={history}
           ipGroups={ipGroups}
           instruction={instruction}
+          backups={backups}
         />
         <ServerManagement />
       </div>
