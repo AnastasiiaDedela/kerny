@@ -4,9 +4,11 @@ import type { ReactNode } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { cn } from '@/lib/utils';
 
 /** 373px card with a 30px radius on mobile (10px gutters on the 393px design frame), inset 20px
-    with a deeper 40px under the buttons; 448px with a 24px inset and a 20px radius from lg up. */
+    horizontally around a 333px content column and 30px top and bottom; 448px with a 24px inset and
+    a 20px radius from lg up. */
 export function ModalShell({
   open,
   onOpenChange,
@@ -22,7 +24,7 @@ export function ModalShell({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         showCloseButton={false}
-        className="bg-background flex max-w-[min(373px,calc(100%-20px))] flex-col gap-0 rounded-[30px] border-0 px-5 pt-5 pb-10 ring-0 sm:max-w-[min(373px,calc(100%-20px))] lg:max-w-[448px] lg:rounded-[20px] lg:bg-[#121212] lg:p-6"
+        className="bg-background flex max-w-[min(373px,calc(100%-20px))] flex-col gap-0 rounded-[30px] border-0 px-5 py-[30px] ring-0 sm:max-w-[min(373px,calc(100%-20px))] lg:max-w-[448px] lg:rounded-[20px] lg:bg-[#121212] lg:p-6"
       >
         <h2 className="text-xl leading-6 font-semibold text-white">{title}</h2>
         {children}
@@ -39,6 +41,8 @@ export function ModalField({
   onValueChange,
   inputMode,
   maxLength,
+  type,
+  readOnly,
 }: {
   id: string;
   label: string;
@@ -47,6 +51,9 @@ export function ModalField({
   onValueChange: (value: string) => void;
   inputMode?: 'numeric';
   maxLength?: number;
+  type?: 'password' | 'email';
+  /** Renders an unchangeable value (the current e-mail) in the dimmed placeholder tone. */
+  readOnly?: boolean;
 }) {
   return (
     <div>
@@ -56,13 +63,18 @@ export function ModalField({
       <input
         id={id}
         name={id}
+        type={type}
         value={value}
         onChange={(e) => onValueChange(e.target.value)}
         placeholder={placeholder}
         inputMode={inputMode}
         maxLength={maxLength}
+        readOnly={readOnly}
         autoComplete="off"
-        className="h-[46px] w-full rounded-[8px] bg-white/[0.04] px-4 py-[7px] text-sm leading-[17px] font-normal text-white outline-none placeholder:text-white/30"
+        className={cn(
+          'h-[46px] w-full rounded-[8px] bg-white/[0.04] px-4 py-[7px] text-sm leading-[17px] font-normal text-white outline-none placeholder:text-white/50 lg:placeholder:text-white/30',
+          readOnly && 'text-white/50'
+        )}
       />
     </div>
   );
@@ -74,13 +86,22 @@ export function ModalField({
 export function ModalActions({
   submitLabel,
   onCancel,
+  destructive,
 }: {
   submitLabel: string;
   onCancel: () => void;
+  /** Solid red submit, for the irreversible Delete Account confirmation. */
+  destructive?: boolean;
 }) {
   return (
     <div className="mt-5 grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-2.5">
-      <Button type="submit" className="h-[46px] min-w-0 text-sm leading-[17px] font-medium">
+      <Button
+        type="submit"
+        className={cn(
+          'h-[46px] min-w-0 text-sm leading-[17px] font-medium',
+          destructive && 'bg-[#FB3737] text-white hover:bg-[#FB3737]/80'
+        )}
+      >
         {submitLabel}
       </Button>
       <button

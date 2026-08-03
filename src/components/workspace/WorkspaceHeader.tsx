@@ -31,7 +31,13 @@ const profileLinks = [
     width: 14,
     height: 16,
   },
-  { label: 'Settings', href: '#', icon: '/images/user-img/settings.svg', width: 14, height: 14 },
+  {
+    label: 'Settings',
+    href: '/workspace/settings',
+    icon: '/images/user-img/settings.svg',
+    width: 14,
+    height: 14,
+  },
 ];
 
 export function WorkspaceHeader() {
