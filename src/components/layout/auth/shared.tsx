@@ -65,14 +65,42 @@ export function OrDivider() {
   );
 }
 
-export function GoogleButton({ children }: { children: ReactNode }) {
+export function GoogleButton({
+  children,
+  onClick,
+  disabled,
+}: {
+  children: ReactNode;
+  onClick?: () => void;
+  disabled?: boolean;
+}) {
   return (
     <button
       type="button"
-      className="hover:text-foreground flex h-10 w-full items-center justify-center gap-2.5 rounded-lg bg-white/[0.04] text-xs leading-[15px] text-white/50 transition-colors"
+      onClick={onClick}
+      disabled={disabled}
+      className="hover:text-foreground flex h-10 w-full items-center justify-center gap-2.5 rounded-lg bg-white/[0.04] text-xs leading-[15px] text-white/50 transition-colors disabled:opacity-50"
     >
       <Image src="/google.svg" alt="" width={16} height={16} />
       {children}
     </button>
   );
+}
+
+/** Message shown above the submit button when a request fails. */
+export function FormError({ children }: { children: ReactNode }) {
+  if (!children) return null;
+
+  return (
+    <p role="alert" className="text-destructive mt-3 text-xs leading-[15px]">
+      {children}
+    </p>
+  );
+}
+
+/** Per-input message from the API's `fieldErrors` map. */
+export function FieldError({ children }: { children: ReactNode }) {
+  if (!children) return null;
+
+  return <p className="text-destructive px-1 text-xs leading-[15px]">{children}</p>;
 }

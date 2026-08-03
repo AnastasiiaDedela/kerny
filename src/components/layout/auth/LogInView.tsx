@@ -1,10 +1,17 @@
+'use client';
+
+import { useState } from 'react';
+
+import { fieldError, formError, useGoogleAuth, useLogin } from '@/api/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
   AuthModalDescription,
   AuthModalHeader,
   description,
+  FieldError,
   fieldClassName,
+  FormError,
   GoogleButton,
   OrDivider,
   SecondaryButton,
@@ -14,13 +21,19 @@ export function LogInView({
   onClose,
   onSignUp,
   onForgotPassword,
-  onSubmit,
+  onSuccess,
 }: {
   onClose: () => void;
   onSignUp: () => void;
   onForgotPassword: () => void;
-  onSubmit: () => void;
+  onSuccess: () => void;
 }) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const login = useLogin();
+  const google = useGoogleAuth();
+
   return (
     <>
       <AuthModalHeader title="Log In" onClose={onClose} />
@@ -30,12 +43,34 @@ export function LogInView({
         className="mt-4 flex flex-col"
         onSubmit={(event) => {
           event.preventDefault();
-          onSubmit();
+          login.mutate({ email, password }, { onSuccess });
         }}
       >
         <div className="flex flex-col gap-2.5">
-          <Input placeholder="Email" type="email" className={fieldClassName} />
-          <Input placeholder="Password" type="password" className={fieldClassName} />
+          <div className="flex flex-col gap-1">
+            <Input
+              placeholder="Email"
+              type="email"
+              autoComplete="email"
+              required
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              className={fieldClassName}
+            />
+            <FieldError>{fieldError(login.error, 'email')}</FieldError>
+          </div>
+          <div className="flex flex-col gap-1">
+            <Input
+              placeholder="Password"
+              type="password"
+              autoComplete="current-password"
+              required
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              className={fieldClassName}
+            />
+            <FieldError>{fieldError(login.error, 'password')}</FieldError>
+          </div>
         </div>
 
         <button
@@ -46,8 +81,14 @@ export function LogInView({
           Forget your Password?
         </button>
 
-        <Button type="submit" className="mt-4 h-[46px] w-full rounded-[10px] text-sm font-medium">
-          Log In
+        <FormError>{formError(login.error)}</FormError>
+
+        <Button
+          type="submit"
+          disabled={login.isPending}
+          className="mt-4 h-[46px] w-full rounded-[10px] text-sm font-medium"
+        >
+          {login.isPending ? 'Logging In…' : 'Log In'}
         </Button>
       </form>
 
@@ -60,7 +101,13 @@ export function LogInView({
       </div>
 
       <div className="mt-4">
-        <GoogleButton>Log In With Google</GoogleButton>
+        <GoogleButton
+          disabled={google.isPending}
+          onClick={() => google.mutate({ next: window.location.pathname })}
+        >
+          Log In With Google
+        </GoogleButton>
+        <FormError>{formError(google.error)}</FormError>
       </div>
     </>
   );

@@ -12,11 +12,9 @@ import { cn } from '@/lib/utils';
 export function AuthModal({
   step,
   onStepChange,
-  onAuthenticated,
 }: {
   step: AuthStep | null;
   onStepChange: (step: AuthStep | null) => void;
-  onAuthenticated: () => void;
 }) {
   const close = () => onStepChange(null);
 
@@ -32,35 +30,25 @@ export function AuthModal({
         )}
       >
         {step === 'sign-up' && (
-          <SignUpView
-            onClose={close}
-            onLogIn={() => onStepChange('log-in')}
-            onSubmit={() => {
-              onAuthenticated();
-              close();
-            }}
-          />
+          <SignUpView onClose={close} onLogIn={() => onStepChange('log-in')} onSuccess={close} />
         )}
         {step === 'log-in' && (
           <LogInView
             onClose={close}
             onSignUp={() => onStepChange('sign-up')}
             onForgotPassword={() => onStepChange('reset-password')}
-            onSubmit={() => {
-              onAuthenticated();
-              close();
-            }}
+            onSuccess={close}
           />
         )}
         {step === 'reset-password' && (
           <ResetPasswordView
             onClose={close}
-            onSubmit={() => onStepChange('new-password')}
+            onSuccess={() => onStepChange('new-password')}
             onGoBack={() => onStepChange('log-in')}
           />
         )}
         {step === 'new-password' && (
-          <NewPasswordView onClose={close} onSubmit={() => onStepChange('success')} />
+          <NewPasswordView onClose={close} onSuccess={() => onStepChange('success')} />
         )}
         {step === 'success' && <SuccessView onClose={close} />}
       </DialogContent>
