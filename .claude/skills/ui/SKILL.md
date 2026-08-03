@@ -4,6 +4,8 @@ description: Conventions for src/components/ui/ primitives — shadcn (style bas
 ---
 
 - Primitives are generated with `npx shadcn@latest add <name>` (config in `components.json`: style `base-nova`, base color `neutral`, icon library `lucide`) — add new ones via the CLI and adjust, don't hand-write a primitive shadcn already offers.
+- Present today: `accordion`, `badge`, `button`, `card`, `checkbox`, `dialog`, `dropdown-menu`, `input`, `tabs`, `textarea`. Check this list before adding — several were added for the auth modal and workspace forms.
+- `dialog` is consumed indirectly in the workspace: compose `ModalShell`/`ModalField` from `src/components/workspace/modal-parts.tsx` rather than importing `Dialog` directly there (see the `workspace` skill). Auth modal views have their own shared pieces in `src/components/layout/auth/shared.tsx`.
 - Built on **`@base-ui/react`, not Radix** — `COMPONENTS_SETUP.md` says Radix in places; that's stale, ignore it (see `repository-map`).
 - Every primitive root/part carries a `data-slot="<name>"` attribute (`data-slot="card"`, `data-slot="accordion-trigger"`, ...) — preserve this when editing; other code or CSS may select on it.
 - Variants are defined with `class-variance-authority` (`cva`) in the same file; `className` is always merged last via `cn()` so caller overrides win.

@@ -87,16 +87,20 @@ export function ModalActions({
   submitLabel,
   onCancel,
   destructive,
+  pending,
 }: {
   submitLabel: string;
   onCancel: () => void;
   /** Solid red submit, for the irreversible Delete Account confirmation. */
   destructive?: boolean;
+  /** Blocks a double submit while the request is in flight (Button's own `disabled:opacity-50`). */
+  pending?: boolean;
 }) {
   return (
     <div className="mt-5 grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-2.5">
       <Button
         type="submit"
+        disabled={pending}
         className={cn(
           'h-[46px] min-w-0 text-sm leading-[17px] font-medium',
           destructive && 'bg-[#FB3737] text-white hover:bg-[#FB3737]/80'
