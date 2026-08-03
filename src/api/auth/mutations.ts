@@ -11,8 +11,13 @@ import type {
 import { UNAUTHENTICATED_SESSION } from '@/api/auth/types';
 import { ApiError, apiClient, unwrap } from '@/api/client';
 
-/** Seed the session cache from a login/signup response, then confirm it with the API. */
-function useSessionSync() {
+/**
+ * Seed the session cache from a login/signup response, then confirm it with the API.
+ *
+ * Exported so other authenticated domains (e.g. account email change, account
+ * deletion) sync the session the same way instead of inventing their own.
+ */
+export function useSessionSync() {
   const queryClient = useQueryClient();
 
   return {

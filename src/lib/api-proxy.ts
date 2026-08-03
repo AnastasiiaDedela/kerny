@@ -1,22 +1,5 @@
 import type { NextRequest } from 'next/server';
 
-/**
- * Same-origin proxy to the Kerny API.
- *
- * The API rejects any browser request whose `Origin` is not `https://kerny.tech`
- * (`invalid_origin` / `csrf_evidence_required`), so the app cannot call it directly
- * from localhost. This forwards `/api/*` to the upstream API from the server,
- * where that origin check can be satisfied, and rewrites `Set-Cookie` so the
- * `kerny_session` cookie is accepted on the app's own host.
- *
- * The proper fix is for the API to allowlist the dev origin; once it does, set
- * `NEXT_PUBLIC_API_BASE_URL=https://api.kerny.tech` and this proxy is bypassed.
- *
- * Two route files share it: `api/[...path]/route.ts` for every nested path, and
- * `api/route.ts` for the bare `/api` root (a catch-all needs ≥1 segment, so it
- * never matches that one).
- */
-
 const UPSTREAM_URL = process.env.API_UPSTREAM_URL ?? 'https://api.kerny.tech';
 const TRUSTED_ORIGIN = process.env.API_TRUSTED_ORIGIN ?? 'https://kerny.tech';
 

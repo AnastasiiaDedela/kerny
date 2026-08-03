@@ -29,6 +29,8 @@ TanStack Query + openapi-fetch data layer — see the `api-layer` skill before t
 - `query-client.ts` — `getQueryClient()`; server-fresh / browser-singleton, shared defaults.
 - `auth/` — `index.ts`, `keys.ts`, `queries.ts` (`useSession`, `useCurrentUser`), `mutations.ts` (signup/login/logout/password reset/Google/revoke, plus `fieldError`/`formError`), `types.ts`.
 - `app/` — same five-file shape; `useApiRoot`/`useApiReachable` health checks.
+- `health/` — `useHealth`/`useReadiness`/`useApiStatus` liveness + readiness probes.
+- `account/` — `queries.ts` (`useAccountSettings`, `useMe`, `useAccountBalance`, `useAccountDeletion`), `mutations.ts` (email change request/confirm, password change, account deletion).
 
 ## `src/types/`
 

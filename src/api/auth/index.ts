@@ -9,6 +9,7 @@ export {
   useLogout,
   useRequestPasswordReset,
   useRevokeAllSessions,
+  useSessionSync,
   useSignup,
 } from '@/api/auth/mutations';
 export type {

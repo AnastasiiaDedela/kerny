@@ -8,7 +8,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-Kerny — a marketing site for a VPS hosting service. Static, content-driven marketing pages (home, about, pricing, data centers). No backend, no database, no API routes, no auth; all copy and data are hard-coded inline in components.
+Kerny — the front end for a VPS hosting service, in two halves:
+
+- **Marketing pages** (`/`, `/about`, `/pricing`, `/data-centers`) — static and content-driven; all copy and data hard-coded inline in components.
+- **Workspace** (`/workspace/*`) — the authenticated product area (servers, balance, notifications, docs), behind a cookie session.
+
+There is no database in this repo. The API is a separate service at `api.kerny.tech`, consumed through `src/api/` (openapi-fetch + TanStack Query) and reached via a same-origin proxy in `src/app/api/*` — see the `api-layer` skill. Several workspace pages still render mock constants that haven't been wired to it yet, so check the file rather than assuming.
 
 ## Commands
 
