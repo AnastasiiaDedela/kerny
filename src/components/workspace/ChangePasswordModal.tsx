@@ -2,6 +2,9 @@
 
 import { useState } from 'react';
 
+import { useChangePassword } from '@/api/account';
+import { fieldError, formError } from '@/api/auth';
+import { FieldError, FormError } from '@/components/layout/auth/shared';
 import { ModalActions, ModalField, ModalShell } from '@/components/workspace/modal-parts';
 
 const emptyPasswords = { current: '', next: '', repeat: '' };
@@ -14,10 +17,28 @@ export function ChangePasswordModal({
   onOpenChange: (open: boolean) => void;
 }) {
   const [values, setValues] = useState(emptyPasswords);
+  const [mismatch, setMismatch] = useState(false);
+
+  const change = useChangePassword();
 
   const close = () => {
     setValues(emptyPasswords);
+    setMismatch(false);
+    change.reset();
     onOpenChange(false);
+  };
+
+  const submit = () => {
+    // The API never sees `repeat`, so the two-field match is ours to check.
+    if (values.next !== values.repeat) {
+      setMismatch(true);
+      return;
+    }
+    setMismatch(false);
+    change.mutate(
+      { currentPassword: values.current, newPassword: values.next },
+      { onSuccess: close }
+    );
   };
 
   return (
@@ -25,7 +46,7 @@ export function ChangePasswordModal({
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          close();
+          submit();
         }}
         className="mt-5 lg:mt-4"
       >
@@ -38,6 +59,7 @@ export function ChangePasswordModal({
             onValueChange={(current) => setValues((v) => ({ ...v, current }))}
             type="password"
           />
+          <FieldError>{fieldError(change.error, 'currentPassword')}</FieldError>
 
           <ModalField
             id="newPassword"
@@ -47,6 +69,7 @@ export function ChangePasswordModal({
             onValueChange={(next) => setValues((v) => ({ ...v, next }))}
             type="password"
           />
+          <FieldError>{fieldError(change.error, 'newPassword')}</FieldError>
 
           <ModalField
             id="repeatPassword"
@@ -56,9 +79,12 @@ export function ChangePasswordModal({
             onValueChange={(repeat) => setValues((v) => ({ ...v, repeat }))}
             type="password"
           />
+          <FieldError>{mismatch ? 'Passwords do not match.' : undefined}</FieldError>
         </div>
 
-        <ModalActions submitLabel="Change" onCancel={close} />
+        <FormError>{formError(change.error)}</FormError>
+
+        <ModalActions submitLabel="Change" onCancel={close} pending={change.isPending} />
       </form>
     </ModalShell>
   );
