@@ -11,11 +11,11 @@ description: How to look up request/response types in src/types/api.d.ts, the 10
 
 Its top-level shape is four exports, so you always know roughly where you are:
 
-| Export       | Line (approx) | Contains                                        |
-| ------------ | ------------- | ----------------------------------------------- |
-| `paths`      | 6             | One entry per URL, e.g. `"/api/auth/login"`     |
-| `components` | 1902          | `schemas`, the named DTOs — `User`, `LoginDto`  |
-| `operations` | 3946          | Per-operation param/response bundles            |
+| Export       | Line (approx) | Contains                                       |
+| ------------ | ------------- | ---------------------------------------------- |
+| `paths`      | 6             | One entry per URL, e.g. `"/api/auth/login"`    |
+| `components` | 1902          | `schemas`, the named DTOs — `User`, `LoginDto` |
+| `operations` | 3946          | Per-operation param/response bundles           |
 
 ## Lookup recipes
 

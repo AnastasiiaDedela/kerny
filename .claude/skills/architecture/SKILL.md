@@ -9,12 +9,12 @@ Deeper, decision-oriented companion to `CLAUDE.md`'s Architecture section — re
 
 There are four layout families. Pick by what chrome the page needs — the decision is the layout, not the URL:
 
-| Family                  | Chrome                                      | Add a page by                         |
-| ----------------------- | ------------------------------------------- | ------------------------------------- |
-| `(site)/`               | `<main>` + default `<Footer />` (`'legal'`) | dropping `page.tsx` in — no new layout |
-| `about/`, `data-centers/` | `<main>` + `<Footer variant="brand" />`   | new top-level folder **+ its own `layout.tsx`** |
-| `workspace/`            | `WorkspaceHeader` + `WorkspaceSidebar`, **no footer** | dropping `page.tsx` under `workspace/` — no new layout (see the `workspace` skill) |
-| `api/`                  | none — route handlers, not pages            | see the `api-layer` skill              |
+| Family                    | Chrome                                                | Add a page by                                                                      |
+| ------------------------- | ----------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `(site)/`                 | `<main>` + default `<Footer />` (`'legal'`)           | dropping `page.tsx` in — no new layout                                             |
+| `about/`, `data-centers/` | `<main>` + `<Footer variant="brand" />`               | new top-level folder **+ its own `layout.tsx`**                                    |
+| `workspace/`              | `WorkspaceHeader` + `WorkspaceSidebar`, **no footer** | dropping `page.tsx` under `workspace/` — no new layout (see the `workspace` skill) |
+| `api/`                    | none — route handlers, not pages                      | see the `api-layer` skill                                                          |
 
 `src/app/(site)/` exists purely to let `/` and `/pricing` share one layout without adding a URL segment. `/about` and `/data-centers` are **not** in it because they need a different `<Footer>` prop (see below).
 

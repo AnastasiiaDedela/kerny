@@ -9,13 +9,13 @@ This repo **does** have a data layer, despite older docs saying it doesn't. It l
 
 One folder per API domain (`src/api/auth/`, `src/api/app/`), always the same five files:
 
-| File           | Holds                                                             |
-| -------------- | ----------------------------------------------------------------- |
-| `keys.ts`      | Query-key factory                                                  |
-| `types.ts`     | Aliases of generated schemas + any hand-narrowed types            |
-| `queries.ts`   | `useQuery` hooks (reads)                                          |
-| `mutations.ts` | `useMutation` hooks (writes)                                      |
-| `index.ts`     | Explicit re-exports — the module's public surface                 |
+| File           | Holds                                                  |
+| -------------- | ------------------------------------------------------ |
+| `keys.ts`      | Query-key factory                                      |
+| `types.ts`     | Aliases of generated schemas + any hand-narrowed types |
+| `queries.ts`   | `useQuery` hooks (reads)                               |
+| `mutations.ts` | `useMutation` hooks (writes)                           |
+| `index.ts`     | Explicit re-exports — the module's public surface      |
 
 **Import from the domain root** (`import { useLogin } from '@/api/auth'`), never deep into `@/api/auth/mutations`. Adding a domain means adding all five files and re-exporting every public hook/type from `index.ts`.
 
