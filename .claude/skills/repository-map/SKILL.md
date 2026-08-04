@@ -31,6 +31,7 @@ TanStack Query + openapi-fetch data layer — see the `api-layer` skill before t
 - `app/` — same five-file shape; `useApiRoot`/`useApiReachable` health checks.
 - `health/` — `useHealth`/`useReadiness`/`useApiStatus` liveness + readiness probes.
 - `account/` — `queries.ts` (`useAccountSettings`, `useMe`, `useAccountBalance`, `useAccountDeletion`), `mutations.ts` (email change request/confirm, password change, account deletion).
+- `catalog/` — public regions + operating systems; `useRegions`/`usePublicRegions`/`useDeployableRegions`, `useOperatingSystems`/`useDeployableOperatingSystems`. Reads only, 1h `staleTime`.
 
 ## `src/types/`
 
@@ -38,12 +39,12 @@ TanStack Query + openapi-fetch data layer — see the `api-layer` skill before t
 
 ## `src/components/home/`
 
-`Banner.tsx`, `WhatIsVps.tsx`, `WhyOurService.tsx`, `OperationSystems.tsx`, `DataCenterRegions.tsx`, `Faq.tsx`, `CtaBanner.tsx` — one file per home-page section, imported in order by `(site)/page.tsx`.
+`Banner.tsx`, `WhatIsVps.tsx`, `WhyOurService.tsx`, `OperationSystems.tsx`, `DataCenterRegions.tsx`, `Faq.tsx`, `CtaBanner.tsx` — one file per home-page section, imported in order by `(site)/page.tsx`. `DataCenterRegions.tsx` is `'use client'` (reads `@/api/catalog`); the rest are server components.
 
 ## `src/components/about/` · `data-centers/` · `pricing/`
 
 - about: `OurAudience.tsx`, `OurAdvantages.tsx`, `JoinTeam.tsx`
-- data-centers: `DataCentersContent.tsx`
+- data-centers: `DataCentersContent.tsx` — `'use client'`; continent tabs over `@/api/catalog` regions
 - pricing: `TariffTable.tsx`, `CloudServerBuilder.tsx` — both `'use client'`, `@tanstack/react-table`
 
 ## `src/components/workspace/`
@@ -69,6 +70,7 @@ Modals: `modal-parts.tsx` (`ModalShell`, `ModalField`), `ActivatePromocodeModal.
 
 - `utils.ts` — `cn()` (clsx + tailwind-merge). Only className helper in the repo.
 - `api-proxy.ts` — `proxyToApi()`; origin/cookie rewriting. See `api-layer`.
+- `catalog.ts` — presentation helpers for `@/api/catalog` regions: `regionCountry()` (ISO code → label), `regionFlagSrc()` (null when no local flag), `continentsOf()`, `regionsIn()`.
 
 ## `public/`
 

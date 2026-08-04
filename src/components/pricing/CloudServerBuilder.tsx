@@ -1,25 +1,15 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import { CirclePlus, ChevronDown } from 'lucide-react';
+import { useDeployableOperatingSystems, useDeployableRegions, type Region } from '@/api/catalog';
+import { regionCountry, regionFlagSrc } from '@/lib/catalog';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { TariffTable, type TariffRow } from './TariffTable';
 
 // ── Static data ──────────────────────────────────────────────────────────────
-
-const osList = ['Ubuntu 24.04', 'Ubuntu 24.04', 'Ubuntu 24.04', 'Ubuntu 24.04', 'Ubuntu 24.04'];
-
-const regions = [
-  { city: 'Chicago', code: 'us' },
-  { city: 'New York', code: 'us' },
-  { city: 'London', code: 'gb' },
-  { city: 'Frankfurt', code: 'de' },
-  { city: 'Amsterdam', code: 'nl' },
-  { city: 'Tokyo', code: 'jp' },
-  { city: 'Singapore', code: 'sg' },
-];
 
 const tariffs: TariffRow[] = [
   {
@@ -81,6 +71,7 @@ const addons = [
 
 interface Server {
   id: number;
+  /** Both are empty until the catalog answers; the first option stands in until then. */
   os: string;
   region: string;
   selectedTariffId: number | null;
@@ -154,10 +145,14 @@ function Dropdown<T extends string>({
   );
 }
 
-function FlagImage({ code, city }: { code: string; city: string }) {
+function FlagImage({ region }: { region: Region | undefined }) {
+  const src = region ? regionFlagSrc(region) : null;
+
   return (
     <span className="relative inline-block h-4 w-6 overflow-hidden rounded-[2px]">
-      <Image src={`/flags/${code}.svg`} alt={city} fill className="object-cover" />
+      {src && region && (
+        <Image src={src} alt={regionCountry(region)} fill className="object-cover" />
+      )}
     </span>
   );
 }
@@ -187,20 +182,28 @@ function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean
 function ServerCard({
   server,
   index,
+  osOptions,
+  regions,
   onUpdate,
   onRemove,
   canRemove,
 }: {
   server: Server;
   index: number;
+  osOptions: string[];
+  regions: Region[];
   onUpdate: (s: Server) => void;
   onRemove: () => void;
   canRemove: boolean;
 }) {
   const regionCities = regions.map((r) => r.city);
 
-  function regionCode(city: string) {
-    return regions.find((r) => r.city === city)?.code ?? 'us';
+  // The catalog arrives after first paint, so fall back to whatever loaded first.
+  const osValue = server.os || osOptions[0] || '';
+  const regionValue = server.region || regionCities[0] || '';
+
+  function regionFor(city: string) {
+    return regions.find((r) => r.city === city);
   }
 
   function toggleAddon(id: string, enabled: boolean) {
@@ -237,26 +240,26 @@ function ServerCard({
         <div>
           <p className="mb-2.5 text-base font-medium text-white/50">Operation System</p>
           <Dropdown
-            value={server.os}
-            options={osList}
+            value={osValue}
+            options={osOptions}
             onChange={(os) => onUpdate({ ...server, os })}
           />
         </div>
         <div>
           <p className="mb-2.5 text-base font-medium text-white/50">Region</p>
           <Dropdown
-            value={server.region}
+            value={regionValue}
             options={regionCities}
             onChange={(region) => onUpdate({ ...server, region })}
             renderOption={(city) => (
               <>
-                <FlagImage code={regionCode(city)} city={city} />
+                <FlagImage region={regionFor(city)} />
                 {city}
               </>
             )}
             renderValue={(city) => (
               <>
-                <FlagImage code={regionCode(city)} city={city} />
+                <FlagImage region={regionFor(city)} />
                 {city}
               </>
             )}
@@ -369,11 +372,20 @@ function CostPanel({ servers, onRemove }: { servers: Server[]; onRemove: (id: nu
 export function CloudServerBuilder() {
   const nextId = useRef(2);
 
+  const { operatingSystems } = useDeployableOperatingSystems();
+  const { regions } = useDeployableRegions();
+
+  const osOptions = useMemo(() => operatingSystems.map((os) => os.name), [operatingSystems]);
+  const sortedRegions = useMemo(
+    () => [...regions].sort((a, b) => a.city.localeCompare(b.city)),
+    [regions]
+  );
+
   const [servers, setServers] = useState<Server[]>([
     {
       id: 1,
-      os: 'Ubuntu 24.04',
-      region: 'Chicago',
+      os: '',
+      region: '',
       selectedTariffId: null,
       enabledAddons: new Set(),
     },
@@ -385,8 +397,8 @@ export function CloudServerBuilder() {
       ...prev,
       {
         id,
-        os: 'Ubuntu 24.04',
-        region: 'Chicago',
+        os: '',
+        region: '',
         selectedTariffId: null,
         enabledAddons: new Set(),
       },
@@ -413,6 +425,8 @@ export function CloudServerBuilder() {
               key={s.id}
               server={s}
               index={i}
+              osOptions={osOptions}
+              regions={sortedRegions}
               onUpdate={updateServer}
               onRemove={() => removeServer(s.id)}
               canRemove={servers.length > 1}
