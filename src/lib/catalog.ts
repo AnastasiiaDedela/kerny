@@ -33,10 +33,16 @@ const CONTINENT_ORDER = ['North America', 'Europe', 'Asia', 'Australia', 'South 
 const countryNames = new Intl.DisplayNames(['en'], { type: 'region' });
 
 /**
+ * Structural subset shared by catalog regions and the region embedded in a server detail,
+ * so both can use the display helpers below.
+ */
+type RegionLike = Pick<Region, 'country' | 'countryCode' | 'flagUrl'>;
+
+/**
  * `region.country` is an ISO alpha-2 code (`'NL'`), not a label, so resolve it for display.
  * Falls back to the raw code for anything `Intl` doesn't recognise.
  */
-export function regionCountry(region: Region): string {
+export function regionCountry(region: RegionLike): string {
   const code = region.countryCode ?? region.country;
   if (!code) return region.country;
 
@@ -44,7 +50,7 @@ export function regionCountry(region: Region): string {
 }
 
 /** The flag to render for a region, or `null` when we have no artwork for its country. */
-export function regionFlagSrc(region: Region): string | null {
+export function regionFlagSrc(region: RegionLike): string | null {
   if (region.flagUrl) return region.flagUrl;
 
   const code = (region.countryCode ?? region.country).toLowerCase();

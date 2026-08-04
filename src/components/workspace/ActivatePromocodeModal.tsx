@@ -2,6 +2,9 @@
 
 import { useState } from 'react';
 
+import { fieldError, formError } from '@/api/auth';
+import { useActivatePromocode } from '@/api/billing';
+import { FieldError, FormError } from '@/components/layout/auth/shared';
 import { ModalActions, ModalField, ModalShell } from '@/components/workspace/modal-parts';
 
 function ActivatePromocodeModal({
@@ -13,8 +16,11 @@ function ActivatePromocodeModal({
 }) {
   const [promocode, setPromocode] = useState('');
 
+  const activate = useActivatePromocode();
+
   const close = () => {
     setPromocode('');
+    activate.reset();
     onOpenChange(false);
   };
 
@@ -23,7 +29,8 @@ function ActivatePromocodeModal({
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          close();
+          // The credit lands on the balance immediately; the hook refreshes it.
+          activate.mutate({ code: promocode.trim() }, { onSuccess: close });
         }}
         className="mt-5 lg:mt-4"
       >
@@ -34,14 +41,17 @@ function ActivatePromocodeModal({
           value={promocode}
           onValueChange={setPromocode}
         />
+        <FieldError>{fieldError(activate.error, 'code')}</FieldError>
 
-        <ModalActions submitLabel="Activate" onCancel={close} />
+        <FormError>{formError(activate.error)}</FormError>
+
+        <ModalActions submitLabel="Activate" onCancel={close} pending={activate.isPending} />
       </form>
     </ModalShell>
   );
 }
 
-/** Trigger + dialog in one client island, so BalanceOverview stays a server component. */
+/** Trigger + dialog in one client island, so the button keeps its place in the layout. */
 export function ActivatePromocodeButton() {
   const [open, setOpen] = useState(false);
 

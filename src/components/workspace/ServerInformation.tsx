@@ -5,17 +5,21 @@ import Image from 'next/image';
 import { ServerHistory, type HistoryEntry } from '@/components/workspace/ServerHistory';
 import { ServerIpAddresses, type IpAddressGroup } from '@/components/workspace/ServerIpAddresses';
 import { ServerBackups } from '@/components/workspace/ServerBackups';
+import { useRevealServerPassword, type ServerStatus } from '@/api/servers';
+import { isServerActive, serverStatusLabel } from '@/lib/servers';
 import { cn } from '@/lib/utils';
 
 export interface ServerInfo {
   name: string;
   host: string;
-  flag: string;
+  /** `null` when we ship no flag for the region's country. */
+  flag: string | null;
   flagAlt: string;
   ip: string;
   login: string;
-  password: string;
-  status: 'Active' | 'Inactive';
+  /** Whether the API holds a password it can reveal; Google-only servers may not. */
+  passwordAvailable: boolean;
+  status: ServerStatus;
   cost: string;
   validUntil: string;
   tariff: string;
@@ -64,17 +68,21 @@ function CopyButton({ value, label }: { value: string; label: string }) {
 }
 
 export function ServerInformation({
+  serverId,
   server,
   history,
   ipGroups,
   instruction,
   backups,
+  backupsEnabled,
 }: {
+  serverId: string;
   server: ServerInfo;
   history: HistoryEntry[];
   ipGroups: IpAddressGroup[];
   instruction: string[];
   backups: string[];
+  backupsEnabled: boolean;
 }) {
   const [activeTab, setActiveTab] = useState<Tab>('Information');
 
@@ -90,7 +98,9 @@ export function ServerInformation({
           <h1 className="text-xl leading-6 font-semibold text-white">{server.name}</h1>
           <div className="flex items-center gap-2.5">
             <span className="relative block h-4 w-5 shrink-0 overflow-hidden rounded-[5px]">
-              <Image src={server.flag} alt={server.flagAlt} fill className="object-cover" />
+              {server.flag && (
+                <Image src={server.flag} alt={server.flagAlt} fill className="object-cover" />
+              )}
             </span>
             <span className="truncate text-base leading-[19px] font-medium text-white">
               {server.host}
@@ -123,18 +133,37 @@ export function ServerInformation({
         </div>
       </div>
 
-      {activeTab === 'Information' && <InformationPanel server={server} />}
+      {activeTab === 'Information' && <InformationPanel serverId={serverId} server={server} />}
       {activeTab === 'History' && <ServerHistory data={history} />}
       {activeTab === 'IP-addresses' && (
         <ServerIpAddresses groups={ipGroups} instruction={instruction} />
       )}
-      {activeTab === 'Backups' && <ServerBackups paragraphs={backups} />}
+      {activeTab === 'Backups' && (
+        <ServerBackups serverId={serverId} paragraphs={backups} enabled={backupsEnabled} />
+      )}
     </section>
   );
 }
 
-function InformationPanel({ server }: { server: ServerInfo }) {
+function InformationPanel({ serverId, server }: { serverId: string; server: ServerInfo }) {
   const [revealed, setRevealed] = useState(false);
+  const reveal = useRevealServerPassword(serverId);
+
+  /**
+   * The password is never part of the detail payload — it is fetched on demand and kept
+   * in this component's state only, so it disappears when the panel unmounts.
+   */
+  function togglePassword() {
+    if (revealed) {
+      setRevealed(false);
+      return;
+    }
+    if (reveal.data) {
+      setRevealed(true);
+      return;
+    }
+    reveal.mutate(undefined, { onSuccess: () => setRevealed(true) });
+  }
 
   return (
     <div className="mt-5 flex flex-col gap-2.5">
@@ -154,12 +183,15 @@ function InformationPanel({ server }: { server: ServerInfo }) {
 
       <Row label="Password">
         <span className="flex items-center gap-2.5">
-          <Value>{revealed ? server.password : '*************'}</Value>
+          <Value>
+            {revealed && reveal.data ? reveal.data.credential.password : '*************'}
+          </Value>
           <button
             type="button"
-            onClick={() => setRevealed((v) => !v)}
+            onClick={togglePassword}
+            disabled={!server.passwordAvailable || reveal.isPending}
             aria-label={revealed ? 'Hide password' : 'Show password'}
-            className="shrink-0 transition-opacity hover:opacity-60"
+            className="shrink-0 transition-opacity hover:opacity-60 disabled:opacity-30"
           >
             <Image
               src={
@@ -180,10 +212,10 @@ function InformationPanel({ server }: { server: ServerInfo }) {
           <span
             className={cn(
               'size-1 rounded-full',
-              server.status === 'Active' ? 'bg-[#00F551]' : 'bg-destructive'
+              isServerActive(server.status) ? 'bg-[#00F551]' : 'bg-destructive'
             )}
           />
-          <Value>{server.status}</Value>
+          <Value>{serverStatusLabel(server.status)}</Value>
         </span>
       </Row>
 

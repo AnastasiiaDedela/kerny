@@ -2,16 +2,35 @@
 
 import { useMemo, useState } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import {
   useDeployableOperatingSystems,
   useDeployableRegions,
   type OperatingSystem,
   type Region,
 } from '@/api/catalog';
+import {
+  usePricing,
+  useQuoteTotals,
+  type BillingPeriod,
+  type PricingBillingPeriod,
+  type PricingCatalog,
+  type PricingTariff,
+  type QuoteItem,
+} from '@/api/pricing';
+import { useCreateServer } from '@/api/servers';
 import { continentsOf, regionCountry, regionFlagSrc, regionsIn } from '@/lib/catalog';
+import {
+  formatCoin,
+  formatCpu,
+  formatDisk,
+  formatRam,
+  formatTransfer,
+  tariffMonthlyPrice,
+} from '@/lib/pricing';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { TariffTable, type TariffRow } from '@/components/pricing/TariffTable';
+import { TariffTable, toTariffRow } from '@/components/pricing/TariffTable';
 
 /**
  * The picker is family-level, but the API lists one entry per image, so each card matches
@@ -123,61 +142,8 @@ const osGroups: {
  */
 const pingColors = ['#FAB500', '#00F700', '#E6132B'];
 
-const tariffs: TariffRow[] = [
-  {
-    id: 1,
-    cpu: '1 × 3.3 GGz',
-    ram: '1 GB',
-    nvme: '15 GB',
-    channel: '1 Gbit / Sec',
-    costPerMonth: 50,
-  },
-  {
-    id: 2,
-    cpu: '1 × 3.3 GGz',
-    ram: '2 GB',
-    nvme: '30 GB',
-    channel: '1 Gbit / Sec',
-    costPerMonth: 50,
-  },
-  {
-    id: 3,
-    cpu: '1 × 3.3 GGz',
-    ram: '1 GB',
-    nvme: '15 GB',
-    channel: '1 Gbit / Sec',
-    costPerMonth: 50,
-  },
-  {
-    id: 4,
-    cpu: '1 × 3.3 GGz',
-    ram: '1 GB',
-    nvme: '15 GB',
-    channel: '1 Gbit / Sec',
-    costPerMonth: 50,
-  },
-  {
-    id: 5,
-    cpu: '1 × 3.3 GGz',
-    ram: '1 GB',
-    nvme: '15 GB',
-    channel: '1 Gbit / Sec',
-    costPerMonth: 50,
-  },
-  {
-    id: 6,
-    cpu: '1 × 3.3 GGz',
-    ram: '1 GB',
-    nvme: '15 GB',
-    channel: '1 Gbit / Sec',
-    costPerMonth: 50,
-  },
-];
-
 const fieldClass =
   'h-[46px] w-full rounded-[8px] bg-white/[0.04] px-5 py-[13px] text-sm leading-[17px] font-normal text-white outline-none placeholder:text-white/50';
-
-type Period = 'Hour' | 'Day' | 'Month';
 
 function SectionHeading({ number, title }: { number: string; title: string }) {
   return (
@@ -235,44 +201,70 @@ function CostSummary({
   os,
   region,
   tariff,
+  regionId,
+  vat,
+  quote,
+  periods,
   period,
   onPeriodChange,
+  onCreate,
+  canCreate,
+  creating,
 }: {
   os: string;
   region: string;
-  tariff: TariffRow | undefined;
-  period: Period;
-  onPeriodChange: (p: Period) => void;
+  tariff: PricingTariff | undefined;
+  regionId: string | undefined;
+  vat: PricingCatalog['vat'] | null;
+  quote: { total: string | null; isPending: boolean; isError: boolean };
+  periods: PricingBillingPeriod[];
+  period: BillingPeriod;
+  onPeriodChange: (p: BillingPeriod) => void;
+  onCreate: () => void;
+  canCreate: boolean;
+  creating: boolean;
 }) {
+  const periodLabel = periods.find((p) => p.id === period)?.label ?? '—';
+
   const rows: [string, string][] = [
     ['OS', os || '—'],
+    ['Billing', periodLabel],
     ['Region', region || '—'],
-    ['CPU', tariff?.cpu ?? '—'],
-    ['RAM', tariff?.ram ?? '—'],
-    ['NVM', tariff?.nvme ?? '—'],
-    ['Network Channel', tariff?.channel ?? '—'],
-    ['Configuration', '666 € / hour'],
-    ['Backups', '666 € / hour'],
-    ['Public IP', '666 € / hour'],
+    ['CPU', tariff ? formatCpu(tariff.cpuCount) : '—'],
+    ['RAM', tariff ? formatRam(tariff.ramMb) : '—'],
+    ['NVMe', tariff ? formatDisk(tariff.diskGb) : '—'],
+    ['Network Channel', tariff ? formatTransfer(tariff.bandwidthGb) : '—'],
+    ['Configuration', tariff ? `${formatCoin(tariffMonthlyPrice(tariff, regionId))} / month` : '—'],
     ['Server Number', '1'],
+    ['VAT', vat ? `VAT is ${vat.included ? '' : 'not '}included` : '—'],
   ];
+
+  /** The mock only specifies the pending copy; the rest mirror the same slot. */
+  const quoteStatus = () => {
+    if (!tariff) return 'Select a configuration';
+    if (quote.isPending) return 'Preparing quote...';
+    if (quote.isError) return 'Could not price this configuration';
+    if (quote.total) return `Total ${formatCoin(quote.total)}`;
+    return 'Preparing quote...';
+  };
 
   return (
     <div className="rounded-[10px] bg-white/[0.04] p-6 lg:w-80">
       <p className="text-xl leading-6 font-semibold text-white">Cost</p>
 
-      <div className="mt-3 flex h-10 items-center rounded-[8px] bg-[#0F0F0F] p-1">
-        {(['Hour', 'Day', 'Month'] as Period[]).map((p) => (
+      {/* Two-up: the four API billing periods don't fit legibly on one row. */}
+      <div className="mt-3 grid grid-cols-2 gap-1 rounded-[8px] bg-[#0F0F0F] p-1">
+        {periods.map((p) => (
           <button
-            key={p}
+            key={p.id}
             type="button"
-            onClick={() => onPeriodChange(p)}
+            onClick={() => onPeriodChange(p.id)}
             className={cn(
-              'flex h-8 flex-1 items-center justify-center rounded-[5px] text-sm transition-colors',
-              period === p ? 'bg-white/[0.06] text-white' : 'text-white/50 hover:text-white/80'
+              'flex h-8 items-center justify-center rounded-[5px] text-sm transition-colors',
+              period === p.id ? 'bg-white/[0.06] text-white' : 'text-white/50 hover:text-white/80'
             )}
           >
-            {p}
+            {p.label}
           </button>
         ))}
       </div>
@@ -281,30 +273,41 @@ function CostSummary({
         {rows.map(([label, value]) => (
           <div key={label} className="flex items-center justify-between gap-4">
             <span className="text-sm leading-[17px] text-white/50">{label}</span>
-            <span className="text-sm leading-[17px] font-medium text-white">{value}</span>
+            <span className="text-right text-sm leading-[17px] font-medium text-white">
+              {value}
+            </span>
           </div>
         ))}
-
-        <div className="flex items-center justify-between gap-4">
-          <span className="text-base leading-[19px] font-medium text-white">Total Price</span>
-          <span className="text-base leading-[19px] font-medium text-white">999 999 €</span>
-        </div>
       </div>
 
-      <Button className="mt-4 h-[46px] w-full text-sm">Proceed to Payment</Button>
+      <div className="mt-4 flex min-h-[46px] items-center rounded-[8px] bg-white/[0.04] px-4 py-[13px]">
+        <span className="text-sm leading-[17px] text-white/50">{quoteStatus()}</span>
+      </div>
+
+      <Button
+        onClick={onCreate}
+        disabled={!canCreate || creating}
+        className="mt-4 h-[46px] w-full text-sm disabled:opacity-50"
+      >
+        {creating ? 'Creating...' : 'Create server'}
+      </Button>
     </div>
   );
 }
 
 export function NewCloudServerForm() {
+  const router = useRouter();
+
   const { operatingSystems } = useDeployableOperatingSystems();
   const { regions } = useDeployableRegions();
+  const { tariffs, billingPeriods, vat } = usePricing();
+  const createServer = useCreateServer();
 
   const [selectedOsId, setSelectedOsId] = useState('');
   const [selectedContinent, setSelectedContinent] = useState('Europe');
   const [selectedRegionId, setSelectedRegionId] = useState('');
-  const [selectedTariffId, setSelectedTariffId] = useState<number | null>(2);
-  const [period, setPeriod] = useState<Period>('Hour');
+  const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
+  const [period, setPeriod] = useState<BillingPeriod>('MONTHLY');
   const [hostName, setHostName] = useState('');
   const [serverName, setServerName] = useState('');
   const [comment, setComment] = useState('');
@@ -329,7 +332,72 @@ export function NewCloudServerForm() {
   const activeRegion =
     continentRegions.find((r) => r.id === selectedRegionId) ?? continentRegions[0];
 
-  const selectedTariff = tariffs.find((t) => t.id === selectedTariffId);
+  // The grid picks a family; a quote needs one image, so take the first of that family.
+  // There is no version picker in this design, so the choice has to be deterministic.
+  const activeOsImage = activeOs ? operatingSystems.find(activeOs.match) : undefined;
+
+  const rows = useMemo(
+    () =>
+      activeRegion
+        ? tariffs
+            .filter((tariff) => tariff.supportedRegionIds.includes(activeRegion.id))
+            .map((tariff) => toTariffRow(tariff, activeRegion.id))
+        : [],
+    [tariffs, activeRegion]
+  );
+
+  // The summary needs the catalog record, not the table's pre-formatted row.
+  const selectedTariff = tariffs.find((tariff) => tariff.id === selectedPlanId);
+
+  const quoteItems = useMemo<QuoteItem[]>(() => {
+    if (!activeOsImage || !activeRegion || !selectedTariff) return [];
+
+    return [
+      {
+        operatingSystemId: activeOsImage.id,
+        regionId: activeRegion.id,
+        planId: selectedTariff.id,
+        billingPeriod: period,
+        addonIds: [],
+        quantity: 1,
+      },
+    ];
+  }, [activeOsImage, activeRegion, selectedTariff, period]);
+
+  const {
+    quoteId,
+    total,
+    isPending: quotePending,
+    isError: quoteError,
+  } = useQuoteTotals(quoteItems);
+
+  /** The API prices from the quote, so provisioning can't start before one exists. */
+  const canCreate = Boolean(
+    quoteId &&
+    activeOsImage &&
+    activeRegion &&
+    selectedTariff &&
+    serverName.trim() &&
+    hostName.trim()
+  );
+
+  function handleCreate() {
+    if (!canCreate || !quoteId || !activeOsImage || !activeRegion || !selectedTariff) return;
+
+    createServer.mutate(
+      {
+        quoteId,
+        name: serverName.trim(),
+        hostname: hostName.trim(),
+        operatingSystemId: activeOsImage.id,
+        regionId: activeRegion.id,
+        planId: selectedTariff.id,
+        billingPeriod: period,
+        addonIds: [],
+      },
+      { onSuccess: (result) => router.push(`/workspace/servers/${result.server.id}`) }
+    );
+  }
 
   return (
     <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start lg:gap-[30px]">
@@ -401,7 +469,11 @@ export function NewCloudServerForm() {
                   region={region}
                   ping={pingColors[i % pingColors.length]}
                   selected={activeRegion?.id === region.id}
-                  onClick={() => setSelectedRegionId(region.id)}
+                  onClick={() => {
+                    setSelectedRegionId(region.id);
+                    // Plans differ by region, so a held selection may not be on sale here.
+                    setSelectedPlanId(null);
+                  }}
                 />
               ))}
             </div>
@@ -412,9 +484,9 @@ export function NewCloudServerForm() {
         <section>
           <SectionHeading number="03" title="Configuration" />
           <TariffTable
-            data={tariffs}
-            selectedId={selectedTariffId}
-            onSelect={setSelectedTariffId}
+            data={rows}
+            selectedId={selectedPlanId}
+            onSelect={setSelectedPlanId}
             showHourly
           />
         </section>
@@ -461,11 +533,19 @@ export function NewCloudServerForm() {
       </div>
 
       <CostSummary
-        os={activeOs?.label ?? ''}
+        // The exact image, not the family card's label — that's what gets provisioned.
+        os={activeOsImage?.name ?? ''}
         region={activeRegion?.city ?? ''}
         tariff={selectedTariff}
+        regionId={activeRegion?.id}
+        vat={vat}
+        quote={{ total, isPending: quotePending, isError: quoteError }}
+        periods={billingPeriods}
         period={period}
         onPeriodChange={setPeriod}
+        onCreate={handleCreate}
+        canCreate={canCreate}
+        creating={createServer.isPending}
       />
     </div>
   );

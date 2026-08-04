@@ -10,15 +10,17 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
+import type { ServerStatus } from '@/api/servers';
+import { isServerActive, serverStatusLabel } from '@/lib/servers';
 import { cn } from '@/lib/utils';
 
 export interface ServerRow {
-  id: number;
+  id: string;
   name: string;
   os: string;
   ip: string;
   region: string;
-  status: 'Active' | 'Inactive';
+  status: ServerStatus;
 }
 
 interface ServerTableProps {
@@ -60,10 +62,10 @@ function StatusValue({ status }: { status: ServerRow['status'] }) {
       <span
         className={cn(
           'size-1 rounded-full',
-          status === 'Active' ? 'bg-[#00F651]' : 'bg-destructive'
+          isServerActive(status) ? 'bg-[#00F651]' : 'bg-destructive'
         )}
       />
-      {status}
+      {serverStatusLabel(status)}
     </span>
   );
 }

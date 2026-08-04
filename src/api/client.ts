@@ -16,6 +16,18 @@ export const apiClient = createClient<paths>({
   credentials: 'include',
 });
 
+/**
+ * Header required by the endpoints that create, charge or destroy (`POST /api/servers`,
+ * `.../backups/enable`, `.../extend`, `DELETE /api/servers/{id}`, and the billing writes),
+ * so a retried request can't double-charge.
+ *
+ * One fresh key per call is correct here: mutations don't auto-retry (`query-client.ts`
+ * sets `retry: false`), so every invocation is a distinct user intent.
+ */
+export function idempotencyHeaders() {
+  return { 'Idempotency-Key': crypto.randomUUID() };
+}
+
 type ErrorEnvelope = components['schemas']['ApiErrorEnvelope'];
 
 function isErrorEnvelope(value: unknown): value is ErrorEnvelope {

@@ -12,8 +12,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useAccountBalance } from '@/api/account';
 import { useAuthModal } from '@/components/layout/AuthModalProvider';
+import { DepositModal } from '@/components/workspace/DepositModal';
 import { navItems, useActiveNavHref } from '@/components/workspace/WorkspaceSidebar';
+import { formatBalance } from '@/lib/billing';
 import { cn } from '@/lib/utils';
 
 const profileLinks = [
@@ -40,10 +43,19 @@ const profileLinks = [
   },
 ];
 
+/** Shown in the balance slot until `/api/me` answers. */
+const LOADING_BALANCE = '—';
+
 export function WorkspaceHeader() {
   const [open, setOpen] = useState(false);
+  const [depositOpen, setDepositOpen] = useState(false);
   const { logOut } = useAuthModal();
   const activeHref = useActiveNavHref();
+
+  // `/api/me` carries the balance the header shows; the billing summary is the balance
+  // page's own source, and both are refreshed after a deposit or promocode.
+  const { balance } = useAccountBalance();
+  const balanceLabel = balance ? formatBalance(balance.amount) : LOADING_BALANCE;
 
   return (
     <header className="bg-background pt-7.5 pb-5">
@@ -60,10 +72,13 @@ export function WorkspaceHeader() {
         <div className="hidden items-center gap-6 lg:flex">
           <div className="text-right">
             <p className="text-sm leading-[17px] text-white/50">Your Balance</p>
-            <p className="text-base leading-[19px] font-medium text-white">999 €</p>
+            <p className="text-base leading-[19px] font-medium text-white">{balanceLabel}</p>
           </div>
 
-          <Button className="h-6 min-h-0 w-16 min-w-0 rounded-[500px] px-2.5 py-0 text-xs leading-[15px] font-normal">
+          <Button
+            onClick={() => setDepositOpen(true)}
+            className="h-6 min-h-0 w-16 min-w-0 rounded-[500px] px-2.5 py-0 text-xs leading-[15px] font-normal"
+          >
             Deposit
           </Button>
 
@@ -156,9 +171,16 @@ export function WorkspaceHeader() {
           <div className="flex items-center justify-between rounded-[10px] border-[0.5px] border-white/20 px-4 py-3">
             <div>
               <p className="text-sm leading-[17px] text-white/50">Your Balance</p>
-              <p className="text-base leading-[19px] font-medium text-white">999 €</p>
+              <p className="text-base leading-[19px] font-medium text-white">{balanceLabel}</p>
             </div>
-            <Button size="default" className="min-w-0 px-4">
+            <Button
+              size="default"
+              onClick={() => {
+                setOpen(false);
+                setDepositOpen(true);
+              }}
+              className="min-w-0 px-4"
+            >
               Deposit
             </Button>
           </div>
@@ -192,6 +214,8 @@ export function WorkspaceHeader() {
           </div>
         </div>
       )}
+
+      <DepositModal open={depositOpen} onOpenChange={setDepositOpen} />
     </header>
   );
 }

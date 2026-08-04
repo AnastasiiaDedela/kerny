@@ -3,6 +3,7 @@
 import { X } from 'lucide-react';
 import Image from 'next/image';
 
+import { useContactDetails } from '@/api/content';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
@@ -13,24 +14,17 @@ import { cn } from '@/lib/utils';
 const description =
   'Lorem ipsum dolor sit amet consectetur. Pellentesque malesuada gravida eget amet cursus sagittis';
 
-const contactInfo = [
-  { icon: '/icons/mail.svg', width: 26, height: 20, label: 'Email', value: 'username@vps.com' },
-  {
-    icon: '/icons/address.svg',
-    width: 26,
-    height: 26,
-    label: 'Address',
-    value: 'City, Region, LV-1234',
-  },
-  {
-    icon: '/icons/calendar.svg',
-    width: 26,
-    height: 26,
-    label: 'Schedule',
-    value: 'Monday - Friday: 08:00 - 23:00\nSaturday - Sunday: 10:00 - 18:00',
-  },
-];
+/** Icon and label are ours; the value comes from `/api/public/contact-info`. */
+const contactRows = [
+  { icon: '/icons/mail.svg', width: 26, height: 20, label: 'Email' },
+  { icon: '/icons/address.svg', width: 26, height: 26, label: 'Address' },
+  { icon: '/icons/calendar.svg', width: 26, height: 26, label: 'Schedule' },
+] as const;
 
+/**
+ * Decorative brand icons. The API's `socialLinks` is empty and carries no icon, so these
+ * stay local — give them hrefs once the endpoint returns any.
+ */
 const socials = [
   { name: 'X', icon: '/icons/x.svg', width: 27, height: 24 },
   { name: 'TikTok', icon: '/icons/tiktok.svg', width: 21, height: 24 },
@@ -48,6 +42,14 @@ export function ContactModal({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
+  const { contactInfo } = useContactDetails();
+
+  const values: Record<(typeof contactRows)[number]['label'], string> = {
+    Email: contactInfo?.supportEmail ?? '—',
+    Address: contactInfo?.address ?? '—',
+    Schedule: contactInfo?.schedule ?? '—',
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
@@ -99,13 +101,13 @@ export function ContactModal({
 
           <div className="hidden w-[259px] flex-col justify-center gap-7.5 lg:flex">
             <div className="flex flex-col gap-8">
-              {contactInfo.map(({ icon, width, height, label, value }) => (
+              {contactRows.map(({ icon, width, height, label }) => (
                 <div key={label} className="flex items-center gap-3">
                   <Image src={icon} alt="" width={width} height={height} className="shrink-0" />
                   <div className="flex flex-col gap-1">
                     <p className="text-muted-foreground text-sm">{label}</p>
                     <p className="text-foreground text-sm font-medium whitespace-pre-line">
-                      {value}
+                      {values[label]}
                     </p>
                   </div>
                 </div>

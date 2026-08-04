@@ -32,6 +32,12 @@ TanStack Query + openapi-fetch data layer — see the `api-layer` skill before t
 - `health/` — `useHealth`/`useReadiness`/`useApiStatus` liveness + readiness probes.
 - `account/` — `queries.ts` (`useAccountSettings`, `useMe`, `useAccountBalance`, `useAccountDeletion`), `mutations.ts` (email change request/confirm, password change, account deletion).
 - `catalog/` — public regions + operating systems; `useRegions`/`usePublicRegions`/`useDeployableRegions`, `useOperatingSystems`/`useDeployableOperatingSystems`. Reads only, 1h `staleTime`.
+- `content/` — public FAQ, legal documents, contact info; `useFaqItems`, `useLegalSummaries`/`useLegalDocument`, `useContactDetails`. The legal hooks are unwired (no `/legal` route exists).
+- `pricing/` — `usePricing` (tariffs/addons/billing periods/VAT) and `useQuote`/`useQuoteTotals`. The quote is a POST modelled as a **query**: pure function of its items, so the cost panels re-run it on every selection change.
+- `billing/` — `queries.ts` (`useBillingSummary`/`useBillingOverview`, `useBillingTransactions`, `useDefaultPaymentMethod`), `mutations.ts` (profile patch, deposit, payment-method setup + save, promocode). Cards are collected by the provider: setup returns a redirect or a hosted-session token, never a direct card save.
+- `servers/` — `queries.ts` (`useServers`/`useServerList`, `useServer`, `useServerHistory`, `useServerIpAddresses`, `useServerBackups`), `mutations.ts` (power/restart/settings/backups/reinstall/password reset+reveal/extend/delete/create). Short 15s `staleTime` — status changes without user action.
+
+`POST /api/servers`, `.../backups/enable`, `.../extend` and `DELETE /api/servers/{id}` require an `Idempotency-Key` header — use `idempotencyHeaders()` from `client.ts`.
 
 ## `src/types/`
 
@@ -53,7 +59,7 @@ Shell: `WorkspaceHeader.tsx`, `WorkspaceSidebar.tsx` (exports `navItems`).
 Tables: `ServerTable.tsx`, `BalanceHistoryTable.tsx`, `ServerHistory.tsx`, `ServerIpAddresses.tsx`.
 Server detail: `ServerInformation.tsx`, `ServerManagement.tsx`, `ServerBackups.tsx`.
 Other: `BalanceOverview.tsx`, `NotificationList.tsx`, `DocumentationSection.tsx`, `NewCloudServerForm.tsx`, `PaymentMethodForm.tsx`.
-Modals: `modal-parts.tsx` (`ModalShell`, `ModalField`), `ActivatePromocodeModal.tsx`, `AddPaymentMethodModal.tsx`.
+Modals: `modal-parts.tsx` (`ModalShell`, `ModalField`), `ActivatePromocodeModal.tsx`, `AddPaymentMethodModal.tsx`, `DepositModal.tsx`.
 
 ## `src/components/layout/`
 
@@ -71,6 +77,9 @@ Modals: `modal-parts.tsx` (`ModalShell`, `ModalField`), `ActivatePromocodeModal.
 - `utils.ts` — `cn()` (clsx + tailwind-merge). Only className helper in the repo.
 - `api-proxy.ts` — `proxyToApi()`; origin/cookie rewriting. See `api-layer`.
 - `catalog.ts` — presentation helpers for `@/api/catalog` regions: `regionCountry()` (ISO code → label), `regionFlagSrc()` (null when no local flag), `continentsOf()`, `regionsIn()`.
+- `pricing.ts` — `tariffMonthlyPrice()` (region override beats the base price), `formatAmount()` and the CPU/RAM/disk/bandwidth formatters. Money is a decimal string; never parse it as a float.
+- `billing.ts` — `formatBalance()` (`999 €`), the ledger formatters + `toHistoryEntry()` (API entry → history-table row), `formatPaymentMethod()`, `parseExpiry()` (`MM/YY` → month/year).
+- `servers.ts` — `isServerActive()`/`serverStatusLabel()` (eleven API states → one green dot + a readable label), `formatServerDate()`, `formatServerTimestamp()`.
 
 ## `public/`
 

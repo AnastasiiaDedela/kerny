@@ -1,50 +1,7 @@
 import Link from 'next/link';
 import { CirclePlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { ServerTable, type ServerRow } from '@/components/workspace/ServerTable';
-
-const servers: ServerRow[] = [
-  {
-    id: 1,
-    name: 'Server Name',
-    os: 'CentOs SELinux 8 x64',
-    ip: '192.168.10.245',
-    region: 'Atlantida',
-    status: 'Active',
-  },
-  {
-    id: 2,
-    name: 'Server Name',
-    os: 'CentOs SELinux 8 x64',
-    ip: '192.168.24.108',
-    region: 'Atlantida',
-    status: 'Inactive',
-  },
-  {
-    id: 3,
-    name: 'Server Name',
-    os: 'CentOs SELinux 8 x64',
-    ip: '192.168.33.71',
-    region: 'Atlantida',
-    status: 'Active',
-  },
-  {
-    id: 4,
-    name: 'Server Name',
-    os: 'CentOs SELinux 8 x64',
-    ip: '192.168.45.19',
-    region: 'Atlantida',
-    status: 'Active',
-  },
-  {
-    id: 5,
-    name: 'Server Name',
-    os: 'CentOs SELinux 8 x64',
-    ip: '192.168.58.203',
-    region: 'Atlantida',
-    status: 'Active',
-  },
-];
+import { ServerList } from '@/components/workspace/ServerList';
 
 export default function WorkspacePage() {
   return (
@@ -59,7 +16,7 @@ export default function WorkspacePage() {
 
       <p className="mt-6 mb-4 text-base leading-[19px] text-white/50">Your Active Servers</p>
 
-      <ServerTable data={servers} />
+      <ServerList />
     </div>
   );
 }

@@ -3,82 +3,36 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import { CirclePlus, ChevronDown } from 'lucide-react';
-import { useDeployableOperatingSystems, useDeployableRegions, type Region } from '@/api/catalog';
+import {
+  useDeployableOperatingSystems,
+  useDeployableRegions,
+  type OperatingSystem,
+  type Region,
+} from '@/api/catalog';
+import {
+  usePricing,
+  useQuoteTotals,
+  type BillingPeriod,
+  type PricingAddon,
+  type PricingTariff,
+  type QuoteItem,
+} from '@/api/pricing';
 import { regionCountry, regionFlagSrc } from '@/lib/catalog';
+import { formatAmount } from '@/lib/pricing';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { TariffTable, type TariffRow } from './TariffTable';
-
-// ── Static data ──────────────────────────────────────────────────────────────
-
-const tariffs: TariffRow[] = [
-  {
-    id: 1,
-    cpu: '1 × 3.3 GHz',
-    ram: '1 GB',
-    nvme: '15 GB',
-    channel: '1 Gbit / Sec',
-    costPerMonth: 50,
-  },
-  {
-    id: 2,
-    cpu: '1 × 3.3 GHz',
-    ram: '2 GB',
-    nvme: '30 GB',
-    channel: '1 Gbit / Sec',
-    costPerMonth: 80,
-  },
-  {
-    id: 3,
-    cpu: '2 × 3.3 GHz',
-    ram: '4 GB',
-    nvme: '60 GB',
-    channel: '1 Gbit / Sec',
-    costPerMonth: 140,
-  },
-  {
-    id: 4,
-    cpu: '2 × 3.3 GHz',
-    ram: '8 GB',
-    nvme: '120 GB',
-    channel: '1 Gbit / Sec',
-    costPerMonth: 220,
-  },
-  {
-    id: 5,
-    cpu: '4 × 3.3 GHz',
-    ram: '16 GB',
-    nvme: '240 GB',
-    channel: '1 Gbit / Sec',
-    costPerMonth: 380,
-  },
-  {
-    id: 6,
-    cpu: '8 × 3.3 GHz',
-    ram: '32 GB',
-    nvme: '480 GB',
-    channel: '1 Gbit / Sec',
-    costPerMonth: 650,
-  },
-];
-
-const addons = [
-  { id: 'service1', name: 'Name of Service', price: 10 },
-  { id: 'service2', name: 'Name of Service', price: 10 },
-];
+import { TariffTable, toTariffRow } from './TariffTable';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 interface Server {
   id: number;
-  /** Both are empty until the catalog answers; the first option stands in until then. */
-  os: string;
-  region: string;
-  selectedTariffId: number | null;
-  enabledAddons: Set<string>;
+  /** Catalog ids, empty until the catalog answers; the first option stands in. */
+  osId: string;
+  regionId: string;
+  planId: string | null;
+  addonIds: Set<string>;
 }
-
-type Period = 'Day' | 'Month' | 'Year';
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 
@@ -182,34 +136,52 @@ function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean
 function ServerCard({
   server,
   index,
-  osOptions,
+  operatingSystems,
   regions,
+  tariffs,
+  addons,
   onUpdate,
   onRemove,
   canRemove,
 }: {
   server: Server;
   index: number;
-  osOptions: string[];
+  operatingSystems: OperatingSystem[];
   regions: Region[];
+  tariffs: PricingTariff[];
+  addons: PricingAddon[];
   onUpdate: (s: Server) => void;
   onRemove: () => void;
   canRemove: boolean;
 }) {
-  const regionCities = regions.map((r) => r.city);
-
   // The catalog arrives after first paint, so fall back to whatever loaded first.
-  const osValue = server.os || osOptions[0] || '';
-  const regionValue = server.region || regionCities[0] || '';
+  const osId = server.osId || operatingSystems[0]?.id || '';
+  const regionId = server.regionId || regions[0]?.id || '';
 
-  function regionFor(city: string) {
-    return regions.find((r) => r.city === city);
+  const osIds = operatingSystems.map((os) => os.id);
+  const regionIds = regions.map((r) => r.id);
+
+  function osName(id: string) {
+    return operatingSystems.find((os) => os.id === id)?.name ?? '';
   }
 
+  function regionFor(id: string) {
+    return regions.find((r) => r.id === id);
+  }
+
+  // A plan is only offered where the provider actually has stock.
+  const rows = useMemo(
+    () =>
+      tariffs
+        .filter((tariff) => tariff.supportedRegionIds.includes(regionId))
+        .map((tariff) => toTariffRow(tariff, regionId)),
+    [tariffs, regionId]
+  );
+
   function toggleAddon(id: string, enabled: boolean) {
-    const next = new Set(server.enabledAddons);
+    const next = new Set(server.addonIds);
     enabled ? next.add(id) : next.delete(id);
-    onUpdate({ ...server, enabledAddons: next });
+    onUpdate({ ...server, addonIds: next });
   }
 
   return (
@@ -240,27 +212,31 @@ function ServerCard({
         <div>
           <p className="mb-2.5 text-base font-medium text-white/50">Operation System</p>
           <Dropdown
-            value={osValue}
-            options={osOptions}
-            onChange={(os) => onUpdate({ ...server, os })}
+            value={osId}
+            options={osIds}
+            onChange={(id) => onUpdate({ ...server, osId: id })}
+            renderOption={osName}
+            renderValue={osName}
           />
         </div>
         <div>
           <p className="mb-2.5 text-base font-medium text-white/50">Region</p>
           <Dropdown
-            value={regionValue}
-            options={regionCities}
-            onChange={(region) => onUpdate({ ...server, region })}
-            renderOption={(city) => (
+            value={regionId}
+            options={regionIds}
+            // Switching region can drop the chosen plan, so clear it rather than quote
+            // a plan the new region doesn't sell.
+            onChange={(id) => onUpdate({ ...server, regionId: id, planId: null })}
+            renderOption={(id) => (
               <>
-                <FlagImage region={regionFor(city)} />
-                {city}
+                <FlagImage region={regionFor(id)} />
+                {regionFor(id)?.city ?? ''}
               </>
             )}
-            renderValue={(city) => (
+            renderValue={(id) => (
               <>
-                <FlagImage region={regionFor(city)} />
-                {city}
+                <FlagImage region={regionFor(id)} />
+                {regionFor(id)?.city ?? ''}
               </>
             )}
           />
@@ -271,9 +247,9 @@ function ServerCard({
       <div className="mt-4 md:mt-5">
         <p className="mb-2.5 text-base font-medium text-white/50">Tariff</p>
         <TariffTable
-          data={tariffs}
-          selectedId={server.selectedTariffId}
-          onSelect={(id) => onUpdate({ ...server, selectedTariffId: id })}
+          data={rows}
+          selectedId={server.planId}
+          onSelect={(id) => onUpdate({ ...server, planId: id })}
         />
       </div>
 
@@ -282,11 +258,12 @@ function ServerCard({
         {addons.map((addon) => (
           <div key={addon.id} className="flex items-center gap-3">
             <Toggle
-              checked={server.enabledAddons.has(addon.id)}
+              checked={server.addonIds.has(addon.id)}
               onChange={(v) => toggleAddon(addon.id, v)}
             />
             <span className="text-sm font-medium text-white">
-              {addon.name} <span className="text-white/30">+{addon.price} €</span>
+              {addon.label}{' '}
+              <span className="text-white/30">+{formatAmount(addon.monthlyPrice)} €</span>
             </span>
           </div>
         ))}
@@ -295,25 +272,22 @@ function ServerCard({
   );
 }
 
-function CostPanel({ servers, onRemove }: { servers: Server[]; onRemove: (id: number) => void }) {
-  const [period, setPeriod] = useState<Period>('Day');
-
-  const totalPerMonth = servers.reduce((sum, s) => {
-    const tariff = tariffs.find((t) => t.id === s.selectedTariffId);
-    const addonSum = addons
-      .filter((a) => s.enabledAddons.has(a.id))
-      .reduce((acc, a) => acc + a.price, 0);
-    return sum + (tariff?.costPerMonth ?? 0) + addonSum;
-  }, 0);
-
-  const displayCost =
-    period === 'Day'
-      ? (totalPerMonth / 30).toFixed(2)
-      : period === 'Month'
-        ? totalPerMonth.toFixed(2)
-        : (totalPerMonth * 12).toFixed(2);
-
-  const periodLabel = { Day: 'per day', Month: 'per month', Year: 'per year' }[period];
+function CostPanel({
+  servers,
+  total,
+  periods,
+  period,
+  onPeriodChange,
+  onRemove,
+}: {
+  servers: Server[];
+  total: string | null;
+  periods: { id: BillingPeriod; label: string; months: number }[];
+  period: BillingPeriod;
+  onPeriodChange: (p: BillingPeriod) => void;
+  onRemove: (id: number) => void;
+}) {
+  const periodLabel = periods.find((p) => p.id === period)?.label ?? '';
 
   return (
     <div className="flex flex-col gap-5">
@@ -322,23 +296,24 @@ function CostPanel({ servers, onRemove }: { servers: Server[]; onRemove: (id: nu
         <p className="mb-3 text-base font-medium text-white/50">Total cost with VAT</p>
 
         <div className="mb-5 flex h-10 items-center rounded-[8px] bg-[#0F0F0F] p-1">
-          {(['Day', 'Month', 'Year'] as Period[]).map((p) => (
+          {periods.map((p) => (
             <button
-              key={p}
+              key={p.id}
               type="button"
-              onClick={() => setPeriod(p)}
+              onClick={() => onPeriodChange(p.id)}
               className={cn(
                 'flex h-8 flex-1 items-center justify-center rounded-[5px] text-sm font-normal transition-colors',
-                period === p ? 'bg-white/[0.06] text-white' : 'text-white/50 hover:text-white/80'
+                period === p.id ? 'bg-white/[0.06] text-white' : 'text-white/50 hover:text-white/80'
               )}
             >
-              {p}
+              {p.label}
             </button>
           ))}
         </div>
 
         <p className="mb-5 text-[28px] leading-[34px] font-semibold text-white">
-          {displayCost} € <span className="text-base font-normal text-white/70">{periodLabel}</span>
+          {total ? `${formatAmount(total)} €` : '—'}{' '}
+          <span className="text-base font-normal text-white/70">{periodLabel}</span>
         </p>
 
         <Button className="w-full" size="lg">
@@ -369,40 +344,50 @@ function CostPanel({ servers, onRemove }: { servers: Server[]; onRemove: (id: nu
 
 // ── Main export ───────────────────────────────────────────────────────────────
 
+const emptyServer = (id: number): Server => ({
+  id,
+  osId: '',
+  regionId: '',
+  planId: null,
+  addonIds: new Set(),
+});
+
 export function CloudServerBuilder() {
   const nextId = useRef(2);
 
   const { operatingSystems } = useDeployableOperatingSystems();
   const { regions } = useDeployableRegions();
+  const { tariffs, addons, billingPeriods } = usePricing();
 
-  const osOptions = useMemo(() => operatingSystems.map((os) => os.name), [operatingSystems]);
   const sortedRegions = useMemo(
     () => [...regions].sort((a, b) => a.city.localeCompare(b.city)),
     [regions]
   );
 
-  const [servers, setServers] = useState<Server[]>([
-    {
-      id: 1,
-      os: '',
-      region: '',
-      selectedTariffId: null,
-      enabledAddons: new Set(),
-    },
-  ]);
+  const [servers, setServers] = useState<Server[]>([emptyServer(1)]);
+  const [period, setPeriod] = useState<BillingPeriod>('MONTHLY');
+
+  // Every selection has to be resolved (not just the ones the user touched) before the
+  // API will price the basket, so apply the same first-option fallback the cards render.
+  const quoteItems = useMemo<QuoteItem[]>(
+    () =>
+      servers
+        .map((server) => ({
+          operatingSystemId: server.osId || operatingSystems[0]?.id || '',
+          regionId: server.regionId || sortedRegions[0]?.id || '',
+          planId: server.planId ?? '',
+          billingPeriod: period,
+          addonIds: [...server.addonIds],
+          quantity: 1,
+        }))
+        .filter((item) => item.operatingSystemId && item.regionId && item.planId),
+    [servers, operatingSystems, sortedRegions, period]
+  );
+
+  const { total } = useQuoteTotals(quoteItems);
 
   function addServer() {
-    const id = nextId.current++;
-    setServers((prev) => [
-      ...prev,
-      {
-        id,
-        os: '',
-        region: '',
-        selectedTariffId: null,
-        enabledAddons: new Set(),
-      },
-    ]);
+    setServers((prev) => [...prev, emptyServer(nextId.current++)]);
   }
 
   function removeServer(id: number) {
@@ -425,8 +410,10 @@ export function CloudServerBuilder() {
               key={s.id}
               server={s}
               index={i}
-              osOptions={osOptions}
+              operatingSystems={operatingSystems}
               regions={sortedRegions}
+              tariffs={tariffs}
+              addons={addons}
               onUpdate={updateServer}
               onRemove={() => removeServer(s.id)}
               canRemove={servers.length > 1}
@@ -469,7 +456,14 @@ export function CloudServerBuilder() {
 
         {/* Right – cost panel */}
         <div className="self-start md:top-6">
-          <CostPanel servers={servers} onRemove={removeServer} />
+          <CostPanel
+            servers={servers}
+            total={total}
+            periods={billingPeriods}
+            period={period}
+            onPeriodChange={setPeriod}
+            onRemove={removeServer}
+          />
         </div>
       </div>
     </section>
