@@ -2,6 +2,7 @@
 
 import { useServerList } from '@/api/servers';
 import { ServerTable, type ServerRow } from '@/components/workspace/ServerTable';
+import { WorkspaceNotice } from '@/components/workspace/WorkspaceNotice';
 
 /**
  * Fetches the signed-in user's servers so the workspace page can stay a server component.
@@ -32,12 +33,10 @@ export function ServerList() {
     if (isPending || isError) return null;
 
     return (
-      <div className="rounded-[10px] bg-white/[0.04] p-6">
-        <p className="text-base leading-[19px] font-semibold text-white">No servers yet</p>
-        <p className="mt-2 text-sm leading-[17px] text-white/50">
-          Create your first cloud server to see it here.
-        </p>
-      </div>
+      <WorkspaceNotice
+        title="No servers yet"
+        description="Create your first cloud server to see it here."
+      />
     );
   }
 
