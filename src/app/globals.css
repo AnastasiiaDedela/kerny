@@ -5,6 +5,9 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  /* Named so it sorts by value against sm/md/lg — an inline `min-[1101px]:`
+     variant is emitted before `sm:` and would lose to it on wide screens. */
+  --breakpoint-wide: 1101px;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);
@@ -161,6 +164,71 @@
 @media (prefers-reduced-motion: reduce) {
   .hero-drop,
   .hero-bob {
+    animation: none;
+  }
+}
+
+/* Operation Systems — vertical marquee columns. Each track renders its cards
+   twice and every card carries its own bottom spacing (no flex `gap`), so the
+   track height is an exact multiple of card+gap and translating 50% lands on a
+   seamless loop point.
+
+   Card/gap sizes live here rather than as `sm:[--os-card:…]` utilities because
+   Tailwind orders arbitrary-property utilities independently of breakpoint
+   width, so the wider tier does not reliably win. */
+.os-systems {
+  --os-card: 96px;
+  --os-gap: 12px;
+}
+
+@media (min-width: 40rem) {
+  .os-systems {
+    --os-card: 120px;
+    --os-gap: 16px;
+  }
+}
+
+@media (min-width: 1101px) {
+  .os-systems {
+    --os-card: 152px;
+    --os-gap: 20px;
+  }
+}
+
+@keyframes os-marquee-up {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(0, -50%, 0);
+  }
+}
+
+@keyframes os-marquee-down {
+  from {
+    transform: translate3d(0, -50%, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.os-marquee-up {
+  animation: os-marquee-up var(--os-duration, 26s) linear infinite;
+}
+
+.os-marquee-down {
+  animation: os-marquee-down var(--os-duration, 26s) linear infinite;
+}
+
+.os-marquee:hover .os-marquee-up,
+.os-marquee:hover .os-marquee-down {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .os-marquee-up,
+  .os-marquee-down {
     animation: none;
   }
 }
