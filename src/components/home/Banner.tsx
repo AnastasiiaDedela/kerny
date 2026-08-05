@@ -12,7 +12,7 @@ export function Banner() {
         <div className="flex flex-col items-center gap-8 px-6 py-8 md:flex-row md:gap-6 md:px-12 md:py-14">
           {/* Left — copy */}
           <div className="flex-1 text-white">
-            <div className="flex flex-wrap gap-2">
+            <div className="banner-chips flex flex-wrap gap-2">
               {chips.map((chip) => (
                 <span
                   key={chip}
@@ -23,22 +23,22 @@ export function Banner() {
               ))}
             </div>
 
-            <h1 className="mt-6 text-3xl leading-[1.1] font-extrabold tracking-tight md:text-5xl">
+            <h1 className="banner-heading mt-6 text-3xl leading-[1.1] font-extrabold tracking-tight md:text-5xl">
               Vps Service —<br className="hidden md:block" /> MVP That Actually Works
             </h1>
 
-            <p className="mt-5 max-w-xl text-sm leading-relaxed text-white/80">
+            <p className="banner-text mt-5 max-w-xl text-sm leading-relaxed text-white/80">
               Lorem ipsum dolor sit amet consectetur. Quam purus proin diam nunc. Sed auctor in
               pellentesque augue volutpat mauris in facilisis. Feugiat a amet commodo commodo magna
               morbi vitae enim. Rutrum fermentum ac interdum faucibus cras. Non vel placerat rutrum
               non cras.
             </p>
 
-            <div className="mt-8 flex flex-wrap items-center gap-4">
+            <div className="banner-actions mt-8 flex flex-wrap items-center gap-4">
               <Button variant="hero" size="lg">
                 Get Started
               </Button>
-              <div className="flex items-center gap-2.5 rounded-md bg-white/10 py-2 pr-12.75 pl-3.5">
+              <div className="banner-servers flex items-center gap-2.5 rounded-md bg-white/10 py-2 pr-12.75 pl-3.5">
                 <span className="flex items-center justify-center">
                   <Image
                     src="/icons/server-rack.svg"

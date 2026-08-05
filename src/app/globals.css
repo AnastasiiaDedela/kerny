@@ -247,6 +247,89 @@
   }
 }
 
+/* Scroll-reveal — elements start hidden and translated, then settle when
+   scrolled into view. Direction utilities pick which side the content enters
+   from. On narrow viewports the horizontal directions fall back to a fade-up
+   so translated content never pokes past the section padding. */
+.reveal {
+  opacity: 0;
+  transition:
+    opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-up {
+  transform: translate3d(0, 40px, 0);
+}
+.reveal-down {
+  transform: translate3d(0, -40px, 0);
+}
+.reveal-left {
+  /* Falls back to fade-up on mobile so the horizontal offset doesn't overflow
+     narrow viewports; the horizontal slide kicks in at md. */
+  transform: translate3d(0, 40px, 0);
+}
+.reveal-right {
+  transform: translate3d(0, 40px, 0);
+}
+.reveal-up-sm {
+  transform: translate3d(0, 20px, 0);
+}
+
+@media (min-width: 768px) {
+  .reveal-left {
+    transform: translate3d(-60px, 0, 0);
+  }
+  .reveal-right {
+    transform: translate3d(60px, 0, 0);
+  }
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+/* Banner left-column staggered entrance — CSS-only, no JS required */
+@keyframes banner-slide-down-sm {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes banner-slide-down {
+  from { opacity: 0; transform: translateY(-20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes banner-slide-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes banner-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.banner-chips   { animation: banner-slide-down-sm 0.5s ease-out 0.2s both; }
+.banner-heading { animation: banner-slide-down    0.6s ease-out 0.3s both; }
+.banner-text    { animation: banner-slide-down-sm 0.5s ease-out 0.4s both; }
+.banner-actions { animation: banner-slide-up      0.5s ease-out 0.5s both; }
+.banner-servers { animation: banner-fade          0.5s ease-out 0.6s both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .banner-chips,
+  .banner-heading,
+  .banner-text,
+  .banner-actions,
+  .banner-servers {
+    animation: none;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

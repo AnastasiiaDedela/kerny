@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { Reveal } from '@/components/common/Reveal';
 
 type Os = { name: string; src: string; width: number; height: number };
 
@@ -79,7 +80,7 @@ function MarqueeColumn({
 export function OperationSystems() {
   return (
     <section className="mx-auto w-full max-w-340 px-5 py-10">
-      <div className="wide:flex-row wide:items-center wide:gap-16 flex flex-col gap-10">
+      <Reveal className="wide:flex-row wide:items-center wide:gap-16 flex flex-col gap-10">
         {/* Left — copy */}
         <div className="flex-1">
           <h2 className="text-4xl font-bold md:text-5xl md:leading-[58px]">
@@ -113,7 +114,7 @@ export function OperationSystems() {
             <Button size="lg">Get Started</Button>
           </div>
         </div>
-      </div>
+      </Reveal>
     </section>
   );
 }
