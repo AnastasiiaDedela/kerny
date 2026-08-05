@@ -115,6 +115,49 @@
   }
 }
 
+/* Hero illustration (HeroServerScene). Every part drops in from above and
+   settles; afterwards only the bodies levitate, their pads stay put. Distances
+   are container-relative so the motion scales with the artwork. */
+.hero-scene {
+  container-type: inline-size;
+}
+
+@keyframes hero-drop {
+  from {
+    opacity: 0;
+    transform: translateY(-9cqw);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes hero-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-1.3cqw);
+  }
+}
+
+.hero-drop {
+  animation: hero-drop 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.hero-bob {
+  animation: hero-bob 4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-drop,
+  .hero-bob {
+    animation: none;
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
