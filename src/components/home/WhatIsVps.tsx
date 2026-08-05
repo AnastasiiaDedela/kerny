@@ -7,7 +7,7 @@ export function WhatIsVps() {
     <section className="mx-auto w-full max-w-340 px-5 py-10">
       <Reveal className="flex flex-col gap-10 md:flex-row md:items-center md:gap-x-12">
         <div className="order-2 mx-auto flex w-full max-w-[514px] flex-1 items-center justify-center pb-19 md:order-1 md:mx-0 md:pb-0">
-          <div className="relative mx-auto w-full">
+          <div className="relative mx-auto w-full px-6 md:px-0">
             <div className="absolute bottom-0 left-0 aspect-[514/215] w-full translate-y-[76px] rounded-[20px] bg-[linear-gradient(180deg,rgba(67,76,247,0)_0%,rgba(67,76,247,0.16)_100%)]" />
             <VpsServerScene className="relative z-10 mx-auto w-full max-w-[358px]" />
           </div>

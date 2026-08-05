@@ -7,8 +7,8 @@ const chips = ['#Reliability', '#DDoS Protection', '#Performance'];
 
 export function Banner() {
   return (
-    <section className="mx-auto w-full max-w-340 px-5 pb-10">
-      <div className="relative overflow-hidden rounded-3xl bg-[#454CEE] bg-gradient-to-br from-[#454cee] to-[#272b88]">
+    <section className="mx-auto w-full max-w-340 px-[10px] pb-10 md:px-5">
+      <div className="relative overflow-hidden rounded-[30px] bg-[linear-gradient(149.71deg,#434CF7_0%,#262C8D_100%)]">
         <div className="flex flex-col items-center gap-8 px-6 py-8 md:flex-row md:gap-6 md:px-12 md:py-14">
           {/* Left — copy */}
           <div className="flex-1 text-white">
@@ -35,10 +35,10 @@ export function Banner() {
             </p>
 
             <div className="banner-actions mt-8 flex flex-wrap items-center gap-4">
-              <GetStartedButton variant="hero" size="lg">
+              <GetStartedButton variant="hero" size="lg" className="w-[200px] md:w-auto">
                 Get Started
               </GetStartedButton>
-              <div className="banner-servers flex items-center gap-2.5 rounded-md bg-white/10 py-2 pr-12.75 pl-3.5">
+              <div className="banner-servers flex h-[50px] w-[200px] items-center gap-2.5 rounded-md bg-white/10 py-2 pr-12.75 pl-3.5 md:h-auto md:w-auto">
                 <span className="flex items-center justify-center">
                   <Image
                     src="/icons/server-rack.svg"
