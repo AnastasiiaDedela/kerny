@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/accordion';
 import { useFaqItems } from '@/api/content';
 import { useContactModal } from '@/components/layout/ContactModalProvider';
+import { Reveal } from '@/components/common/Reveal';
 
 export function Faq() {
   const openContactModal = useContactModal();
@@ -16,7 +17,7 @@ export function Faq() {
 
   return (
     <section className="mx-auto w-full max-w-340 px-5 py-10">
-      <div className="flex flex-col gap-10 lg:flex-row lg:justify-between lg:gap-[125px]">
+      <Reveal className="flex flex-col gap-10 lg:flex-row lg:justify-between lg:gap-[125px]">
         {/* Left — copy */}
         <div className="max-w-[495px] lg:w-2/5">
           <h2 className="text-4xl font-bold lg:text-5xl lg:leading-[58px]">
@@ -57,7 +58,7 @@ export function Faq() {
             </Button>
           </div>
         </div>
-      </div>
+      </Reveal>
     </section>
   );
 }

@@ -1,20 +1,15 @@
-import Image from 'next/image';
 import { Button } from '@/components/ui/button';
+import { VpsServerScene } from '@/components/home/VpsServerScene';
+import { Reveal } from '@/components/common/Reveal';
 
 export function WhatIsVps() {
   return (
     <section className="mx-auto w-full max-w-340 px-5 py-10">
-      <div className="flex flex-col gap-10 md:flex-row md:items-center md:gap-x-12">
+      <Reveal className="flex flex-col gap-10 md:flex-row md:items-center md:gap-x-12">
         <div className="order-2 mx-auto flex w-full max-w-[514px] flex-1 items-center justify-center pb-19 md:order-1 md:mx-0 md:pb-0">
           <div className="relative mx-auto w-full">
             <div className="absolute bottom-0 left-0 aspect-[514/215] w-full translate-y-[76px] rounded-[20px] bg-[linear-gradient(180deg,rgba(67,76,247,0)_0%,rgba(67,76,247,0.16)_100%)]" />
-            <Image
-              src="/images/what-is-vps.png"
-              alt="Isometric illustration of a VPS server node"
-              width={716}
-              height={552}
-              className="relative z-10 mx-auto block h-auto w-full max-w-[358px]"
-            />
+            <VpsServerScene className="relative z-10 mx-auto w-full max-w-[358px]" />
           </div>
         </div>
 
@@ -41,7 +36,7 @@ export function WhatIsVps() {
             <Button size="lg">Get Started</Button>
           </div>
         </div>
-      </div>
+      </Reveal>
     </section>
   );
 }
