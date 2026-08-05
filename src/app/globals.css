@@ -179,6 +179,20 @@
 .os-systems {
   --os-card: 96px;
   --os-gap: 12px;
+
+  /* Card internals, from the 152px Figma card: logo box 78px tall starting 24px
+     below the card top, label 11px under it. Derived from --os-card so the
+     narrower tiers stay proportional instead of needing their own numbers.
+     Height (not width) is what's fixed — every logo is 78px tall and free to be
+     as wide as its aspect ratio makes it, which is what makes them read as one
+     size despite Debian being 62px wide and Alpine 90px. */
+  --os-logo: calc(var(--os-card) * 78 / 152);
+  --os-inset: calc(var(--os-card) * 24 / 152);
+  --os-label-gap: calc(var(--os-card) * 11 / 152);
+
+  /* Figma fades the outermost card into the page over 70px of its 152px height;
+     as a mask this is the same effect without needing an overlay element. */
+  --os-fade: calc(var(--os-card) * 70 / 152);
 }
 
 @media (min-width: 40rem) {

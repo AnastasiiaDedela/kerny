@@ -35,15 +35,17 @@ function OsCard({ name, src, width, height }: Os) {
     /* Bottom padding stands in for the column gap so the track height stays an
        exact multiple of card+gap — see the marquee keyframes in globals.css. */
     <div className="pb-(--os-gap)">
-      <div className="wide:gap-3 flex size-(--os-card) flex-col items-center justify-center gap-2 rounded-[15px] bg-[#161616] ring-1 ring-white/5">
+      <div className="flex size-(--os-card) flex-col items-center rounded-[15px] bg-white/[0.04] pt-(--os-inset)">
         <Image
           src={src}
           alt={name}
           width={width}
           height={height}
-          className="wide:max-h-19.5 max-h-10 w-auto sm:max-h-12"
+          className="h-(--os-logo) w-auto max-w-full object-contain"
         />
-        <span className="wide:text-xs px-1 text-center text-[11px] font-medium">{name}</span>
+        <span className="wide:text-xs mt-(--os-label-gap) px-1 text-center text-[11px] leading-[15px] font-normal">
+          {name}
+        </span>
       </div>
     </div>
   );
@@ -61,7 +63,7 @@ function MarqueeColumn({
   return (
     <div
       className={cn(
-        'h-[calc(3*var(--os-card)+3*var(--os-gap))] overflow-hidden [mask-image:linear-gradient(to_bottom,transparent,#000_18%,#000_82%,transparent)]',
+        'h-[calc(3*var(--os-card)+3*var(--os-gap))] overflow-hidden [mask-image:linear-gradient(to_bottom,transparent_0,#000_var(--os-fade),#000_calc(100%-var(--os-fade)),transparent_100%)]',
         className
       )}
     >
