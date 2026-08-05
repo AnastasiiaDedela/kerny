@@ -70,7 +70,11 @@ export function WhyOurService() {
         </div>
       </Reveal>
 
+<<<<<<< HEAD
       <div className="mt-12 grid items-stretch gap-5 lg:grid-cols-[1fr_2fr_1fr]">
+=======
+      <div className="mt-12 grid items-stretch gap-5 md:grid-cols-[1fr_2fr_1fr]">
+>>>>>>> main
         {/* Left column — enters from the left on desktop. */}
         <Reveal direction="left" className="h-full">
           <TallCard

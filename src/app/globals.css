@@ -5,6 +5,9 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  /* Named so it sorts by value against sm/md/lg — an inline `min-[1101px]:`
+     variant is emitted before `sm:` and would lose to it on wide screens. */
+  --breakpoint-wide: 1101px;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);
@@ -112,6 +115,218 @@
   &::-webkit-scrollbar-thumb {
     background: #ffffff;
     border-radius: 10px;
+  }
+}
+
+/* Assembling illustrations — HeroServerScene and VpsServerScene. Every part
+   drops in from above and settles; afterwards only the bodies levitate, their
+   pads stay put. Distances are container-relative so the motion scales with the
+   artwork. */
+.hero-scene {
+  container-type: inline-size;
+}
+
+/* Scenes below the fold hold at the pre-drop frame until scrolled into view. */
+.hero-scene--idle .hero-drop,
+.hero-scene--idle .hero-bob {
+  animation-play-state: paused;
+}
+
+@keyframes hero-drop {
+  from {
+    opacity: 0;
+    transform: translateY(-9cqw);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes hero-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-1.3cqw);
+  }
+}
+
+.hero-drop {
+  animation: hero-drop 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.hero-bob {
+  animation: hero-bob 4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-drop,
+  .hero-bob {
+    animation: none;
+  }
+}
+
+/* Operation Systems — vertical marquee columns. Each track renders its cards
+   twice and every card carries its own bottom spacing (no flex `gap`), so the
+   track height is an exact multiple of card+gap and translating 50% lands on a
+   seamless loop point.
+
+   Card/gap sizes live here rather than as `sm:[--os-card:…]` utilities because
+   Tailwind orders arbitrary-property utilities independently of breakpoint
+   width, so the wider tier does not reliably win. */
+.os-systems {
+  --os-card: 96px;
+  --os-gap: 12px;
+
+  /* Card internals, from the 152px Figma card: logo box 78px tall starting 24px
+     below the card top, label 11px under it. Derived from --os-card so the
+     narrower tiers stay proportional instead of needing their own numbers.
+     Height (not width) is what's fixed — every logo is 78px tall and free to be
+     as wide as its aspect ratio makes it, which is what makes them read as one
+     size despite Debian being 62px wide and Alpine 90px. */
+  --os-logo: calc(var(--os-card) * 78 / 152);
+  --os-inset: calc(var(--os-card) * 24 / 152);
+  --os-label-gap: calc(var(--os-card) * 11 / 152);
+
+  /* Figma fades the outermost card into the page over 70px of its 152px height;
+     as a mask this is the same effect without needing an overlay element. */
+  --os-fade: calc(var(--os-card) * 70 / 152);
+}
+
+@media (min-width: 40rem) {
+  .os-systems {
+    --os-card: 120px;
+    --os-gap: 16px;
+  }
+}
+
+@media (min-width: 1101px) {
+  .os-systems {
+    --os-card: 152px;
+    --os-gap: 20px;
+  }
+}
+
+@keyframes os-marquee-up {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(0, -50%, 0);
+  }
+}
+
+@keyframes os-marquee-down {
+  from {
+    transform: translate3d(0, -50%, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.os-marquee-up {
+  animation: os-marquee-up var(--os-duration, 26s) linear infinite;
+}
+
+.os-marquee-down {
+  animation: os-marquee-down var(--os-duration, 26s) linear infinite;
+}
+
+.os-marquee:hover .os-marquee-up,
+.os-marquee:hover .os-marquee-down {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .os-marquee-up,
+  .os-marquee-down {
+    animation: none;
+  }
+}
+
+/* Scroll-reveal — elements start hidden and translated, then settle when
+   scrolled into view. Direction utilities pick which side the content enters
+   from. On narrow viewports the horizontal directions fall back to a fade-up
+   so translated content never pokes past the section padding. */
+.reveal {
+  opacity: 0;
+  transition:
+    opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-up {
+  transform: translate3d(0, 40px, 0);
+}
+.reveal-down {
+  transform: translate3d(0, -40px, 0);
+}
+.reveal-left {
+  /* Falls back to fade-up on mobile so the horizontal offset doesn't overflow
+     narrow viewports; the horizontal slide kicks in at md. */
+  transform: translate3d(0, 40px, 0);
+}
+.reveal-right {
+  transform: translate3d(0, 40px, 0);
+}
+.reveal-up-sm {
+  transform: translate3d(0, 20px, 0);
+}
+
+@media (min-width: 768px) {
+  .reveal-left {
+    transform: translate3d(-60px, 0, 0);
+  }
+  .reveal-right {
+    transform: translate3d(60px, 0, 0);
+  }
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+/* Banner left-column staggered entrance — CSS-only, no JS required */
+@keyframes banner-slide-down-sm {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes banner-slide-down {
+  from { opacity: 0; transform: translateY(-20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes banner-slide-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes banner-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.banner-chips   { animation: banner-slide-down-sm 0.5s ease-out 0.2s both; }
+.banner-heading { animation: banner-slide-down    0.6s ease-out 0.3s both; }
+.banner-text    { animation: banner-slide-down-sm 0.5s ease-out 0.4s both; }
+.banner-actions { animation: banner-slide-up      0.5s ease-out 0.5s both; }
+.banner-servers { animation: banner-fade          0.5s ease-out 0.6s both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .banner-chips,
+  .banner-heading,
+  .banner-text,
+  .banner-actions,
+  .banner-servers {
+    animation: none;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
   }
 }
 
