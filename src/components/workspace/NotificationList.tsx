@@ -11,34 +11,63 @@ export interface NotificationItem {
 /* Unread items carry the brand wash, the 2px right bar and a solid dot; read ones drop all three.
    The bar is inside the 1050px box, so unread trades 2px of right padding for it and both states
    keep the same 1010px text column. */
-export function NotificationList({ items }: { items: NotificationItem[] }) {
+export function NotificationList({
+  items,
+  onMarkRead,
+  pendingId,
+}: {
+  items: NotificationItem[];
+  /** Omit to render the list read-only — the cards then have no click target at all. */
+  onMarkRead?: (id: string) => void;
+  /** The id currently being marked read, so only that card dims while its call is in flight. */
+  pendingId?: string | null;
+}) {
   return (
     <div className="flex flex-col gap-4">
-      {items.map((item) => (
-        <article
-          key={item.id}
-          className={cn(
-            'rounded-[10px] bg-white/[0.04] p-5',
-            !item.read &&
-              'border-primary border-r-2 bg-[linear-gradient(90deg,rgba(67,76,247,0)_25.71%,rgba(67,76,247,0.12)_100%)] pr-[18px]'
-          )}
-        >
-          <div className="flex items-start justify-between gap-5">
-            <h2 className="text-lg leading-[22px] font-semibold text-white">{item.title}</h2>
-            <span
-              aria-hidden
-              className={cn(
-                'size-1.5 shrink-0 rounded-full',
-                item.read ? 'bg-white/10' : 'bg-primary'
-              )}
-            />
-          </div>
+      {items.map((item) => {
+        const markable = Boolean(onMarkRead) && !item.read;
+        const isPending = item.id === pendingId;
 
-          <p className="mt-2.5 text-base leading-[19px] text-white/50">{item.message}</p>
+        return (
+          <article
+            key={item.id}
+            className={cn(
+              'relative rounded-[10px] bg-white/[0.04] p-5 transition-opacity',
+              !item.read &&
+                'border-primary border-r-2 bg-[linear-gradient(90deg,rgba(67,76,247,0)_25.71%,rgba(67,76,247,0.12)_100%)] pr-[18px]',
+              isPending && 'opacity-50'
+            )}
+          >
+            {/* The whole card is the target, as an overlay rather than a wrapping button: the
+                card's content includes a heading, which a <button> may not contain. Absolute
+                so it claims no space and the read/unread layout above stays untouched. */}
+            {markable && (
+              <button
+                type="button"
+                onClick={() => onMarkRead?.(item.id)}
+                disabled={isPending}
+                aria-label={`Mark "${item.title}" as read`}
+                className="focus-visible:ring-ring/50 absolute inset-0 cursor-pointer rounded-[10px] outline-none focus-visible:ring-3 disabled:cursor-default"
+              />
+            )}
 
-          <p className="mt-4 text-sm leading-[17px] text-white/50">{item.time}</p>
-        </article>
-      ))}
+            <div className="flex items-start justify-between gap-5">
+              <h2 className="text-lg leading-[22px] font-semibold text-white">{item.title}</h2>
+              <span
+                aria-hidden
+                className={cn(
+                  'size-1.5 shrink-0 rounded-full',
+                  item.read ? 'bg-white/10' : 'bg-primary'
+                )}
+              />
+            </div>
+
+            <p className="mt-2.5 text-base leading-[19px] text-white/50">{item.message}</p>
+
+            <p className="mt-4 text-sm leading-[17px] text-white/50">{item.time}</p>
+          </article>
+        );
+      })}
     </div>
   );
 }

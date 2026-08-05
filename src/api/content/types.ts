@@ -17,3 +17,13 @@ export type ContactInfoResponse = components['schemas']['ContactInfoResponse'];
 
 /** `{ supportEmail, address, schedule, socialLinks }` — the envelope's body. */
 export type ContactInfo = ContactInfoResponse['contactInfo'];
+
+/**
+ * Body of the public contact form. Note there is no `phone` field — the modal folds the
+ * phone number the design asks for into `question`.
+ */
+export type CreateContactRequestDto = components['schemas']['CreateContactRequestDto'];
+
+/** The submitted request echoed back, with its server-assigned `id` and `status`. */
+export type ContactRequest = components['schemas']['ContactRequest'];
+export type ContactRequestResponse = components['schemas']['ContactRequestResponse'];

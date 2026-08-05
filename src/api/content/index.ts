@@ -1,4 +1,5 @@
 export { contentKeys } from '@/api/content/keys';
+export { useCreateContactRequest } from '@/api/content/mutations';
 export {
   useContactDetails,
   useContactInfo,
@@ -11,7 +12,10 @@ export {
 export type {
   ContactInfo,
   ContactInfoResponse,
+  ContactRequest,
+  ContactRequestResponse,
   ContentBlock,
+  CreateContactRequestDto,
   FaqItem,
   FaqListResponse,
   LegalDocument,
