@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { HeroServerScene } from '@/components/home/HeroServerScene';
+import { CountUp } from '@/components/home/CountUp';
 
 const chips = ['#Reliability', '#DDoS Protection', '#Performance'];
 
@@ -48,7 +49,7 @@ export function Banner() {
                   />
                 </span>
                 <span className="leading-tight">
-                  <span className="text-md block font-bold text-white">15 465</span>
+                  <CountUp value={15465} className="text-md block font-bold text-white" />
                   <span className="block text-xs text-white/70">active servers</span>
                 </span>
               </div>
