@@ -1,101 +1,149 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import {
+  useDeployableOperatingSystems,
+  useDeployableRegions,
+  type OperatingSystem,
+  type Region,
+} from '@/api/catalog';
+import {
+  usePricing,
+  useQuoteTotals,
+  type BillingPeriod,
+  type PricingBillingPeriod,
+  type PricingCatalog,
+  type PricingTariff,
+  type QuoteItem,
+} from '@/api/pricing';
+import { useCreateServer } from '@/api/servers';
+import { continentsOf, regionCountry, regionFlagSrc, regionsIn } from '@/lib/catalog';
+import {
+  formatCoin,
+  formatCpu,
+  formatDisk,
+  formatRam,
+  formatTransfer,
+  tariffMonthlyPrice,
+} from '@/lib/pricing';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { TariffTable, type TariffRow } from '@/components/pricing/TariffTable';
+import { TariffTable, toTariffRow } from '@/components/pricing/TariffTable';
 
-const osOptions = [
-  { label: 'Alma Linux', icon: '/images/systems-img/alma.png' },
-  { label: 'Alpine Linux', icon: '/images/systems-img/alpine.png' },
-  { label: 'Arch Linux', icon: '/images/systems-img/arch.png' },
-  { label: 'CentOS', icon: '/images/systems-img/centos.png' },
-  { label: 'Debian', icon: '/images/systems-img/debian.png' },
-  { label: 'Fedora', icon: '/images/systems-img/fedora.png' },
-  { label: 'Fedora CoreOS', icon: '/images/systems-img/fedora-coreos.png' },
-  { label: 'FreeBSD', icon: '/images/systems-img/freebsd.png' },
-  { label: 'OpenBSD', icon: '/images/systems-img/openbsd.png' },
-  { label: 'Flatcar Container Linux', icon: '/images/systems-img/flatcar.png' },
-  { label: 'Rocky Linux', icon: '/images/systems-img/rocky.png' },
-  { label: 'Windows', icon: '/images/systems-img/windows.png' },
-  { label: 'openSUSE leap', icon: '/images/systems-img/opensuse.png' },
-  { label: 'Ubuntu', icon: '/images/systems-img/ubuntu.png' },
-  { label: 'Windows Core', icon: '/images/systems-img/powershell.png' },
+/**
+ * The picker is family-level, but the API lists one entry per image, so each card matches
+ * a set of them. Only groups we ship an icon for are offered — the families left out
+ * (`iso`, `snapshot`, `backup`, `application`, `marketplace_app`) aren't operating systems.
+ */
+const osGroups: {
+  id: string;
+  label: string;
+  icon: string;
+  match: (os: OperatingSystem) => boolean;
+}[] = [
+  {
+    id: 'almalinux',
+    label: 'Alma Linux',
+    icon: '/images/systems-img/alma.png',
+    match: (os) => os.family === 'almalinux',
+  },
+  {
+    id: 'alpinelinux',
+    label: 'Alpine Linux',
+    icon: '/images/systems-img/alpine.png',
+    match: (os) => os.family === 'alpinelinux',
+  },
+  {
+    id: 'archlinux',
+    label: 'Arch Linux',
+    icon: '/images/systems-img/arch.png',
+    match: (os) => os.family === 'archlinux',
+  },
+  {
+    id: 'centos',
+    label: 'CentOS',
+    icon: '/images/systems-img/centos.png',
+    match: (os) => os.family === 'centos',
+  },
+  {
+    id: 'debian',
+    label: 'Debian',
+    icon: '/images/systems-img/debian.png',
+    match: (os) => os.family === 'debian',
+  },
+  {
+    id: 'fedora',
+    label: 'Fedora',
+    icon: '/images/systems-img/fedora.png',
+    match: (os) => os.family === 'fedora',
+  },
+  {
+    id: 'fedora-coreos',
+    label: 'Fedora CoreOS',
+    icon: '/images/systems-img/fedora-coreos.png',
+    match: (os) => os.family === 'fedora-coreos',
+  },
+  {
+    id: 'freebsd',
+    label: 'FreeBSD',
+    icon: '/images/systems-img/freebsd.png',
+    match: (os) => os.family === 'freebsd',
+  },
+  {
+    id: 'openbsd',
+    label: 'OpenBSD',
+    icon: '/images/systems-img/openbsd.png',
+    match: (os) => os.family === 'openbsd',
+  },
+  {
+    id: 'flatcar',
+    label: 'Flatcar Container Linux',
+    icon: '/images/systems-img/flatcar.png',
+    match: (os) => os.family === 'flatcar',
+  },
+  {
+    id: 'rockylinux',
+    label: 'Rocky Linux',
+    icon: '/images/systems-img/rocky.png',
+    match: (os) => os.family === 'rockylinux',
+  },
+  {
+    // Windows Core ships as its own card, so the plain Windows one must exclude it.
+    id: 'windows',
+    label: 'Windows',
+    icon: '/images/systems-img/windows.png',
+    match: (os) => os.family === 'windows' && !os.name.startsWith('Windows Core'),
+  },
+  {
+    id: 'opensuse',
+    label: 'openSUSE leap',
+    icon: '/images/systems-img/opensuse.png',
+    match: (os) => os.family === 'opensuse',
+  },
+  {
+    id: 'ubuntu',
+    label: 'Ubuntu',
+    icon: '/images/systems-img/ubuntu.png',
+    match: (os) => os.family === 'ubuntu',
+  },
+  {
+    id: 'windows-core',
+    label: 'Windows Core',
+    icon: '/images/systems-img/powershell.png',
+    match: (os) => os.name.startsWith('Windows Core'),
+  },
 ];
 
-const continents = ['North America', 'Europe', 'Asia', 'Australia', 'South America', 'Africa'];
-
-const regionCards = [
-  { id: 1, ping: '#FAB500' },
-  { id: 2, ping: '#00F700' },
-  { id: 3, ping: '#E6132B' },
-  { id: 4, ping: '#FAB500' },
-  { id: 5, ping: '#FAB500' },
-  { id: 6, ping: '#FAB500' },
-  { id: 7, ping: '#FAB500' },
-  { id: 8, ping: '#00F700' },
-  { id: 9, ping: '#FAB500' },
-  { id: 10, ping: '#FAB500' },
-  { id: 11, ping: '#FAB500' },
-  { id: 12, ping: '#FAB500' },
-];
-
-const tariffs: TariffRow[] = [
-  {
-    id: 1,
-    cpu: '1 × 3.3 GGz',
-    ram: '1 GB',
-    nvme: '15 GB',
-    channel: '1 Gbit / Sec',
-    costPerMonth: 50,
-  },
-  {
-    id: 2,
-    cpu: '1 × 3.3 GGz',
-    ram: '2 GB',
-    nvme: '30 GB',
-    channel: '1 Gbit / Sec',
-    costPerMonth: 50,
-  },
-  {
-    id: 3,
-    cpu: '1 × 3.3 GGz',
-    ram: '1 GB',
-    nvme: '15 GB',
-    channel: '1 Gbit / Sec',
-    costPerMonth: 50,
-  },
-  {
-    id: 4,
-    cpu: '1 × 3.3 GGz',
-    ram: '1 GB',
-    nvme: '15 GB',
-    channel: '1 Gbit / Sec',
-    costPerMonth: 50,
-  },
-  {
-    id: 5,
-    cpu: '1 × 3.3 GGz',
-    ram: '1 GB',
-    nvme: '15 GB',
-    channel: '1 Gbit / Sec',
-    costPerMonth: 50,
-  },
-  {
-    id: 6,
-    cpu: '1 × 3.3 GGz',
-    ram: '1 GB',
-    nvme: '15 GB',
-    channel: '1 Gbit / Sec',
-    costPerMonth: 50,
-  },
-];
+/**
+ * Placeholder latency indicators. The catalog has no latency field, so these stay mocked
+ * and are cycled across whatever regions the API returns.
+ */
+const pingColors = ['#FAB500', '#00F700', '#E6132B'];
 
 const fieldClass =
   'h-[46px] w-full rounded-[8px] bg-white/[0.04] px-5 py-[13px] text-sm leading-[17px] font-normal text-white outline-none placeholder:text-white/50';
-
-type Period = 'Hour' | 'Day' | 'Month';
 
 function SectionHeading({ number, title }: { number: string; title: string }) {
   return (
@@ -108,19 +156,23 @@ function SectionHeading({ number, title }: { number: string; title: string }) {
   );
 }
 
-function FlagNL() {
+function Flag({ region }: { region: Region }) {
+  const src = regionFlagSrc(region);
+
   return (
     <span className="relative mb-2 block h-5 w-[30px] overflow-hidden rounded-[5px]">
-      <Image src="/flags/nl.svg" alt="Netherlands" fill className="object-cover" />
+      {src && <Image src={src} alt={regionCountry(region)} fill className="object-cover" />}
     </span>
   );
 }
 
 function RegionCard({
+  region,
   ping,
   selected,
   onClick,
 }: {
+  region: Region;
   ping: string;
   selected: boolean;
   onClick: () => void;
@@ -138,53 +190,81 @@ function RegionCard({
         <span className="size-1 rounded-full" style={{ backgroundColor: ping }} />
         <span className="text-[10px] leading-3 text-white">165 mss</span>
       </span>
-      <FlagNL />
-      <p className="text-sm leading-[17px] font-semibold text-white">Amsterdam</p>
-      <p className="text-[10px] leading-3 text-white/50">Netherlands</p>
+      <Flag region={region} />
+      <p className="text-sm leading-[17px] font-semibold text-white">{region.city}</p>
+      <p className="text-[10px] leading-3 text-white/50">{regionCountry(region)}</p>
     </button>
   );
 }
 
 function CostSummary({
   os,
+  region,
   tariff,
+  regionId,
+  vat,
+  quote,
+  periods,
   period,
   onPeriodChange,
+  onCreate,
+  canCreate,
+  creating,
 }: {
   os: string;
-  tariff: TariffRow | undefined;
-  period: Period;
-  onPeriodChange: (p: Period) => void;
+  region: string;
+  tariff: PricingTariff | undefined;
+  regionId: string | undefined;
+  vat: PricingCatalog['vat'] | null;
+  quote: { total: string | null; isPending: boolean; isError: boolean };
+  periods: PricingBillingPeriod[];
+  period: BillingPeriod;
+  onPeriodChange: (p: BillingPeriod) => void;
+  onCreate: () => void;
+  canCreate: boolean;
+  creating: boolean;
 }) {
+  const periodLabel = periods.find((p) => p.id === period)?.label ?? '—';
+
   const rows: [string, string][] = [
-    ['OS', os],
-    ['Region', 'Amsterdam'],
-    ['CPU', tariff?.cpu ?? '—'],
-    ['RAM', tariff?.ram ?? '—'],
-    ['NVM', tariff?.nvme ?? '—'],
-    ['Network Channel', tariff?.channel ?? '—'],
-    ['Configuration', '666 € / hour'],
-    ['Backups', '666 € / hour'],
-    ['Public IP', '666 € / hour'],
+    ['OS', os || '—'],
+    ['Billing', periodLabel],
+    ['Region', region || '—'],
+    ['CPU', tariff ? formatCpu(tariff.cpuCount) : '—'],
+    ['RAM', tariff ? formatRam(tariff.ramMb) : '—'],
+    ['NVMe', tariff ? formatDisk(tariff.diskGb) : '—'],
+    ['Network Channel', tariff ? formatTransfer(tariff.bandwidthGb) : '—'],
+    ['Configuration', tariff ? `${formatCoin(tariffMonthlyPrice(tariff, regionId))} / month` : '—'],
     ['Server Number', '1'],
+    ['VAT', vat ? `VAT is ${vat.included ? '' : 'not '}included` : '—'],
   ];
+
+  /** The mock only specifies the pending copy; the rest mirror the same slot. */
+  const quoteStatus = () => {
+    if (!tariff) return 'Select a configuration';
+    if (quote.isPending) return 'Preparing quote...';
+    if (quote.isError) return 'Could not price this configuration';
+    if (quote.total) return `Total ${formatCoin(quote.total)}`;
+    return 'Preparing quote...';
+  };
 
   return (
     <div className="rounded-[10px] bg-white/[0.04] p-6 lg:w-80">
       <p className="text-xl leading-6 font-semibold text-white">Cost</p>
 
-      <div className="mt-3 flex h-10 items-center rounded-[8px] bg-[#0F0F0F] p-1">
-        {(['Hour', 'Day', 'Month'] as Period[]).map((p) => (
+      {/* Two-up: the four API billing periods don't fit legibly on one row. */}
+      <div className="mt-3 grid grid-cols-2 gap-1 rounded-[8px] bg-[#0F0F0F] p-1">
+        {periods.map((p) => (
           <button
-            key={p}
+            key={p.id}
             type="button"
-            onClick={() => onPeriodChange(p)}
+            onClick={() => onPeriodChange(p.id)}
             className={cn(
-              'flex h-8 flex-1 items-center justify-center rounded-[5px] text-sm transition-colors',
-              period === p ? 'bg-white/[0.06] text-white' : 'text-white/50 hover:text-white/80'
+              'flex h-8 items-center justify-center rounded-[5px] text-sm transition-colors',
+              period === p.id ? 'bg-white/[0.06] text-white' : 'text-white/50 hover:text-white/80'
             )}
           >
-            {p}
+            {p.label}
           </button>
         ))}
       </div>
@@ -193,32 +273,131 @@ function CostSummary({
         {rows.map(([label, value]) => (
           <div key={label} className="flex items-center justify-between gap-4">
             <span className="text-sm leading-[17px] text-white/50">{label}</span>
-            <span className="text-sm leading-[17px] font-medium text-white">{value}</span>
+            <span className="text-right text-sm leading-[17px] font-medium text-white">
+              {value}
+            </span>
           </div>
         ))}
-
-        <div className="flex items-center justify-between gap-4">
-          <span className="text-base leading-[19px] font-medium text-white">Total Price</span>
-          <span className="text-base leading-[19px] font-medium text-white">999 999 €</span>
-        </div>
       </div>
 
-      <Button className="mt-4 h-[46px] w-full text-sm">Proceed to Payment</Button>
+      <div className="mt-4 flex min-h-[46px] items-center rounded-[8px] bg-white/[0.04] px-4 py-[13px]">
+        <span className="text-sm leading-[17px] text-white/50">{quoteStatus()}</span>
+      </div>
+
+      <Button
+        onClick={onCreate}
+        disabled={!canCreate || creating}
+        className="mt-4 h-[46px] w-full text-sm disabled:opacity-50"
+      >
+        {creating ? 'Creating...' : 'Create server'}
+      </Button>
     </div>
   );
 }
 
 export function NewCloudServerForm() {
-  const [selectedOs, setSelectedOs] = useState('Arch Linux');
+  const router = useRouter();
+
+  const { operatingSystems } = useDeployableOperatingSystems();
+  const { regions } = useDeployableRegions();
+  const { tariffs, billingPeriods, vat } = usePricing();
+  const createServer = useCreateServer();
+
+  const [selectedOsId, setSelectedOsId] = useState('');
   const [selectedContinent, setSelectedContinent] = useState('Europe');
-  const [selectedRegionId, setSelectedRegionId] = useState(5);
-  const [selectedTariffId, setSelectedTariffId] = useState<number | null>(2);
-  const [period, setPeriod] = useState<Period>('Hour');
+  const [selectedRegionId, setSelectedRegionId] = useState('');
+  const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
+  const [period, setPeriod] = useState<BillingPeriod>('MONTHLY');
   const [hostName, setHostName] = useState('');
   const [serverName, setServerName] = useState('');
   const [comment, setComment] = useState('');
 
-  const selectedTariff = tariffs.find((t) => t.id === selectedTariffId);
+  const availableOsGroups = useMemo(
+    () => osGroups.filter((group) => operatingSystems.some(group.match)),
+    [operatingSystems]
+  );
+  const continents = useMemo(() => continentsOf(regions), [regions]);
+
+  // Each selection falls back to the first valid option rather than clearing when the
+  // catalog loads, or when switching continent leaves the chosen region out of view.
+  const activeOs = availableOsGroups.find((g) => g.id === selectedOsId) ?? availableOsGroups[0];
+  const activeContinent = continents.includes(selectedContinent)
+    ? selectedContinent
+    : (continents[0] ?? '');
+
+  const continentRegions = useMemo(
+    () => regionsIn(regions, activeContinent),
+    [regions, activeContinent]
+  );
+  const activeRegion =
+    continentRegions.find((r) => r.id === selectedRegionId) ?? continentRegions[0];
+
+  // The grid picks a family; a quote needs one image, so take the first of that family.
+  // There is no version picker in this design, so the choice has to be deterministic.
+  const activeOsImage = activeOs ? operatingSystems.find(activeOs.match) : undefined;
+
+  const rows = useMemo(
+    () =>
+      activeRegion
+        ? tariffs
+            .filter((tariff) => tariff.supportedRegionIds.includes(activeRegion.id))
+            .map((tariff) => toTariffRow(tariff, activeRegion.id))
+        : [],
+    [tariffs, activeRegion]
+  );
+
+  // The summary needs the catalog record, not the table's pre-formatted row.
+  const selectedTariff = tariffs.find((tariff) => tariff.id === selectedPlanId);
+
+  const quoteItems = useMemo<QuoteItem[]>(() => {
+    if (!activeOsImage || !activeRegion || !selectedTariff) return [];
+
+    return [
+      {
+        operatingSystemId: activeOsImage.id,
+        regionId: activeRegion.id,
+        planId: selectedTariff.id,
+        billingPeriod: period,
+        addonIds: [],
+        quantity: 1,
+      },
+    ];
+  }, [activeOsImage, activeRegion, selectedTariff, period]);
+
+  const {
+    quoteId,
+    total,
+    isPending: quotePending,
+    isError: quoteError,
+  } = useQuoteTotals(quoteItems);
+
+  /** The API prices from the quote, so provisioning can't start before one exists. */
+  const canCreate = Boolean(
+    quoteId &&
+    activeOsImage &&
+    activeRegion &&
+    selectedTariff &&
+    serverName.trim() &&
+    hostName.trim()
+  );
+
+  function handleCreate() {
+    if (!canCreate || !quoteId || !activeOsImage || !activeRegion || !selectedTariff) return;
+
+    createServer.mutate(
+      {
+        quoteId,
+        name: serverName.trim(),
+        hostname: hostName.trim(),
+        operatingSystemId: activeOsImage.id,
+        regionId: activeRegion.id,
+        planId: selectedTariff.id,
+        billingPeriod: period,
+        addonIds: [],
+      },
+      { onSuccess: (result) => router.push(`/workspace/servers/${result.server.id}`) }
+    );
+  }
 
   return (
     <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start lg:gap-[30px]">
@@ -227,14 +406,14 @@ export function NewCloudServerForm() {
         <section>
           <SectionHeading number="01" title="Operation System" />
           <div className="grid grid-cols-3 items-start gap-3 min-[1300px]:grid-cols-5 min-[1300px]:gap-[10px]">
-            {osOptions.map((os) => (
+            {availableOsGroups.map((os) => (
               <button
-                key={os.label}
+                key={os.id}
                 type="button"
-                onClick={() => setSelectedOs(os.label)}
+                onClick={() => setSelectedOsId(os.id)}
                 className={cn(
                   'flex min-h-[110px] w-full flex-col items-center justify-start gap-[13px] rounded-[10px] px-2 pt-4 pb-3 text-center transition-colors min-[1300px]:aspect-square min-[1300px]:min-h-0 min-[1300px]:justify-center min-[1300px]:gap-[14px] min-[1300px]:p-4',
-                  selectedOs === os.label
+                  activeOs?.id === os.id
                     ? 'border-primary bg-primary/10 border'
                     : 'bg-white/[0.04] hover:bg-white/[0.06]'
                 )}
@@ -273,7 +452,7 @@ export function NewCloudServerForm() {
                   onClick={() => setSelectedContinent(continent)}
                   className={cn(
                     'flex h-10 w-full items-center justify-center rounded-[10px] text-sm transition-colors',
-                    selectedContinent === continent
+                    activeContinent === continent
                       ? 'border-primary bg-primary/10 border text-white'
                       : 'bg-white/[0.04] text-white/50 hover:text-white'
                   )}
@@ -284,12 +463,17 @@ export function NewCloudServerForm() {
             </div>
 
             <div className="grid flex-1 grid-cols-2 gap-2.5 min-[1090px]:grid-cols-3">
-              {regionCards.map((card) => (
+              {continentRegions.map((region, i) => (
                 <RegionCard
-                  key={card.id}
-                  ping={card.ping}
-                  selected={selectedRegionId === card.id}
-                  onClick={() => setSelectedRegionId(card.id)}
+                  key={region.id}
+                  region={region}
+                  ping={pingColors[i % pingColors.length]}
+                  selected={activeRegion?.id === region.id}
+                  onClick={() => {
+                    setSelectedRegionId(region.id);
+                    // Plans differ by region, so a held selection may not be on sale here.
+                    setSelectedPlanId(null);
+                  }}
                 />
               ))}
             </div>
@@ -300,9 +484,9 @@ export function NewCloudServerForm() {
         <section>
           <SectionHeading number="03" title="Configuration" />
           <TariffTable
-            data={tariffs}
-            selectedId={selectedTariffId}
-            onSelect={setSelectedTariffId}
+            data={rows}
+            selectedId={selectedPlanId}
+            onSelect={setSelectedPlanId}
             showHourly
           />
         </section>
@@ -349,10 +533,19 @@ export function NewCloudServerForm() {
       </div>
 
       <CostSummary
-        os={selectedOs}
+        // The exact image, not the family card's label — that's what gets provisioned.
+        os={activeOsImage?.name ?? ''}
+        region={activeRegion?.city ?? ''}
         tariff={selectedTariff}
+        regionId={activeRegion?.id}
+        vat={vat}
+        quote={{ total, isPending: quotePending, isError: quoteError }}
+        periods={billingPeriods}
         period={period}
         onPeriodChange={setPeriod}
+        onCreate={handleCreate}
+        canCreate={canCreate}
+        creating={createServer.isPending}
       />
     </div>
   );

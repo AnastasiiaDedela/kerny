@@ -29,9 +29,17 @@ const columns = [
   }),
 ];
 
-export function BalanceHistoryTable({ data }: { data: HistoryEntry[] }) {
+export function BalanceHistoryTable({
+  data,
+  emptyLabel,
+}: {
+  data: HistoryEntry[];
+  /** Shown in place of the rows when there are none. `null` while the ledger is still loading. */
+  emptyLabel?: string | null;
+}) {
   const table = useReactTable({ data, columns, getCoreRowModel: getCoreRowModel() });
   const [headerGroup] = table.getHeaderGroups();
+  const rows = table.getRowModel().rows;
 
   return (
     <div className="@container">
@@ -58,7 +66,14 @@ export function BalanceHistoryTable({ data }: { data: HistoryEntry[] }) {
           taller than 218px, so below 480px the list flows instead of scrolling — and with
           no header above it, it sits flush against the top of its grid cell. */}
       <div className="scrollbar-hairline flex flex-col gap-3 @min-[480px]:mt-2.5 @min-[480px]:-mr-[7px] @min-[480px]:h-[218px] @min-[480px]:gap-1.5 @min-[480px]:overflow-y-auto @min-[480px]:pr-1.5">
-        {table.getRowModel().rows.map((row) => {
+        {/* An empty ledger keeps the list's shape: one row-height card in the dimmed tone. */}
+        {rows.length === 0 && emptyLabel && (
+          <div className="flex h-[50px] shrink-0 items-center justify-center rounded-[10px] bg-[#0F0F0F] px-4 text-sm leading-[17px] font-medium text-white/50">
+            {emptyLabel}
+          </div>
+        )}
+
+        {rows.map((row) => {
           const [action, time, amount] = row.getVisibleCells();
 
           return (

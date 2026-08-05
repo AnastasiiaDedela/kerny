@@ -1,16 +1,6 @@
-import { NotificationList, type NotificationItem } from '@/components/workspace/NotificationList';
+import { MarkAllNotificationsReadButton } from '@/components/workspace/MarkAllNotificationsReadButton';
+import { NotificationFeed } from '@/components/workspace/NotificationFeed';
 import { WorkspaceMobileNav } from '@/components/workspace/WorkspaceSidebar';
-
-const message =
-  'Lorem ipsum dolor sit amet consectetur. Maecenas vel tortor nisl ultricies donec facilisis accumsan pellentesque. Amet egestas nam at viverra pulvinar at maecenas volutpat. Pellentesque quisque proin consectetur in purus. Eu lorem purus quam ac. Eget arcu elit sagittis sed vestibulum.';
-
-const notifications: NotificationItem[] = Array.from({ length: 5 }, (_, i) => ({
-  id: `notification-${i}`,
-  title: 'Title of Notification',
-  message,
-  time: '03.02.2026 19:51:55',
-  read: i >= 3,
-}));
 
 export default function NotificationsPage() {
   return (
@@ -18,10 +8,15 @@ export default function NotificationsPage() {
       {/* Same 30px under the nav card as the balance page; there it's a 20px column gap + 10px. */}
       <WorkspaceMobileNav className="mb-[30px] lg:hidden" />
 
-      <h1 className="text-xl leading-6 font-semibold text-white">Notifications</h1>
+      {/* The button shares the heading's row and only appears when something is unread, so
+          the heading keeps its original position and baseline when it isn't there. */}
+      <div className="flex items-center justify-between gap-5">
+        <h1 className="text-xl leading-6 font-semibold text-white">Notifications</h1>
+        <MarkAllNotificationsReadButton />
+      </div>
 
       <div className="mt-4">
-        <NotificationList items={notifications} />
+        <NotificationFeed />
       </div>
     </div>
   );

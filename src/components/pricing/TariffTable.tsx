@@ -6,22 +6,48 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
+import type { PricingTariff } from '@/api/pricing';
+import {
+  formatAmount,
+  formatBandwidth,
+  formatCpu,
+  formatDisk,
+  formatRam,
+  tariffMonthlyPrice,
+} from '@/lib/pricing';
 import { cn } from '@/lib/utils';
 
 export interface TariffRow {
-  id: number;
+  /** The catalog's plan id (a cuid), which is also the `planId` a quote expects. */
+  id: string;
   cpu: string;
   ram: string;
   nvme: string;
   channel: string;
-  costPerMonth: number;
+  /** Decimal string from the API (`'30.00'`) — never a float. */
+  costPerMonth: string;
+}
+
+/** Maps a catalog tariff onto a row, priced for the region the buyer picked. */
+export function toTariffRow(tariff: PricingTariff, regionId: string | undefined): TariffRow {
+  return {
+    id: tariff.id,
+    cpu: formatCpu(tariff.cpuCount),
+    ram: formatRam(tariff.ramMb),
+    nvme: formatDisk(tariff.diskGb),
+    channel: formatBandwidth(tariff.bandwidthGb),
+    costPerMonth: formatAmount(tariffMonthlyPrice(tariff, regionId)),
+  };
 }
 
 interface TariffTableProps {
   data: TariffRow[];
-  selectedId: number | null;
-  onSelect: (id: number) => void;
-  /** Also show an equivalent "€ / hour" price next to "€ / month". */
+  selectedId: string | null;
+  onSelect: (id: string) => void;
+  /**
+   * Use the wide layout that reserves a second cost column beside "€ / month". The
+   * catalog has no hourly price, so that column renders an em dash.
+   */
   showHourly?: boolean;
 }
 
@@ -154,7 +180,7 @@ export function TariffTable({ data, selectedId, onSelect, showHourly = false }: 
                         {row.costPerMonth} € <span className="text-white/50">/ month</span>
                       </span>
                       <span className={cn(HOURLY_CELL, 'w-[68px] text-right text-white')}>
-                        {row.costPerMonth} € <span className="text-white/50">/ hour</span>
+                        — <span className="text-white/50">/ hour</span>
                       </span>
                     </div>
                   </div>

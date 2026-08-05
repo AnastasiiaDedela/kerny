@@ -3,79 +3,33 @@
 import Image from 'next/image';
 import { useState } from 'react';
 
+import { usePublicRegions, type Region } from '@/api/catalog';
+import { regionCountry, regionFlagSrc, regionsIn } from '@/lib/catalog';
 import { cn } from '@/lib/utils';
 
-type Region = { city: string; country: string; code: string };
+type TabValue = 'all' | 'North America' | 'Europe' | 'Asia' | 'Australia';
 
-const northAmerica: Region[] = [
-  { city: 'Toronto', country: 'Canada', code: 'ca' },
-  { city: 'Mexico City', country: 'Mexico', code: 'mx' },
-  { city: 'Atlanta', country: 'Georgia', code: 'us' },
-  { city: 'Honolulu', country: 'Hawaii', code: 'us' },
-  { city: 'Chicago', country: 'Illinois', code: 'us' },
-  { city: 'Dallas', country: 'Texas', code: 'us' },
-  { city: 'Los Angeles', country: 'California', code: 'us' },
-  { city: 'Miami', country: 'Florida', code: 'us' },
-  { city: 'New York Area', country: 'New York', code: 'us' },
-  { city: 'SF Bay Area', country: 'CA', code: 'us' },
-  { city: 'Seattle', country: 'Washington', code: 'us' },
+/** `continent` is `null` for the "All Regions" tab, which skips filtering entirely. */
+const tabs: { value: TabValue; label: string; continent: string | null }[] = [
+  { value: 'all', label: 'All Regions', continent: null },
+  { value: 'North America', label: 'North America', continent: 'North America' },
+  { value: 'Europe', label: 'Europe', continent: 'Europe' },
+  { value: 'Asia', label: 'Asia', continent: 'Asia' },
+  { value: 'Australia', label: 'Australia', continent: 'Australia' },
 ];
 
-const southAmerica: Region[] = [
-  { city: 'São Paulo', country: 'Brazil', code: 'br' },
-  { city: 'Santiago', country: 'Chile', code: 'cl' },
-];
+function RegionCard({ region }: { region: Region }) {
+  const country = regionCountry(region);
+  const flag = regionFlagSrc(region);
 
-const europe: Region[] = [
-  { city: 'Amsterdam', country: 'Netherlands', code: 'nl' },
-  { city: 'London', country: 'United Kingdom', code: 'gb' },
-  { city: 'Frankfurt', country: 'Germany', code: 'de' },
-  { city: 'Paris', country: 'France', code: 'fr' },
-  { city: 'Madrid', country: 'Spain', code: 'es' },
-  { city: 'Stockholm', country: 'Sweden', code: 'se' },
-  { city: 'Warsaw', country: 'Poland', code: 'pl' },
-  { city: 'Manchester', country: 'United Kingdom', code: 'gb' },
-];
-
-const asia: Region[] = [
-  { city: 'Tokyo', country: 'Japan', code: 'jp' },
-  { city: 'Osaka', country: 'Japan', code: 'jp' },
-  { city: 'Seoul', country: 'Korea, Republic of', code: 'kr' },
-  { city: 'Singapore', country: 'Singapore', code: 'sg' },
-  { city: 'Mumbai', country: 'India', code: 'in' },
-  { city: 'Delhi NCR', country: 'India', code: 'in' },
-  { city: 'Tel Aviv-Yafo', country: 'Israel', code: 'il' },
-  { city: 'Bangalore', country: 'India', code: 'in' },
-];
-
-const australia: Region[] = [
-  { city: 'Sydney', country: 'Australia', code: 'au' },
-  { city: 'Melbourne', country: 'Australia', code: 'au' },
-];
-
-const africa: Region[] = [{ city: 'Johannesburg', country: 'South Africa', code: 'za' }];
-
-const allRegions = [...northAmerica, ...southAmerica, ...europe, ...asia, ...australia, ...africa];
-
-type TabValue = 'all' | 'northAmerica' | 'europe' | 'asia' | 'australia';
-
-const tabs: { value: TabValue; label: string; regions: Region[] }[] = [
-  { value: 'all', label: 'All Regions', regions: allRegions },
-  { value: 'northAmerica', label: 'North America', regions: northAmerica },
-  { value: 'europe', label: 'Europe', regions: europe },
-  { value: 'asia', label: 'Asia', regions: asia },
-  { value: 'australia', label: 'Australia', regions: australia },
-];
-
-function RegionCard({ city, country, code }: Region) {
   return (
     <div className="flex h-[78px] items-center justify-between gap-3 rounded-[15px] bg-gradient-to-b from-white/[0] to-white/[0.08] px-5">
       <div className="flex min-w-0 flex-col gap-1">
-        <div className="truncate text-sm font-semibold">{city}</div>
+        <div className="truncate text-sm font-semibold">{region.city}</div>
         <div className="text-muted-foreground truncate text-xs">{country}</div>
       </div>
       <span className="relative h-[24px] w-9 shrink-0 overflow-hidden rounded-[4px] ring-1 ring-white/10">
-        <Image src={`/flags/${code}.svg`} alt={country} fill className="object-cover" />
+        {flag && <Image src={flag} alt={country} fill className="object-cover" />}
       </span>
     </div>
   );
@@ -83,8 +37,10 @@ function RegionCard({ city, country, code }: Region) {
 
 export function DataCentersContent() {
   const [activeTab, setActiveTab] = useState<TabValue>('all');
+  const { regions } = usePublicRegions();
 
-  const activeRegions = tabs.find((t) => t.value === activeTab)!.regions;
+  const continent = tabs.find((t) => t.value === activeTab)!.continent;
+  const activeRegions = continent ? regionsIn(regions, continent) : regions;
 
   return (
     <section className="mx-auto w-full max-w-340 px-5 pt-7.5 pb-20 md:pt-0">
@@ -112,7 +68,7 @@ export function DataCentersContent() {
 
       <div className="mt-7.5 grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 md:gap-4 lg:grid-cols-5">
         {activeRegions.map((region) => (
-          <RegionCard key={`${region.city}-${region.country}`} {...region} />
+          <RegionCard key={region.id} region={region} />
         ))}
       </div>
     </section>

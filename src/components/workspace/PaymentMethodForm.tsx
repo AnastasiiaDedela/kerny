@@ -1,8 +1,18 @@
 'use client';
 
 import { useState } from 'react';
+
+import { fieldError, formError } from '@/api/auth';
+import {
+  useBillingOverview,
+  useDefaultPaymentMethod,
+  useUpdateBillingProfile,
+  type BillingProfileDto,
+} from '@/api/billing';
+import { FieldError, FormError } from '@/components/layout/auth/shared';
 import { Button } from '@/components/ui/button';
 import { AddPaymentMethodModal } from '@/components/workspace/AddPaymentMethodModal';
+import { formatPaymentMethod } from '@/lib/billing';
 
 const fields = [
   { name: 'name', label: 'Name', type: 'text', placeholder: 'Enter your Name...' },
@@ -34,9 +44,39 @@ const emptyForm: Record<FieldName, string> = {
   companyDetails: '',
 };
 
+/** The profile is a partial patch, so blanks are left out rather than sent as `''`. */
+function toProfileDto(values: Record<FieldName, string>): BillingProfileDto {
+  const dto: BillingProfileDto = {};
+
+  for (const key of Object.keys(values) as FieldName[]) {
+    const value = values[key].trim();
+    if (value) dto[key] = value;
+  }
+
+  return dto;
+}
+
 export function PaymentMethodForm() {
   const [values, setValues] = useState(emptyForm);
+  const [hydrated, setHydrated] = useState(false);
   const [cardModalOpen, setCardModalOpen] = useState(false);
+
+  const { profile } = useBillingOverview();
+  const { paymentMethod } = useDefaultPaymentMethod();
+  const updateProfile = useUpdateBillingProfile();
+
+  // Seed the inputs from the saved profile once, so a background refetch can't
+  // overwrite what the user is in the middle of typing.
+  if (profile && !hydrated) {
+    setHydrated(true);
+    setValues({
+      name: profile.name ?? '',
+      email: profile.email ?? '',
+      address: profile.address ?? '',
+      taxId: profile.taxId ?? '',
+      companyDetails: profile.companyDetails ?? '',
+    });
+  }
 
   return (
     <section className="rounded-[10px] bg-white/[0.04] p-5 lg:p-6">
@@ -46,7 +86,7 @@ export function PaymentMethodForm() {
           13px inset runs all the way round. flex-wrap only kicks in on very narrow phones. */}
       <div className="mt-4 flex min-h-[66px] flex-wrap items-center justify-between gap-2.5 rounded-[10px] bg-white/[0.04] p-[13px] lg:gap-4 lg:pr-[13px] lg:pl-6">
         <span className="text-sm leading-[17px] font-medium text-white lg:text-base lg:leading-[19px]">
-          No Payment Method
+          {paymentMethod ? formatPaymentMethod(paymentMethod) : 'No Payment Method'}
         </span>
         <button
           type="button"
@@ -57,7 +97,12 @@ export function PaymentMethodForm() {
         </button>
       </div>
 
-      <form onSubmit={(e) => e.preventDefault()}>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          updateProfile.mutate(toProfileDto(values));
+        }}
+      >
         <div className="mt-4 flex flex-col gap-4">
           {fields.map((field) => (
             <div key={field.name}>
@@ -77,11 +122,18 @@ export function PaymentMethodForm() {
                 placeholder={field.placeholder}
                 className="h-[46px] w-full rounded-[8px] bg-white/[0.04] px-4 py-[7px] text-sm leading-[17px] font-normal text-white outline-none placeholder:text-white/30"
               />
+              <FieldError>{fieldError(updateProfile.error, field.name)}</FieldError>
             </div>
           ))}
         </div>
 
-        <Button type="submit" className="mt-5 h-[46px] w-full text-sm leading-[17px] font-medium">
+        <FormError>{formError(updateProfile.error)}</FormError>
+
+        <Button
+          type="submit"
+          disabled={updateProfile.isPending}
+          className="mt-5 h-[46px] w-full text-sm leading-[17px] font-medium"
+        >
           Save
         </Button>
       </form>

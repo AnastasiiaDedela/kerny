@@ -1,4 +1,19 @@
-export function ServerBackups({ paragraphs }: { paragraphs: string[] }) {
+'use client';
+
+import { useEnableBackups } from '@/api/servers';
+
+export function ServerBackups({
+  serverId,
+  paragraphs,
+  enabled,
+}: {
+  serverId: string;
+  paragraphs: string[];
+  /** From `/api/servers/{id}/backups` — the button is the only thing that reads it. */
+  enabled: boolean;
+}) {
+  const enableBackups = useEnableBackups(serverId);
+
   return (
     <section className="mt-5 rounded-[10px] bg-[#0F0F0F] p-5">
       <p className="text-2xl leading-[29px] font-semibold text-white">...</p>
@@ -11,11 +26,14 @@ export function ServerBackups({ paragraphs }: { paragraphs: string[] }) {
         ))}
       </div>
 
+      {/* Enabling is chargeable and cannot be undone here, so it disables once on. */}
       <button
         type="button"
-        className="bg-primary mt-5 flex h-10 w-[190px] items-center justify-center gap-2.5 rounded-[10px] p-2.5 text-center text-sm leading-[17px] font-medium text-white"
+        onClick={() => enableBackups.mutate()}
+        disabled={enabled || enableBackups.isPending}
+        className="bg-primary mt-5 flex h-10 w-[190px] items-center justify-center gap-2.5 rounded-[10px] p-2.5 text-center text-sm leading-[17px] font-medium text-white disabled:opacity-50"
       >
-        Enable backups
+        {enabled ? 'Backups enabled' : 'Enable backups'}
       </button>
     </section>
   );
