@@ -115,11 +115,18 @@
   }
 }
 
-/* Hero illustration (HeroServerScene). Every part drops in from above and
-   settles; afterwards only the bodies levitate, their pads stay put. Distances
-   are container-relative so the motion scales with the artwork. */
+/* Assembling illustrations — HeroServerScene and VpsServerScene. Every part
+   drops in from above and settles; afterwards only the bodies levitate, their
+   pads stay put. Distances are container-relative so the motion scales with the
+   artwork. */
 .hero-scene {
   container-type: inline-size;
+}
+
+/* Scenes below the fold hold at the pre-drop frame until scrolled into view. */
+.hero-scene--idle .hero-drop,
+.hero-scene--idle .hero-bob {
+  animation-play-state: paused;
 }
 
 @keyframes hero-drop {
