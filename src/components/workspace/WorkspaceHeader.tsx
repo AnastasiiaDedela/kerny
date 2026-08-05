@@ -60,13 +60,10 @@ export function WorkspaceHeader() {
   return (
     <header className="bg-background pt-7.5 pb-5">
       <div className="mx-auto flex w-full max-w-340 items-center justify-between px-5">
-        <Link
-          href="/"
-          className="text-foreground font-logo flex items-center gap-2 text-lg font-extrabold"
-        >
-          Kerny
+        <Link href="/" className="flex items-center gap-2">
+          <Image src="/logo.svg" alt="Kerny" width={49} height={16} />
           <span className="text-primary hidden lg:inline">»</span>
-          <span className="hidden font-sans lg:inline">Workspace</span>
+          <span className="text-foreground hidden font-sans lg:inline">Workspace</span>
         </Link>
 
         <div className="hidden items-center gap-6 lg:flex">
@@ -132,12 +129,8 @@ export function WorkspaceHeader() {
       {open && (
         <div className="bg-background fixed inset-0 z-50 flex flex-col overflow-y-auto px-5 py-7.5 lg:hidden">
           <div className="flex items-center justify-between">
-            <Link
-              href="/"
-              onClick={() => setOpen(false)}
-              className="text-foreground font-logo text-xl leading-6 font-extrabold"
-            >
-              Kerny
+            <Link href="/" onClick={() => setOpen(false)}>
+              <Image src="/logo.svg" alt="Kerny" width={49} height={16} />
             </Link>
             <button
               type="button"

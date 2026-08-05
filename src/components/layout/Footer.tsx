@@ -89,7 +89,7 @@ export function Footer({ variant = 'legal' }: { variant?: FooterVariant }) {
       <div className="mx-auto max-w-340 px-5 py-10">
         <div className="flex flex-col justify-between gap-7.5 pb-7.5 md:flex-row md:items-start md:gap-10 md:pb-6">
           <div className="flex flex-col gap-2.5">
-            <span className="font-logo text-lg leading-[22px] font-extrabold">Kerny</span>
+            <Image src="/logo.svg" alt="Kerny" width={49} height={16} />
             {variant === 'legal' ? (
               <LegalDetails />
             ) : (
