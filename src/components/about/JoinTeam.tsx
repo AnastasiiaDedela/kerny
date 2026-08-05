@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { Button } from '@/components/ui/button';
+import { GetStartedButton } from '@/components/common/GetStartedButton';
 
 const headlineClasses =
   // Below md the headline is locked to two lines, so it scales with the viewport
@@ -127,13 +127,13 @@ export function JoinTeam() {
           </div>
         </div>
 
-        <Button
+        <GetStartedButton
           variant="hero"
           size="lg"
           className="z-30 mt-6 h-[60px] w-[200px] text-base font-semibold text-[#3940D3] max-md:mt-[31px] max-md:h-[50px] lg:mt-[30px]"
         >
           Get Started
-        </Button>
+        </GetStartedButton>
       </div>
     </section>
   );

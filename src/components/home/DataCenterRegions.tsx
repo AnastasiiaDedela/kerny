@@ -6,24 +6,32 @@ import { ArrowRight } from 'lucide-react';
 
 import { usePublicRegions, type Region } from '@/api/catalog';
 import { regionCountry, regionFlagSrc, regionsIn } from '@/lib/catalog';
+import { Reveal } from '@/components/common/Reveal';
 
 /** How many of a continent's regions the home page previews before "Show More". */
 const PREVIEW_COUNT = 5;
 
-function RegionCard({ region }: { region: Region }) {
+/* Cards are staggered so a row reads left-to-right; the cap keeps the last card
+   in a wide row from waiting too long. */
+const STAGGER_MS = 60;
+const STAGGER_CAP = 6;
+
+function RegionCard({ region, index = 0 }: { region: Region; index?: number }) {
   const country = regionCountry(region);
   const flag = regionFlagSrc(region);
 
   return (
-    <div className="flex h-[78px] items-center justify-between gap-3 rounded-[15px] bg-gradient-to-b from-white/[0] to-white/[0.08] px-5">
-      <div className="flex min-w-0 flex-col gap-1">
-        <div className="truncate text-sm font-semibold">{region.city}</div>
-        <div className="text-muted-foreground truncate text-xs">{country}</div>
+    <Reveal direction="up" delay={Math.min(index, STAGGER_CAP) * STAGGER_MS}>
+      <div className="flex h-[78px] items-center justify-between gap-3 rounded-[15px] bg-gradient-to-b from-white/[0] to-white/[0.08] px-5">
+        <div className="flex min-w-0 flex-col gap-1">
+          <div className="truncate text-sm font-semibold">{region.city}</div>
+          <div className="text-muted-foreground truncate text-xs">{country}</div>
+        </div>
+        <span className="relative h-[24px] w-9 shrink-0 overflow-hidden rounded-[4px] ring-1 ring-white/10">
+          {flag && <Image src={flag} alt={country} fill className="object-cover" />}
+        </span>
       </div>
-      <span className="relative h-[24px] w-9 shrink-0 overflow-hidden rounded-[4px] ring-1 ring-white/10">
-        {flag && <Image src={flag} alt={country} fill className="object-cover" />}
-      </span>
-    </div>
+    </Reveal>
   );
 }
 
@@ -65,8 +73,8 @@ export function DataCenterRegions() {
         <div>
           <GroupHeader title="North America" showMore />
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
-            {northAmerica.map((r) => (
-              <RegionCard key={r.id} region={r} />
+            {northAmerica.map((r, i) => (
+              <RegionCard key={r.id} region={r} index={i} />
             ))}
           </div>
         </div>
@@ -75,8 +83,8 @@ export function DataCenterRegions() {
         <div>
           <GroupHeader title="Europe" showMore />
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
-            {europe.map((r) => (
-              <RegionCard key={r.id} region={r} />
+            {europe.map((r, i) => (
+              <RegionCard key={r.id} region={r} index={i} />
             ))}
           </div>
         </div>
@@ -85,35 +93,35 @@ export function DataCenterRegions() {
         <div>
           <GroupHeader title="Asia" showMore />
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
-            {asia.map((r) => (
-              <RegionCard key={r.id} region={r} />
+            {asia.map((r, i) => (
+              <RegionCard key={r.id} region={r} index={i} />
             ))}
           </div>
         </div>
 
         {/* Australia / South America / Africa */}
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-5 lg:gap-4">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-3 lg:grid-cols-5 lg:gap-4">
           <div className="lg:col-span-2">
             <GroupHeader title="Australia" />
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              {australia.map((r) => (
-                <RegionCard key={r.id} region={r} />
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2">
+              {australia.map((r, i) => (
+                <RegionCard key={r.id} region={r} index={i} />
               ))}
             </div>
           </div>
           <div className="lg:col-span-2">
             <GroupHeader title="South America" />
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              {southAmerica.map((r) => (
-                <RegionCard key={r.id} region={r} />
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2">
+              {southAmerica.map((r, i) => (
+                <RegionCard key={r.id} region={r} index={i} />
               ))}
             </div>
           </div>
           <div className="lg:col-span-1">
             <GroupHeader title="Africa" />
             <div className="grid grid-cols-1 gap-4">
-              {africa.map((r) => (
-                <RegionCard key={r.id} region={r} />
+              {africa.map((r, i) => (
+                <RegionCard key={r.id} region={r} index={i} />
               ))}
             </div>
           </div>

@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { GetStartedButton } from '@/components/common/GetStartedButton';
+import { Reveal } from '@/components/common/Reveal';
 
 export function CtaBanner() {
   return (
@@ -16,22 +17,29 @@ export function CtaBanner() {
           className="pointer-events-none absolute inset-y-0 right-0 h-full w-2/3 [mask-image:linear-gradient(to_right,transparent,black_40%)] object-cover object-left opacity-50 mix-blend-screen"
         />
         <div className="relative flex flex-col items-start justify-between gap-5 md:flex-row md:items-center md:gap-8">
-          <div className="flex flex-col gap-1 md:gap-2.5">
-            <h2 className="max-w-md text-[32px] leading-[39px] font-semibold text-white md:text-5xl md:leading-[58px]">
-              Join the Future Of
-            </h2>
-            <h2 className="max-w-md text-[32px] leading-[39px] font-semibold text-white md:text-5xl md:leading-[58px]">
-              VPS Today!
-            </h2>
-          </div>
+          {/* Headline enters from the left; button enters from the right. The
+              button wrapper carries md:shrink-0 so it keeps the original flex
+              behavior now that the button isn't the direct flex child. */}
+          <Reveal direction="left">
+            <div className="flex flex-col gap-1 md:gap-2.5">
+              <h2 className="max-w-md text-[32px] leading-[39px] font-semibold text-white md:text-5xl md:leading-[58px]">
+                Join the Future Of
+              </h2>
+              <h2 className="max-w-md text-[32px] leading-[39px] font-semibold text-white md:text-5xl md:leading-[58px]">
+                VPS Today!
+              </h2>
+            </div>
+          </Reveal>
 
-          <Button
-            variant="default"
-            size="lg"
-            className="min-w-[150px] shrink-0 text-sm font-medium max-md:w-[200px]"
-          >
-            Get Started <ArrowRight className="size-4" />
-          </Button>
+          <Reveal direction="right" className="md:shrink-0">
+            <GetStartedButton
+              variant="default"
+              size="lg"
+              className="min-w-[150px] shrink-0 text-sm font-medium max-md:w-[200px]"
+            >
+              Get Started <ArrowRight className="size-4" />
+            </GetStartedButton>
+          </Reveal>
         </div>
       </div>
     </section>

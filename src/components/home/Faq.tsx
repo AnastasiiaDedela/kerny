@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/accordion';
 import { useFaqItems } from '@/api/content';
 import { useContactModal } from '@/components/layout/ContactModalProvider';
+import { Reveal } from '@/components/common/Reveal';
 
 export function Faq() {
   const openContactModal = useContactModal();
@@ -16,18 +17,18 @@ export function Faq() {
 
   return (
     <section className="mx-auto w-full max-w-340 px-5 py-10">
-      <div className="flex flex-col gap-10 lg:flex-row lg:justify-between lg:gap-[125px]">
+      <Reveal className="flex flex-col gap-10 min-[1121px]:flex-row min-[1121px]:justify-between min-[1121px]:gap-[125px]">
         {/* Left — copy */}
-        <div className="max-w-[495px] lg:w-2/5">
-          <h2 className="text-4xl font-bold lg:text-5xl lg:leading-[58px]">
+        <div className="max-w-[495px] min-[1121px]:w-2/5">
+          <h2 className="text-4xl font-bold min-[1121px]:text-5xl min-[1121px]:leading-[58px]">
             Questions,
-            <br className="hidden lg:block" /> answers
+            <br className="hidden min-[1121px]:block" /> answers
           </h2>
           <p className="text-foreground mt-6 text-sm leading-relaxed">
             Lorem ipsum dolor sit amet consectetur. Pellentesque malesuada gravida eget amet cursus
             sagittis. In orci tortor ut tincidunt consectetur
           </p>
-          <div className="mt-8 hidden lg:block">
+          <div className="mt-8 hidden min-[1121px]:block">
             <Button size="lg" onClick={openContactModal}>
               Contact Us
             </Button>
@@ -38,7 +39,7 @@ export function Faq() {
         <div className="flex flex-col align-bottom">
           <Accordion
             defaultValue={[1]}
-            className="flex w-full flex-col gap-0.5 overflow-hidden rounded-[15px] lg:w-175"
+            className="flex w-full flex-col gap-0.5 overflow-hidden rounded-[15px] min-[1121px]:w-175"
           >
             {items.map((item, i) => (
               <AccordionItem key={item.id} value={i} className="bg-white/[0.04] px-6">
@@ -51,13 +52,13 @@ export function Faq() {
               </AccordionItem>
             ))}
           </Accordion>
-          <div className="mt-8 lg:hidden">
+          <div className="mt-8 min-[1121px]:hidden">
             <Button size="lg" className="w-full" onClick={openContactModal}>
               Contact Us
             </Button>
           </div>
         </div>
-      </div>
+      </Reveal>
     </section>
   );
 }
