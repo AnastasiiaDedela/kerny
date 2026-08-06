@@ -53,7 +53,7 @@ export function Faq() {
             ))}
           </Accordion>
           <div className="mt-8 min-[1121px]:hidden">
-            <Button size="lg" className="w-full" onClick={openContactModal}>
+            <Button size="lg" className="h-14 w-full max-w-88 md:max-w-none" onClick={openContactModal}>
               Contact Us
             </Button>
           </div>

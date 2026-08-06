@@ -177,8 +177,19 @@
    Tailwind orders arbitrary-property utilities independently of breakpoint
    width, so the wider tier does not reliably win. */
 .os-systems {
-  --os-card: 96px;
-  --os-gap: 12px;
+  /* Mobile Figma frame is 393px wide: three 110px cards 11.5px apart fill the
+     353px content width exactly. Below 393px the card shrinks so the row still
+     fits inside the section's 20px page padding instead of overflowing. */
+  --os-card: min(110px, calc((100vw - 63px) / 3));
+  --os-gap: 11.5px;
+  --os-row-gap: 10px;
+
+  /* Mobile shows exactly three cards per column; the wider tiers keep the
+     extra gap that lets a fourth peek in under the fade. */
+  --os-col-h: calc(3 * var(--os-card) + 2 * var(--os-row-gap));
+
+  /* The static middle column sits one notch lower than the two marquees. */
+  --os-center-offset: 20px;
 
   /* Card internals, from the 152px Figma card: logo box 78px tall starting 24px
      below the card top, label 11px under it. Derived from --os-card so the
@@ -199,6 +210,9 @@
   .os-systems {
     --os-card: 120px;
     --os-gap: 16px;
+    --os-row-gap: 16px;
+    --os-col-h: calc(3 * var(--os-card) + 3 * var(--os-row-gap));
+    --os-center-offset: 0px;
   }
 }
 
@@ -206,6 +220,39 @@
   .os-systems {
     --os-card: 152px;
     --os-gap: 20px;
+    --os-row-gap: 20px;
+  }
+}
+
+.os-column {
+  height: var(--os-col-h);
+  overflow: hidden;
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    #000 var(--os-fade),
+    #000 calc(100% - var(--os-fade)),
+    transparent 100%
+  );
+}
+
+/* The middle column is static, so on the wider tiers it is flush with the
+   section and needs no fade; only the mobile frame clips it. */
+.os-column-static {
+  margin-top: var(--os-center-offset);
+}
+
+@media (max-width: 39.999rem) {
+  .os-column-static {
+    height: var(--os-col-h);
+    overflow: hidden;
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      #000 var(--os-fade),
+      #000 calc(100% - var(--os-fade)),
+      transparent 100%
+    );
   }
 }
 
@@ -293,27 +340,59 @@
 
 /* Banner left-column staggered entrance — CSS-only, no JS required */
 @keyframes banner-slide-down-sm {
-  from { opacity: 0; transform: translateY(-10px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 @keyframes banner-slide-down {
-  from { opacity: 0; transform: translateY(-20px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 @keyframes banner-slide-up {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 @keyframes banner-fade {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
-.banner-chips   { animation: banner-slide-down-sm 0.5s ease-out 0.2s both; }
-.banner-heading { animation: banner-slide-down    0.6s ease-out 0.3s both; }
-.banner-text    { animation: banner-slide-down-sm 0.5s ease-out 0.4s both; }
-.banner-actions { animation: banner-slide-up      0.5s ease-out 0.5s both; }
-.banner-servers { animation: banner-fade          0.5s ease-out 0.6s both; }
+.banner-chips {
+  animation: banner-slide-down-sm 0.5s ease-out 0.2s both;
+}
+.banner-heading {
+  animation: banner-slide-down 0.6s ease-out 0.3s both;
+}
+.banner-text {
+  animation: banner-slide-down-sm 0.5s ease-out 0.4s both;
+}
+.banner-actions {
+  animation: banner-slide-up 0.5s ease-out 0.5s both;
+}
+.banner-servers {
+  animation: banner-fade 0.5s ease-out 0.6s both;
+}
 
 @media (prefers-reduced-motion: reduce) {
   .banner-chips,

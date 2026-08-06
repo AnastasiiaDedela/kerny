@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ChevronDown, Menu, X } from 'lucide-react';
+import { ChevronDown, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -121,7 +121,7 @@ export function WorkspaceHeader() {
           onClick={() => setOpen(true)}
           className="text-foreground lg:hidden"
         >
-          <Menu className="size-7" />
+          <Image src="/burger.svg" alt="" width={22} height={12} />
         </button>
       </div>
 
