@@ -96,7 +96,13 @@ export function ServerInformation({
           <div className="flex items-center gap-2.5">
             <span className="relative block h-4 w-5 shrink-0 overflow-hidden rounded-[5px]">
               {server.flag && (
-                <Image src={server.flag} alt={server.flagAlt} fill className="object-cover" />
+                <Image
+                  src={server.flag}
+                  alt={server.flagAlt}
+                  fill
+                  sizes="20px"
+                  className="object-cover"
+                />
               )}
             </span>
             <span className="truncate text-base leading-[19px] font-medium text-white">

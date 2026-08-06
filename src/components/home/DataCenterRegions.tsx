@@ -25,7 +25,7 @@ function RegionCard({ region, index = 0 }: { region: Region; index?: number }) {
           <div className="text-muted-foreground truncate text-xs">{country}</div>
         </div>
         <span className="relative h-[24px] w-9 shrink-0 overflow-hidden rounded-[4px] ring-1 ring-white/10">
-          {flag && <Image src={flag} alt={country} fill className="object-cover" />}
+          {flag && <Image src={flag} alt={country} fill sizes="36px" className="object-cover" />}
         </span>
       </div>
     </Reveal>

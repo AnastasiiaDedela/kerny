@@ -127,7 +127,7 @@ function FlagImage({ region }: { region: Region | undefined }) {
   return (
     <span className="relative inline-block h-4 w-6 overflow-hidden rounded-[2px]">
       {src && region && (
-        <Image src={src} alt={regionCountry(region)} fill className="object-cover" />
+        <Image src={src} alt={regionCountry(region)} fill sizes="24px" className="object-cover" />
       )}
     </span>
   );
