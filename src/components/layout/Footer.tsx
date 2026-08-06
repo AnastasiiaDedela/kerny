@@ -4,6 +4,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useContactModal } from '@/components/layout/ContactModalProvider';
+import { useCookieConsent } from '@/components/layout/CookieConsentProvider';
 
 const services = [
   { label: 'Server Rental', href: '/pricing' },
@@ -83,7 +84,11 @@ function LegalDetails() {
   );
 }
 
+const policyLinkClassName = 'text-muted-foreground hover:text-foreground text-sm transition-colors';
+
 export function Footer({ variant = 'legal' }: { variant?: FooterVariant }) {
+  const { openCookieSettings } = useCookieConsent();
+
   return (
     <footer className="border-border text-foreground border-t">
       <div className="mx-auto max-w-340 px-5 py-10">
@@ -110,15 +115,25 @@ export function Footer({ variant = 'legal' }: { variant?: FooterVariant }) {
         <div className="flex flex-col-reverse items-start justify-between gap-6 border-t-[0.5px] border-white/16 pt-6 md:flex-row md:items-center md:gap-4">
           <p className="text-muted-foreground text-sm">© Kerny 2026. All Right Reserved</p>
           <div className="flex w-full flex-wrap justify-between gap-x-6 gap-y-2 md:w-auto md:justify-center md:gap-12.5">
-            {policies[variant].map(({ label, href }) => (
-              <Link
-                key={label}
-                href={href}
-                className="text-muted-foreground hover:text-foreground text-sm transition-colors"
-              >
-                {label}
-              </Link>
-            ))}
+            {/* Cookie Policy reopens the consent settings — the only way back to them once
+                the banner has been dismissed. Same label/button swap NavColumn does for
+                Contact Us. */}
+            {policies[variant].map(({ label, href }) =>
+              label === 'Cookie Policy' ? (
+                <button
+                  key={label}
+                  type="button"
+                  onClick={openCookieSettings}
+                  className={policyLinkClassName}
+                >
+                  {label}
+                </button>
+              ) : (
+                <Link key={label} href={href} className={policyLinkClassName}>
+                  {label}
+                </Link>
+              )
+            )}
           </div>
         </div>
       </div>

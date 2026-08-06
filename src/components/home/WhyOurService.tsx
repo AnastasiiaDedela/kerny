@@ -5,6 +5,16 @@ import { cn } from '@/lib/utils';
 const description =
   'Lorem ipsum dolor sit amet consectetur. Fringilla eu ultrices netus viverra id mauris. Maecenas justo varius turpis lectus ultricies. Donec ullamcorper libero consectetur';
 
+/* Desktop-only copy for the middle-column row cards. From lg: up they sit beside
+   their illustration in a text column roughly twice as wide as a tall card's, and
+   the design fills it with a longer paragraph. Below lg the row cards are stacked
+   like every other card, so they keep the shared `description`. */
+const rowDescription =
+  'Lorem ipsum dolor sit amet consectetur. Adipiscing orci in sagittis dui. Aliquam quis volutpat dolor id enim. Magna nulla nulla sollicitudin eu aliquam laoreet cursus vel elementum. Risus risus tincidunt justo amet tristique duis. Lacus volutpat lacinia sed posuere fringilla a vestibulum';
+
+const bodyCopy =
+  'text-muted-foreground mt-2 text-left text-[14px] leading-[17px] font-normal md:mt-3 md:text-sm md:leading-tight';
+
 type Illustration = { src: string; alt: string; width: number; height: number };
 
 /* Mobile geometry is fixed by the design: a 346px card with 30px top / 24px side
@@ -14,11 +24,13 @@ type Illustration = { src: string; alt: string; width: number; height: number };
 function CardBody({
   title,
   image,
+  desktopDescription,
   mediaClassName,
   imageClassName,
 }: {
   title: string;
   image: Illustration;
+  desktopDescription?: string;
   mediaClassName?: string;
   imageClassName?: string;
 }) {
@@ -42,9 +54,10 @@ function CardBody({
         <h3 className="text-[18px] leading-[22px] font-semibold md:text-base md:leading-normal md:font-bold">
           {title}
         </h3>
-        <p className="text-muted-foreground mt-2 text-left text-[14px] leading-[17px] font-normal md:mt-3 md:text-sm md:leading-tight">
-          {description}
-        </p>
+        <p className={cn(bodyCopy, desktopDescription && 'lg:hidden')}>{description}</p>
+        {desktopDescription && (
+          <p className={cn(bodyCopy, 'hidden lg:block')}>{desktopDescription}</p>
+        )}
       </div>
     </>
   );
@@ -65,7 +78,7 @@ function TallCard(props: { title: string; image: Illustration }) {
 function RowCard(props: { title: string; image: Illustration }) {
   return (
     <div className="flex h-[346px] w-full flex-col rounded-[15px] bg-white/[0.04] px-6 pt-[30px] pb-6 md:h-auto md:min-h-0 md:w-auto md:flex-1 md:flex-row md:items-center md:gap-[31px] md:bg-[#161616] md:p-6 md:ring-1 md:ring-white/5">
-      <CardBody {...props} />
+      <CardBody {...props} desktopDescription={rowDescription} />
     </div>
   );
 }

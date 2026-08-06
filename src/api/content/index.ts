@@ -3,6 +3,7 @@ export { useCreateContactRequest } from '@/api/content/mutations';
 export {
   useContactDetails,
   useContactInfo,
+  useCookiePolicy,
   useFaq,
   useFaqItems,
   useLegalDocument,
