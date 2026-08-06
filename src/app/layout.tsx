@@ -4,6 +4,7 @@ import './globals.css';
 import { Providers } from '@/app/providers';
 import { AuthModalProvider } from '@/components/layout/AuthModalProvider';
 import { ContactModalProvider } from '@/components/layout/ContactModalProvider';
+import { CookieConsentProvider } from '@/components/layout/CookieConsentProvider';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -27,7 +28,9 @@ export default function RootLayout({
       <body className="flex min-h-full flex-col">
         <Providers>
           <ContactModalProvider>
-            <AuthModalProvider>{children}</AuthModalProvider>
+            <AuthModalProvider>
+              <CookieConsentProvider>{children}</CookieConsentProvider>
+            </AuthModalProvider>
           </ContactModalProvider>
         </Providers>
       </body>

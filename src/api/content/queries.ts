@@ -80,6 +80,27 @@ export function useLegalDocument(slug: string | undefined) {
   });
 }
 
+/** Slug of the cookie policy in `/api/public/legal`. */
+const COOKIE_POLICY_SLUG = 'cookie-policy';
+
+/**
+ * The cookie policy's title and description, for the consent banner and settings modal.
+ * Reuses the `/api/public/legal` listing rather than fetching the document by slug: the
+ * banner only needs the summary blurb, and the listing is already cached for an hour.
+ *
+ * `policy` is `null` while pending and when the API is unreachable, so both surfaces
+ * render their own fallback copy — a consent banner has to appear regardless.
+ */
+export function useCookiePolicy() {
+  const { documents, isPending, isError } = useLegalSummaries();
+
+  return {
+    policy: documents.find((document) => document.slug === COOKIE_POLICY_SLUG) ?? null,
+    isPending,
+    isError,
+  };
+}
+
 /**
  * GET /api/public/contact-info — support email, postal address, opening hours and social
  * links for the contact surfaces. `schedule` is newline-separated and meant to be
