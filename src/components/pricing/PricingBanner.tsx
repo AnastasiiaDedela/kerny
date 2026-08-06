@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { Button } from '@/components/ui/button';
+import { GetStartedButton } from '@/components/common/GetStartedButton';
 
 /* The Figma banner is 1320×433 with the cloud group at left 705 / top 29, sized
    662.6×509.32 — so it bleeds 47.6px past the right edge and 105.32px past the
@@ -39,13 +39,14 @@ export function PricingBanner() {
           {/* Both button widths sit behind a variant: plain `w-[200px]` and
               `xl:w-[160px]` sort unreliably against each other. */}
           <div className="mt-5 xl:mt-[30px]">
-            <Button
+            <GetStartedButton
               variant="hero"
               size="lg"
+              href="/workspace/new-server"
               className="h-[50px] text-sm leading-[17px] font-semibold text-[#3940D3] max-xl:w-[200px] xl:w-[160px]"
             >
               Start Calculation
-            </Button>
+            </GetStartedButton>
           </div>
         </div>
 

@@ -9,19 +9,22 @@ import { useAuthModal } from '@/components/layout/AuthModalProvider';
 type Props = VariantProps<typeof buttonVariants> & {
   className?: string;
   children?: ReactNode;
+  /** Where a signed-in visitor lands; anonymous visitors get the log-in modal instead. */
+  href?: string;
 };
 
-export function GetStartedButton({ variant, size, className, children }: Props) {
+export function GetStartedButton({
+  variant,
+  size,
+  className,
+  children,
+  href = '/workspace',
+}: Props) {
   const { isLoggedIn, openLogIn } = useAuthModal();
 
   if (isLoggedIn) {
     return (
-      <Button
-        variant={variant}
-        size={size}
-        className={className}
-        render={<Link href="/workspace" />}
-      >
+      <Button variant={variant} size={size} className={className} render={<Link href={href} />}>
         {children}
       </Button>
     );

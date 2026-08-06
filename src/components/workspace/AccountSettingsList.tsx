@@ -34,13 +34,27 @@ const CONFIRM_COPY =
 /** Placeholder shown in a row's description slot until `/api/account/settings` answers. */
 const LOADING_DESCRIPTION = '—';
 
-function passwordDescription(password: AccountSettings['password']) {
-  if (!password.hasPassword) return 'No password set';
-  if (!password.changedAt) return LOADING_DESCRIPTION;
+/**
+ * STUB — not a real value. `/api/account/settings` leaves `password.changedAt` null
+ * until the password is changed for the first time, and no endpoint a non-admin user
+ * can call exposes an account-creation date, so there is nothing to count from. The
+ * design calls for "Created N days ago" in this state, so we show this fixed age.
+ *
+ * TODO: delete this and the branch below once the API populates `changedAt` at
+ * password creation — the real calculation underneath already handles it.
+ */
+const PLACEHOLDER_PASSWORD_AGE_DAYS = 10;
 
-  const days = Math.floor((Date.now() - new Date(password.changedAt).getTime()) / 86_400_000);
+function formatAge(days: number) {
   if (days <= 0) return 'Created today';
   return `Created ${days} day${days === 1 ? '' : 's'} ago`;
+}
+
+function passwordDescription(password: AccountSettings['password']) {
+  if (!password.hasPassword) return 'No password set';
+  if (!password.changedAt) return formatAge(PLACEHOLDER_PASSWORD_AGE_DAYS);
+
+  return formatAge(Math.floor((Date.now() - new Date(password.changedAt).getTime()) / 86_400_000));
 }
 
 function describe(modal: AccountSettingModal, settings: AccountSettings | undefined) {

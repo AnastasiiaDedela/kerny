@@ -14,7 +14,6 @@ import {
   usePricing,
   useQuoteTotals,
   type BillingPeriod,
-  type PricingAddon,
   type PricingTariff,
   type QuoteItem,
 } from '@/api/pricing';
@@ -34,6 +33,47 @@ interface Server {
   regionId: string;
   planId: string | null;
   addonIds: Set<string>;
+}
+
+/**
+ * The plans a region actually sells. The first one is what a card preselects, so the
+ * cost panel prices the basket without waiting for a click.
+ */
+function tariffsIn(tariffs: PricingTariff[], regionId: string) {
+  return tariffs.filter((tariff) => tariff.supportedRegionIds.includes(regionId));
+}
+
+/**
+ * The catalog ships no add-ons yet (`addons: []`), which would leave the card without the
+ * two toggle rows the design ends on. These stand in until it does — and only then, real
+ * add-ons replace them. The prefix marks them unpriceable: a quote carrying an id the API
+ * doesn't know is rejected, so `CloudServerBuilder` strips these before quoting.
+ */
+const PLACEHOLDER_ADDON_PREFIX = 'placeholder:';
+
+const placeholderAddons: AddonRow[] = [
+  { id: `${PLACEHOLDER_ADDON_PREFIX}service1`, label: 'Name of Service', monthlyPrice: '10.00' },
+  { id: `${PLACEHOLDER_ADDON_PREFIX}service2`, label: 'Name of Service', monthlyPrice: '10.00' },
+];
+
+/** What a toggle row needs, whether it came from the catalog or the placeholder above. */
+interface AddonRow {
+  id: string;
+  label: string;
+  monthlyPrice: string;
+}
+
+/**
+ * Amounts are decimal strings and must never round-trip through a float, so the
+ * placeholder surcharge is summed in whole cents and formatted back at the end.
+ */
+function toCents(amount: string): number {
+  const [whole, fraction = ''] = amount.split('.');
+  return Number(whole) * 100 + Number(fraction.padEnd(2, '0').slice(0, 2));
+}
+
+function fromCents(cents: number): string {
+  return `${Math.trunc(cents / 100)}.${String(cents % 100).padStart(2, '0')}`;
 }
 
 // ── Sub-components ────────────────────────────────────────────────────────────
@@ -151,7 +191,7 @@ function ServerCard({
   operatingSystems: OperatingSystem[];
   regions: Region[];
   tariffs: PricingTariff[];
-  addons: PricingAddon[];
+  addons: AddonRow[];
   onUpdate: (s: Server) => void;
   onRemove: () => void;
   canRemove: boolean;
@@ -172,13 +212,12 @@ function ServerCard({
   }
 
   // A plan is only offered where the provider actually has stock.
+  const regionTariffs = useMemo(() => tariffsIn(tariffs, regionId), [tariffs, regionId]);
   const rows = useMemo(
-    () =>
-      tariffs
-        .filter((tariff) => tariff.supportedRegionIds.includes(regionId))
-        .map((tariff) => toTariffRow(tariff, regionId)),
-    [tariffs, regionId]
+    () => regionTariffs.map((tariff) => toTariffRow(tariff, regionId)),
+    [regionTariffs, regionId]
   );
+  const planId = server.planId ?? regionTariffs[0]?.id ?? null;
 
   function toggleAddon(id: string, enabled: boolean) {
     const next = new Set(server.addonIds);
@@ -250,7 +289,7 @@ function ServerCard({
         <p className="mb-2.5 text-base font-medium text-white/50">Tariff</p>
         <TariffTable
           data={rows}
-          selectedId={server.planId}
+          selectedId={planId}
           onSelect={(id) => onUpdate({ ...server, planId: id })}
         />
       </div>
@@ -298,14 +337,14 @@ function CostPanel({
       <div className="rounded-[15px] bg-white/[0.04] p-6 md:p-[30px]">
         <p className="mb-3 text-base font-medium text-white/50">Total cost with VAT</p>
 
-        <div className="mb-5 flex h-10 items-center rounded-[8px] bg-[#0F0F0F] p-1">
+        <div className="mb-5 grid grid-cols-2 gap-1 rounded-[8px] bg-[#0F0F0F] p-1 lg:h-10 lg:grid-cols-4 lg:gap-0">
           {periods.map((p) => (
             <button
               key={p.id}
               type="button"
               onClick={() => onPeriodChange(p.id)}
               className={cn(
-                'flex h-8 flex-1 items-center justify-center rounded-[5px] text-sm font-normal transition-colors',
+                'flex h-8 items-center justify-center rounded-[5px] text-sm font-normal transition-colors',
                 period === p.id ? 'bg-white/[0.06] text-white' : 'text-white/50 hover:text-white/80'
               )}
             >
@@ -376,24 +415,54 @@ export function CloudServerBuilder() {
   const [servers, setServers] = useState<Server[]>([emptyServer(1)]);
   const [period, setPeriod] = useState<BillingPeriod>('MONTHLY');
 
+  const addonRows: AddonRow[] = addons.length ? addons : placeholderAddons;
+
   // Every selection has to be resolved (not just the ones the user touched) before the
   // API will price the basket, so apply the same first-option fallback the cards render.
   const quoteItems = useMemo<QuoteItem[]>(
     () =>
       servers
-        .map((server) => ({
-          operatingSystemId: server.osId || operatingSystems[0]?.id || '',
-          regionId: server.regionId || sortedRegions[0]?.id || '',
-          planId: server.planId ?? '',
-          billingPeriod: period,
-          addonIds: [...server.addonIds],
-          quantity: 1,
-        }))
+        .map((server) => {
+          const regionId = server.regionId || sortedRegions[0]?.id || '';
+
+          return {
+            operatingSystemId: server.osId || operatingSystems[0]?.id || '',
+            regionId,
+            planId: server.planId ?? tariffsIn(tariffs, regionId)[0]?.id ?? '',
+            billingPeriod: period,
+            addonIds: [...server.addonIds].filter((id) => !id.startsWith(PLACEHOLDER_ADDON_PREFIX)),
+            quantity: 1,
+          };
+        })
         .filter((item) => item.operatingSystemId && item.regionId && item.planId),
-    [servers, operatingSystems, sortedRegions, period]
+    [servers, operatingSystems, sortedRegions, tariffs, period]
   );
 
   const { total } = useQuoteTotals(quoteItems);
+
+  /**
+   * The quote can't price placeholder add-ons, so their cost is added here instead — the
+   * toggles would otherwise move nothing. `monthlyPrice` is per month, so scale it by the
+   * selected period's length. Real add-ons never reach this: the quote already prices
+   * them, and their ids can't carry the placeholder prefix.
+   */
+  const placeholderMonthlyCents = useMemo(
+    () =>
+      servers.reduce(
+        (sum, server) =>
+          sum +
+          placeholderAddons
+            .filter((addon) => server.addonIds.has(addon.id))
+            .reduce((serverSum, addon) => serverSum + toCents(addon.monthlyPrice), 0),
+        0
+      ),
+    [servers]
+  );
+
+  const months = billingPeriods.find((p) => p.id === period)?.months ?? 1;
+
+  const displayTotal =
+    total === null ? null : fromCents(toCents(total) + placeholderMonthlyCents * months);
 
   function addServer() {
     setServers((prev) => [...prev, emptyServer(nextId.current++)]);
@@ -422,7 +491,7 @@ export function CloudServerBuilder() {
               operatingSystems={operatingSystems}
               regions={sortedRegions}
               tariffs={tariffs}
-              addons={addons}
+              addons={addonRows}
               onUpdate={updateServer}
               onRemove={() => removeServer(s.id)}
               canRemove={servers.length > 1}
@@ -467,7 +536,7 @@ export function CloudServerBuilder() {
         <div className="self-start md:top-6">
           <CostPanel
             servers={servers}
-            total={total}
+            total={displayTotal}
             periods={billingPeriods}
             period={period}
             onPeriodChange={setPeriod}
