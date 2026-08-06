@@ -11,13 +11,8 @@ import type {
   LegalSummary,
 } from '@/api/content/types';
 
-/** Editorial content changes on a CMS edit, not per session — an hour is plenty. */
 const CONTENT_STALE_TIME = 60 * 60 * 1000;
 
-/**
- * GET /api/public/faq — the marketing FAQ. Unauthenticated. The API does not promise
- * `sortOrder` ordering in the payload, so `useFaqItems()` sorts before rendering.
- */
 export function useFaq() {
   return useQuery({
     queryKey: contentKeys.faq(),
@@ -26,7 +21,6 @@ export function useFaq() {
   });
 }
 
-/** FAQ entries in `sortOrder`, ready to render. */
 export function useFaqItems() {
   const { data, isPending, isError } = useFaq();
 
@@ -37,13 +31,6 @@ export function useFaqItems() {
   };
 }
 
-/**
- * GET /api/public/legal — titles, descriptions and `lastUpdated` for every policy
- * document. Metadata only; `useLegalDocument()` fetches the body.
- *
- * Nothing renders this yet: the app has no `/legal` route, so the footer's policy links
- * are still hard-coded. Wire them once a document page exists.
- */
 export function useLegalDocuments() {
   return useQuery({
     queryKey: contentKeys.legal(),
@@ -53,7 +40,6 @@ export function useLegalDocuments() {
   });
 }
 
-/** Legal documents as a plain array, alphabetical by title. */
 export function useLegalSummaries() {
   const { data, isPending, isError } = useLegalDocuments();
 
@@ -64,10 +50,6 @@ export function useLegalSummaries() {
   };
 }
 
-/**
- * GET /api/public/legal/{slug} — one document with `bodyMarkdown` and a pre-parsed
- * `content` block list. Skipped until a slug is supplied.
- */
 export function useLegalDocument(slug: string | undefined) {
   return useQuery({
     queryKey: contentKeys.legalDocument(slug ?? ''),
@@ -80,17 +62,8 @@ export function useLegalDocument(slug: string | undefined) {
   });
 }
 
-/** Slug of the cookie policy in `/api/public/legal`. */
 const COOKIE_POLICY_SLUG = 'cookie-policy';
 
-/**
- * The cookie policy's title and description, for the consent banner and settings modal.
- * Reuses the `/api/public/legal` listing rather than fetching the document by slug: the
- * banner only needs the summary blurb, and the listing is already cached for an hour.
- *
- * `policy` is `null` while pending and when the API is unreachable, so both surfaces
- * render their own fallback copy — a consent banner has to appear regardless.
- */
 export function useCookiePolicy() {
   const { documents, isPending, isError } = useLegalSummaries();
 
@@ -101,11 +74,6 @@ export function useCookiePolicy() {
   };
 }
 
-/**
- * GET /api/public/contact-info — support email, postal address, opening hours and social
- * links for the contact surfaces. `schedule` is newline-separated and meant to be
- * rendered with `whitespace-pre-line`.
- */
 export function useContactInfo() {
   return useQuery({
     queryKey: contentKeys.contactInfo(),
@@ -115,7 +83,6 @@ export function useContactInfo() {
   });
 }
 
-/** Convenience wrapper for the contact modal/footer, which only need the body. */
 export function useContactDetails() {
   const { data, isPending, isError } = useContactInfo();
 
@@ -126,6 +93,5 @@ export function useContactDetails() {
   };
 }
 
-/** Stable identities so a pending render doesn't hand consumers a fresh array each time. */
 const EMPTY_FAQ: FaqItem[] = [];
 const EMPTY_LEGAL: LegalSummary[] = [];

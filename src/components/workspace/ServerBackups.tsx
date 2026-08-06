@@ -9,7 +9,6 @@ export function ServerBackups({
 }: {
   serverId: string;
   paragraphs: string[];
-  /** From `/api/servers/{id}/backups` — the button is the only thing that reads it. */
   enabled: boolean;
 }) {
   const enableBackups = useEnableBackups(serverId);
@@ -26,7 +25,6 @@ export function ServerBackups({
         ))}
       </div>
 
-      {/* Enabling is chargeable and cannot be undone here, so it disables once on. */}
       <button
         type="button"
         onClick={() => enableBackups.mutate()}

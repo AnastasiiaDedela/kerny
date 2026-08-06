@@ -8,11 +8,8 @@ import { usePublicRegions, type Region } from '@/api/catalog';
 import { regionCountry, regionFlagSrc, regionsIn } from '@/lib/catalog';
 import { Reveal } from '@/components/common/Reveal';
 
-/** How many of a continent's regions the home page previews before "Show More". */
 const PREVIEW_COUNT = 5;
 
-/* Cards are staggered so a row reads left-to-right; the cap keeps the last card
-   in a wide row from waiting too long. */
 const STAGGER_MS = 60;
 const STAGGER_CAP = 6;
 
@@ -64,12 +61,10 @@ export function DataCenterRegions() {
   return (
     <section className="mx-auto w-full max-w-340 px-5 py-10">
       <h2 className="text-left text-3xl font-extrabold tracking-tight md:text-center md:text-4xl">
-        {/* The count only joins the heading once the catalog answers, so it never claims zero. */}
         {regions.length > 0 && `${regions.length} `}Cloud Data Center Regions
       </h2>
 
       <div className="mt-12 space-y-8">
-        {/* North America */}
         <div>
           <GroupHeader title="North America" showMore />
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
@@ -79,7 +74,6 @@ export function DataCenterRegions() {
           </div>
         </div>
 
-        {/* Europe */}
         <div>
           <GroupHeader title="Europe" showMore />
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
@@ -89,7 +83,6 @@ export function DataCenterRegions() {
           </div>
         </div>
 
-        {/* Asia */}
         <div>
           <GroupHeader title="Asia" showMore />
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
@@ -99,7 +92,6 @@ export function DataCenterRegions() {
           </div>
         </div>
 
-        {/* Australia / South America / Africa */}
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3 lg:grid-cols-5 lg:gap-4">
           <div className="lg:col-span-2">
             <GroupHeader title="Australia" />

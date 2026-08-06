@@ -7,10 +7,6 @@ import { useCreateDeposit, type DepositAction } from '@/api/billing';
 import { FormError } from '@/components/layout/auth/shared';
 import { ModalActions, ModalField, ModalShell } from '@/components/workspace/modal-parts';
 
-/**
- * What to tell the user when the deposit cannot simply be handed over to the provider's
- * page. `redirect` never lands here — the browser leaves for the provider instead.
- */
 function actionNotice(action: DepositAction): string | null {
   switch (action.kind) {
     case 'redirect':
@@ -22,10 +18,6 @@ function actionNotice(action: DepositAction): string | null {
   }
 }
 
-/**
- * Top-up dialog. The API only starts the payment — it answers with an action envelope,
- * and the balance moves later, when the provider's webhook confirms it.
- */
 export function DepositModal({
   open,
   onOpenChange,
@@ -46,13 +38,11 @@ export function DepositModal({
   };
 
   const submit = () => {
-    // `provider` is left off so the API routes to whichever provider it has enabled.
     deposit.mutate(
       { amount: amount.trim(), currency: 'COIN' },
       {
         onSuccess: ({ action }) => {
           if (action.kind === 'redirect') {
-            // A full navigation, not the router: the provider is off-app.
             window.location.assign(action.redirectUrl);
             return;
           }

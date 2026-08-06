@@ -98,7 +98,6 @@ export function ServerTable({ data }: ServerTableProps) {
     <div className="flex flex-col gap-2.5">
       {table.getRowModel().rows.map((row) => (
         <div key={row.id}>
-          {/* Mobile/tablet: stacked card */}
           <div className="flex flex-col gap-4 rounded-[10px] bg-white/[0.04] p-4 min-[1240px]:hidden">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
@@ -135,7 +134,6 @@ export function ServerTable({ data }: ServerTableProps) {
             </div>
           </div>
 
-          {/* Desktop: full row */}
           <div className="hidden h-[86px] items-center justify-between rounded-[10px] bg-white/[0.04] pr-[23px] pl-5 min-[1240px]:flex">
             <div className="flex w-[162px] shrink-0 items-center gap-4">
               <Image src="/images/servers/server-name.svg" alt="" width={46} height={46} />

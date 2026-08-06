@@ -29,7 +29,6 @@ export function ChangePasswordModal({
   };
 
   const submit = () => {
-    // The API never sees `repeat`, so the two-field match is ours to check.
     if (values.next !== values.repeat) {
       setMismatch(true);
       return;

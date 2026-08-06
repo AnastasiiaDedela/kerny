@@ -10,7 +10,6 @@ type AuthModalContextValue = {
   openSignUp: () => void;
   openLogIn: () => void;
   isLoggedIn: boolean;
-  /** True until the first `/api/auth/session` answer arrives. */
   isLoading: boolean;
   user: User | null;
   logOut: () => void;

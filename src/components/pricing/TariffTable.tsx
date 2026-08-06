@@ -18,17 +18,14 @@ import {
 import { cn } from '@/lib/utils';
 
 export interface TariffRow {
-  /** The catalog's plan id (a cuid), which is also the `planId` a quote expects. */
   id: string;
   cpu: string;
   ram: string;
   nvme: string;
   channel: string;
-  /** Decimal string from the API (`'30.00'`) — never a float. */
   costPerMonth: string;
 }
 
-/** Maps a catalog tariff onto a row, priced for the region the buyer picked. */
 export function toTariffRow(tariff: PricingTariff, regionId: string | undefined): TariffRow {
   return {
     id: tariff.id,
@@ -44,10 +41,6 @@ interface TariffTableProps {
   data: TariffRow[];
   selectedId: string | null;
   onSelect: (id: string) => void;
-  /**
-   * Use the wide layout that reserves a second cost column beside "€ / month". The
-   * catalog has no hourly price, so that column renders an em dash.
-   */
   showHourly?: boolean;
 }
 
@@ -68,18 +61,10 @@ const columns = [
   }),
 ];
 
-// Column widths mirror the markup (163 / 164 / 174 / 141 / 78 across the 720px
-// usable row width). Cost (last column) is right-aligned.
 const GRID = 'grid grid-cols-[163fr_164fr_174fr_141fr_minmax(90px,1fr)] items-center px-5';
 
-// Fixed column widths + gaps for the "hourly" desktop row: 20px padding, CPU
-// (40) RAM (40) NVME (40) Channel (100) Cost/month (70) Cost/hour, 20px
-// padding — matches the markup's exact spacing rather than proportional (fr)
-// columns, since the month/hour gap isn't uniform with the others.
 const HOURLY_CELL = 'shrink-0 whitespace-nowrap text-sm';
 
-// Stacked-card cells: a fixed 36px row, so a card lands on the mock's 200px height
-// (16 padding + 4 rows of 36 + 3 gaps of 8 + 16 padding).
 const CELL =
   'flex h-9 items-center justify-between gap-2.5 rounded-[5px] border-[0.5px] border-white/30 px-3';
 const CELL_LABEL = 'text-sm leading-[17px] font-normal text-white/50';
@@ -90,16 +75,12 @@ export function TariffTable({ data, selectedId, onSelect, showHourly = false }: 
 
   return (
     <>
-      {/* Mobile/tablet: stacked cards */}
       <div
         className={cn(
           'rounded-[8px] bg-[#0F0F0F] p-4',
           showHourly ? 'min-[1380px]:hidden' : 'lg:hidden'
         )}
       >
-        {/* The list caps at three cards (200 + 12 gap each) and scrolls; the negative
-            margin pulls the hairline thumb into the 16px padding so it sits 9px off
-            the panel edge, with pr-1.5 keeping the cards clear of it. */}
         <div className="scrollbar-hairline -mr-[7px] flex max-h-[624px] flex-col gap-3 overflow-y-auto pr-1.5">
           {data.map((row) => {
             const selected = row.id === selectedId;
@@ -115,12 +96,10 @@ export function TariffTable({ data, selectedId, onSelect, showHourly = false }: 
                     : 'bg-white/[0.04] hover:bg-white/[0.06]'
                 )}
               >
-                {/* CPU */}
                 <div className={CELL}>
                   <span className={CELL_LABEL}>CPU</span>
                   <span className={CELL_VALUE}>{row.cpu}</span>
                 </div>
-                {/* RAM + NVME */}
                 <div className="flex gap-[9px]">
                   <div className={cn(CELL, 'flex-1')}>
                     <span className={CELL_LABEL}>RAM</span>
@@ -131,12 +110,10 @@ export function TariffTable({ data, selectedId, onSelect, showHourly = false }: 
                     <span className={CELL_VALUE}>{row.nvme}</span>
                   </div>
                 </div>
-                {/* Channel */}
                 <div className={CELL}>
                   <span className={CELL_LABEL}>Channel</span>
                   <span className={CELL_VALUE}>{row.channel}</span>
                 </div>
-                {/* Cost */}
                 <div className={CELL}>
                   <span className={CELL_LABEL}>Cost</span>
                   <span className={CELL_VALUE}>
@@ -149,11 +126,9 @@ export function TariffTable({ data, selectedId, onSelect, showHourly = false }: 
         </div>
       </div>
 
-      {/* Desktop: horizontal table */}
       {showHourly ? (
         <div className="hidden overflow-x-auto min-[1380px]:block">
           <div className="min-w-[700px]">
-            {/* Header */}
             <div className="flex h-[50px] items-center rounded-[8px] bg-white/[0.04] px-5">
               <span className={cn(HOURLY_CELL, 'w-[77px] text-white/50')}>CPU</span>
               <span className={cn(HOURLY_CELL, 'ml-10 w-[30px] text-white/50')}>RAM</span>
@@ -165,7 +140,6 @@ export function TariffTable({ data, selectedId, onSelect, showHourly = false }: 
               </div>
             </div>
 
-            {/* Rows */}
             <div className="mt-2.5 flex flex-col gap-2">
               {data.map((row) => {
                 const selected = row.id === selectedId;
@@ -204,7 +178,6 @@ export function TariffTable({ data, selectedId, onSelect, showHourly = false }: 
       ) : (
         <div className="hidden overflow-x-auto rounded-[8px] bg-[#0F0F0F] lg:block">
           <div className="min-w-[560px] p-5">
-            {/* Header */}
             <div className={cn(GRID, 'h-[50px] rounded-[8px] bg-white/[0.04]')}>
               {table.getHeaderGroups()[0]?.headers.map((header, i) => (
                 <div
@@ -216,7 +189,6 @@ export function TariffTable({ data, selectedId, onSelect, showHourly = false }: 
               ))}
             </div>
 
-            {/* Rows */}
             <div className="mt-2.5 flex flex-col gap-2">
               {table.getRowModel().rows.map((row) => {
                 const selected = row.original.id === selectedId;

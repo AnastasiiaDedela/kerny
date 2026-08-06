@@ -12,12 +12,10 @@ import { cn } from '@/lib/utils';
 export interface ServerInfo {
   name: string;
   host: string;
-  /** `null` when we ship no flag for the region's country. */
   flag: string | null;
   flagAlt: string;
   ip: string;
   login: string;
-  /** Whether the API holds a password it can reveal; Google-only servers may not. */
   passwordAvailable: boolean;
   status: ServerStatus;
   cost: string;
@@ -88,7 +86,6 @@ export function ServerInformation({
 
   return (
     <section className="h-full rounded-[10px] bg-white/[0.04] p-5 lg:p-6">
-      {/* Server identity */}
       <div className="flex items-center gap-6">
         <span className="bg-primary/20 flex size-[100px] shrink-0 items-center justify-center rounded-[8.33px]">
           <Image src="/images/servers/claud server.svg" alt="" width={52} height={35} />
@@ -109,9 +106,6 @@ export function ServerInformation({
         </div>
       </div>
 
-      {/* Tabs */}
-      {/* Two-up grid until the card itself is wide enough for all four tabs in one row —
-          keyed to the card, not the viewport, because the lg two-column layout squeezes it. */}
       <div className="@container mt-[30px]">
         <div className="grid grid-cols-2 gap-2.5 @min-[580px]:flex">
           {tabs.map((tab) => (
@@ -149,10 +143,6 @@ function InformationPanel({ serverId, server }: { serverId: string; server: Serv
   const [revealed, setRevealed] = useState(false);
   const reveal = useRevealServerPassword(serverId);
 
-  /**
-   * The password is never part of the detail payload — it is fetched on demand and kept
-   * in this component's state only, so it disappears when the panel unmounts.
-   */
   function togglePassword() {
     if (revealed) {
       setRevealed(false);

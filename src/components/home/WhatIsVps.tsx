@@ -5,7 +5,7 @@ import { Reveal } from '@/components/common/Reveal';
 export function WhatIsVps() {
   return (
     <section className="mx-auto w-full max-w-340 px-5 py-10">
-      <Reveal className="flex flex-col gap-10 md:flex-row md:items-center md:gap-x-12">
+      <Reveal className="flex flex-col gap-11.5 md:flex-row md:items-center md:gap-x-11.5">
         <div className="order-2 mx-auto flex w-full max-w-[514px] flex-1 items-center justify-center pb-19 md:order-1 md:mx-0 md:pb-0">
           <div className="relative mx-auto w-full px-6 md:px-0">
             <div className="absolute bottom-0 left-0 aspect-[514/215] w-full translate-y-[76px] rounded-[20px] bg-[linear-gradient(180deg,rgba(67,76,247,0)_0%,rgba(67,76,247,0.16)_100%)]" />
@@ -13,7 +13,6 @@ export function WhatIsVps() {
           </div>
         </div>
 
-        {/* Right — copy */}
         <div className="order-1 flex-1 md:order-2 md:text-right">
           <h2 className="text-4xl leading-14.5 font-bold md:text-5xl">What Is A VPS?</h2>
           <p className="text-foreground mt-6 text-sm leading-6 font-normal">

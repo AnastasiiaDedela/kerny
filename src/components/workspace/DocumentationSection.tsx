@@ -4,8 +4,6 @@ export interface DocumentationSectionItem {
   paragraphs: string[];
 }
 
-/* The section title only appears on desktop — the mobile screen leads straight from the page
-   heading into the copy. */
 export function DocumentationSection({ title, paragraphs }: Omit<DocumentationSectionItem, 'id'>) {
   return (
     <section>

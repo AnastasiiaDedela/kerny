@@ -9,7 +9,6 @@ import { cn } from '@/lib/utils';
 
 type TabValue = 'all' | 'North America' | 'Europe' | 'Asia' | 'Australia';
 
-/** `continent` is `null` for the "All Regions" tab, which skips filtering entirely. */
 const tabs: { value: TabValue; label: string; continent: string | null }[] = [
   { value: 'all', label: 'All Regions', continent: null },
   { value: 'North America', label: 'North America', continent: 'North America' },

@@ -52,7 +52,6 @@ const paymentDetails = [
 
 const support = { email: 'support@kerny.com', phone: '1-800-111-11111' };
 
-/** The receipt's hairline rules — 1px at 6% white, the same stroke as the item row borders. */
 function Rule({ className }: React.ComponentProps<'div'>) {
   return <div className={cn('h-px bg-white/[0.06]', className)} />;
 }
@@ -60,8 +59,6 @@ function Rule({ className }: React.ComponentProps<'div'>) {
 export function PaymentConfirmation() {
   return (
     <section className="bg-background mx-auto w-full max-w-[800px] rounded-[10px] p-5 lg:p-[30px]">
-      {/* Sender block and order/thank-you block are both 117px tall in the design, so they
-          bottom-align on desktop; below lg they stack in reading order. */}
       <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between lg:gap-10">
         <div>
           <p className="font-logo text-primary text-2xl leading-[29px]">Kerny</p>
@@ -74,8 +71,6 @@ export function PaymentConfirmation() {
 
         <div className="lg:text-right">
           <p className="text-base leading-[19px] font-medium text-white">{orderNumber}</p>
-          {/* Broken where the design breaks it. Its 207px box is exactly the width of
-              "your Purchase!", so a max-width can't hold the two lines reliably. */}
           <p className="text-primary mt-[30px] text-[28px] leading-[34px] font-bold">
             Thank you for
             <br />
@@ -88,7 +83,6 @@ export function PaymentConfirmation() {
 
       <h1 className="mt-5 text-lg leading-[22px] font-semibold text-white">Order Summary</h1>
 
-      {/* Item rows and their rules are inset a further 30px from the card padding. */}
       <ul className="mt-4 lg:pl-[30px]">
         {items.map((item, index) => (
           <li
@@ -147,7 +141,6 @@ export function PaymentConfirmation() {
         </Link>
       </p>
 
-      {/* Copyright sits left of the button on desktop; on mobile the action comes first. */}
       <div className="mt-5 flex flex-col-reverse gap-5 lg:flex-row lg:items-center lg:justify-between">
         <p className="text-base leading-[19px] text-white/50 lg:w-[138px] lg:shrink-0">
           © Kerny 2026. All Right Reserved

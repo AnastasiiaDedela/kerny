@@ -5,16 +5,12 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  /* Named so it sorts by value against sm/md/lg — an inline `min-[1101px]:`
-     variant is emitted before `sm:` and would lose to it on wide screens. */
   --breakpoint-wide: 1101px;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-sans);
-  /* Brand logo face. Falls back to Inter until the Nekst files are added to
-     public/fonts and registered with next/font/local. */
   --font-logo: 'Nekst', var(--font-inter), sans-serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -102,9 +98,6 @@
   --font-sans: var(--font-inter), sans-serif;
 }
 
-/* 1px white thumb, matching the scroll indicator in the server history design.
-   Deliberately no `scrollbar-width`/`scrollbar-color`: Chrome honours those over
-   ::-webkit-scrollbar and its narrowest `thin` is ~9px, which breaks the hairline. */
 @utility scrollbar-hairline {
   &::-webkit-scrollbar {
     width: 1px;
@@ -118,15 +111,10 @@
   }
 }
 
-/* Assembling illustrations — HeroServerScene and VpsServerScene. Every part
-   drops in from above and settles; afterwards only the bodies levitate, their
-   pads stay put. Distances are container-relative so the motion scales with the
-   artwork. */
 .hero-scene {
   container-type: inline-size;
 }
 
-/* Scenes below the fold hold at the pre-drop frame until scrolled into view. */
 .hero-scene--idle .hero-drop,
 .hero-scene--idle .hero-bob {
   animation-play-state: paused;
@@ -168,41 +156,19 @@
   }
 }
 
-/* Operation Systems — vertical marquee columns. Each track renders its cards
-   twice and every card carries its own bottom spacing (no flex `gap`), so the
-   track height is an exact multiple of card+gap and translating 50% lands on a
-   seamless loop point.
-
-   Card/gap sizes live here rather than as `sm:[--os-card:…]` utilities because
-   Tailwind orders arbitrary-property utilities independently of breakpoint
-   width, so the wider tier does not reliably win. */
 .os-systems {
-  /* Mobile Figma frame is 393px wide: three 110px cards 11.5px apart fill the
-     353px content width exactly. Below 393px the card shrinks so the row still
-     fits inside the section's 20px page padding instead of overflowing. */
   --os-card: min(110px, calc((100vw - 63px) / 3));
   --os-gap: 11.5px;
   --os-row-gap: 10px;
 
-  /* Mobile shows exactly three cards per column; the wider tiers keep the
-     extra gap that lets a fourth peek in under the fade. */
   --os-col-h: calc(3 * var(--os-card) + 2 * var(--os-row-gap));
 
-  /* The static middle column sits one notch lower than the two marquees. */
   --os-center-offset: 20px;
 
-  /* Card internals, from the 152px Figma card: logo box 78px tall starting 24px
-     below the card top, label 11px under it. Derived from --os-card so the
-     narrower tiers stay proportional instead of needing their own numbers.
-     Height (not width) is what's fixed — every logo is 78px tall and free to be
-     as wide as its aspect ratio makes it, which is what makes them read as one
-     size despite Debian being 62px wide and Alpine 90px. */
   --os-logo: calc(var(--os-card) * 78 / 152);
   --os-inset: calc(var(--os-card) * 24 / 152);
   --os-label-gap: calc(var(--os-card) * 11 / 152);
 
-  /* Figma fades the outermost card into the page over 70px of its 152px height;
-     as a mask this is the same effect without needing an overlay element. */
   --os-fade: calc(var(--os-card) * 70 / 152);
 }
 
@@ -236,8 +202,6 @@
   );
 }
 
-/* The middle column is static, so on the wider tiers it is flush with the
-   section and needs no fade; only the mobile frame clips it. */
 .os-column-static {
   margin-top: var(--os-center-offset);
 }
@@ -294,10 +258,6 @@
   }
 }
 
-/* Scroll-reveal — elements start hidden and translated, then settle when
-   scrolled into view. Direction utilities pick which side the content enters
-   from. On narrow viewports the horizontal directions fall back to a fade-up
-   so translated content never pokes past the section padding. */
 .reveal {
   opacity: 0;
   transition:
@@ -313,8 +273,6 @@
   transform: translate3d(0, -40px, 0);
 }
 .reveal-left {
-  /* Falls back to fade-up on mobile so the horizontal offset doesn't overflow
-     narrow viewports; the horizontal slide kicks in at md. */
   transform: translate3d(0, 40px, 0);
 }
 .reveal-right {
@@ -338,7 +296,6 @@
   transform: translate3d(0, 0, 0);
 }
 
-/* Banner left-column staggered entrance — CSS-only, no JS required */
 @keyframes banner-slide-down-sm {
   from {
     opacity: 0;

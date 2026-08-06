@@ -4,7 +4,6 @@ import { usePathname } from 'next/navigation';
 import { WorkspaceHeader } from '@/components/workspace/WorkspaceHeader';
 import { WorkspaceSidebar } from '@/components/workspace/WorkspaceSidebar';
 
-/** Routes whose content spans the full 1320px column instead of sitting next to the sidebar. */
 const fullWidthRoutes = ['/workspace/settings'];
 
 export default function WorkspaceLayout({ children }: Readonly<{ children: React.ReactNode }>) {

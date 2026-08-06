@@ -14,11 +14,6 @@ import {
   FormError,
 } from '@/components/layout/auth/shared';
 
-/**
- * The confirm endpoint needs the token from the emailed reset link. When the user
- * arrives via that link (`/?token=…`) it is filled in for them; otherwise they can
- * paste it, which keeps this step reachable on its own.
- */
 function readTokenFromUrl() {
   if (typeof window === 'undefined') return '';
   return new URLSearchParams(window.location.search).get('token') ?? '';
@@ -63,7 +58,6 @@ export function NewPasswordView({
                 placeholder="Reset code from email"
                 type="text"
                 name="reset-token"
-                // Without these the browser offers to autofill this as an email field.
                 autoComplete="off"
                 spellCheck={false}
                 required

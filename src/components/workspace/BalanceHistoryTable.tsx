@@ -34,7 +34,6 @@ export function BalanceHistoryTable({
   emptyLabel,
 }: {
   data: HistoryEntry[];
-  /** Shown in place of the rows when there are none. `null` while the ledger is still loading. */
   emptyLabel?: string | null;
 }) {
   const table = useReactTable({ data, columns, getCoreRowModel: getCoreRowModel() });
@@ -43,9 +42,6 @@ export function BalanceHistoryTable({
 
   return (
     <div className="@container">
-      {/* Narrow cards carry their own labels, so the header row only exists from 480px up.
-          The 188/144/168 track list is what centres the Time value under the Time header
-          and keeps Amount flush right, so the header and the rows share it. */}
       <div className="hidden h-[50px] grid-cols-[188fr_144fr_168fr] items-center rounded-[10px] bg-[#0F0F0F] px-4 @min-[480px]:grid">
         {headerGroup.headers.map((header, i) => (
           <span
@@ -61,12 +57,7 @@ export function BalanceHistoryTable({
         ))}
       </div>
 
-      {/* The list scrolls inside the fixed-height card; the hairline thumb sits 6px to the
-          right of the rows, hence the padding + pulled-out margin. Stacked cards are far
-          taller than 218px, so below 480px the list flows instead of scrolling — and with
-          no header above it, it sits flush against the top of its grid cell. */}
       <div className="scrollbar-hairline flex flex-col gap-3 @min-[480px]:mt-2.5 @min-[480px]:-mr-[7px] @min-[480px]:h-[218px] @min-[480px]:gap-1.5 @min-[480px]:overflow-y-auto @min-[480px]:pr-1.5">
-        {/* An empty ledger keeps the list's shape: one row-height card in the dimmed tone. */}
         {rows.length === 0 && emptyLabel && (
           <div className="flex h-[50px] shrink-0 items-center justify-center rounded-[10px] bg-[#0F0F0F] px-4 text-sm leading-[17px] font-medium text-white/50">
             {emptyLabel}
@@ -78,7 +69,6 @@ export function BalanceHistoryTable({
 
           return (
             <div key={row.id} className="shrink-0">
-              {/* Narrow: every value gets its own label, stacked. */}
               <div className="flex flex-col gap-3 rounded-[10px] bg-[#0F0F0F] p-5 @min-[480px]:hidden">
                 {row.getVisibleCells().map((cell) => (
                   <div key={cell.id} className="flex flex-col gap-1.5">
@@ -92,7 +82,6 @@ export function BalanceHistoryTable({
                 ))}
               </div>
 
-              {/* Wide: one row under the shared header. */}
               <div className="hidden h-[50px] grid-cols-[188fr_144fr_168fr] items-center rounded-[10px] bg-[#0F0F0F] px-4 text-sm leading-[17px] font-medium whitespace-nowrap text-white @min-[480px]:grid">
                 <span>{flexRender(action.column.columnDef.cell, action.getContext())}</span>
                 <span className="text-center">

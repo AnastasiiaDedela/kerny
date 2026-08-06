@@ -7,7 +7,6 @@ const fallbackTitle = 'Cookies';
 const fallbackDescription =
   'We use cookies to keep the site running, remember your preferences and understand how it is used. Choose which ones you allow.';
 
-/** 20×20 "i" knocked out of a white disc — the `Subtract` shape in the design. */
 function InfoIcon() {
   return (
     <svg
@@ -28,23 +27,10 @@ function InfoIcon() {
   );
 }
 
-/**
- * The API blurb is a multi-paragraph policy summary; the banner has room for the opening
- * paragraph only (the settings modal renders the whole thing).
- */
 function firstParagraph(text: string) {
   return text.split(/\n\s*\n/)[0].trim();
 }
 
-/**
- * Bottom-left consent prompt. 328px card from the design: 20px padding, a 20px icon and a
- * 12px gutter leave a 256px content column, which the three 80px buttons and their two 8px
- * gaps fill exactly.
- *
- * It holds 328px at every width and only goes fluid under ~348px, where 328 plus the two
- * 10px gutters no longer fits. The buttons are a 3-up grid rather than fixed 80px widths
- * so they divide whatever the card gives them on those narrow screens.
- */
 export function CookieBanner({
   onAccept,
   onDecline,

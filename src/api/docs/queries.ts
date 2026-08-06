@@ -9,10 +9,8 @@ import type {
   ArticleSummary,
 } from '@/api/docs/types';
 
-/** Documentation changes on a CMS edit, not per session — an hour is plenty. */
 const DOCS_STALE_TIME = 60 * 60 * 1000;
 
-/** Shared so `useDocsArticle` and `useDocsArticles`' fan-out hit the same cache entry. */
 function articleOptions(slug: string) {
   return queryOptions({
     queryKey: docsKeys.article(slug),
@@ -22,10 +20,6 @@ function articleOptions(slug: string) {
   });
 }
 
-/**
- * GET /api/docs/articles — every published article's slug, title, summary and
- * `sortOrder`. Metadata only; `useDocsArticle()` fetches the body.
- */
 export function useDocsArticleList() {
   return useQuery({
     queryKey: docsKeys.articles(),
@@ -35,7 +29,6 @@ export function useDocsArticleList() {
   });
 }
 
-/** Article summaries in `sortOrder` — the payload isn't promised to arrive sorted. */
 export function useDocsArticleSummaries() {
   const { data, isPending, isError } = useDocsArticleList();
 
@@ -46,21 +39,10 @@ export function useDocsArticleSummaries() {
   };
 }
 
-/**
- * GET /api/docs/articles/{slug} — one article with its `body` blocks and section
- * anchors. Skipped until a slug is supplied.
- */
 export function useDocsArticle(slug: string | undefined) {
   return useQuery({ ...articleOptions(slug ?? ''), enabled: Boolean(slug) });
 }
 
-/**
- * Every article with its body, in `sortOrder`. The list endpoint carries summaries only,
- * so each body is a request of its own — hence the fan-out rather than one call.
- *
- * `isPending` stays true until the list *and* every body has landed, so the page never
- * paints a half-built set of articles.
- */
 export function useDocsArticles() {
   const { summaries, isPending: isListPending, isError: isListError } = useDocsArticleSummaries();
 
@@ -77,5 +59,4 @@ export function useDocsArticles() {
   };
 }
 
-/** Stable identity so a pending render doesn't hand consumers a fresh array each time. */
 const EMPTY_SUMMARIES: ArticleSummary[] = [];

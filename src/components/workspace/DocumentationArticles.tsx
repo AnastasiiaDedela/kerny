@@ -4,13 +4,6 @@ import { useDocsArticles } from '@/api/docs';
 import { DocumentationSection } from '@/components/workspace/DocumentationSection';
 import { WorkspaceNotice } from '@/components/workspace/WorkspaceNotice';
 
-/**
- * Fetches the documentation articles so the page can stay a server component. Every
- * block in an article's `body` renders as a paragraph — the block `type` is an open
- * string in the schema, so filtering on it would silently drop content.
- *
- * Renders bare sections: the page owns the column that spaces them.
- */
 export function DocumentationArticles() {
   const { articles, isPending, isError } = useDocsArticles();
 
@@ -27,8 +20,6 @@ export function DocumentationArticles() {
     );
   }
 
-  /* Same reasoning as `NotificationFeed`: only a settled, successful response can mean
-     there is genuinely nothing to read. */
   if (articles.length === 0) {
     return (
       <WorkspaceNotice

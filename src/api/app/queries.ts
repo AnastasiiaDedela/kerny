@@ -4,7 +4,6 @@ import { appKeys } from '@/api/app/keys';
 import type { OkResponse } from '@/api/app/types';
 import { apiClient, unwrap } from '@/api/client';
 
-/** GET /api — the API's root marker; a successful `{ ok: true }` means it is reachable. */
 export function useApiRoot() {
   return useQuery({
     queryKey: appKeys.root(),
@@ -12,7 +11,6 @@ export function useApiRoot() {
   });
 }
 
-/** Convenience wrapper for callers that only need "is the API up?". */
 export function useApiReachable() {
   const { data, isPending, isError } = useApiRoot();
 

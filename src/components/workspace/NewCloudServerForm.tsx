@@ -32,11 +32,6 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { TariffTable, toTariffRow } from '@/components/pricing/TariffTable';
 
-/**
- * The picker is family-level, but the API lists one entry per image, so each card matches
- * a set of them. Only groups we ship an icon for are offered — the families left out
- * (`iso`, `snapshot`, `backup`, `application`, `marketplace_app`) aren't operating systems.
- */
 const osGroups: {
   id: string;
   label: string;
@@ -110,7 +105,6 @@ const osGroups: {
     match: (os) => os.family === 'rockylinux',
   },
   {
-    // Windows Core ships as its own card, so the plain Windows one must exclude it.
     id: 'windows',
     label: 'Windows',
     icon: '/images/systems-img/windows.png',
@@ -136,10 +130,6 @@ const osGroups: {
   },
 ];
 
-/**
- * Placeholder latency indicators. The catalog has no latency field, so these stay mocked
- * and are cycled across whatever regions the API returns.
- */
 const pingColors = ['#FAB500', '#00F700', '#E6132B'];
 
 const fieldClass =
@@ -239,7 +229,6 @@ function CostSummary({
     ['VAT', vat ? `VAT is ${vat.included ? '' : 'not '}included` : '—'],
   ];
 
-  /** The mock only specifies the pending copy; the rest mirror the same slot. */
   const quoteStatus = () => {
     if (!tariff) return 'Select a configuration';
     if (quote.isPending) return 'Preparing quote...';
@@ -252,7 +241,6 @@ function CostSummary({
     <div className="rounded-[10px] bg-white/[0.04] p-6 lg:w-80">
       <p className="text-xl leading-6 font-semibold text-white">Cost</p>
 
-      {/* Two-up: the four API billing periods don't fit legibly on one row. */}
       <div className="mt-3 grid grid-cols-2 gap-1 rounded-[8px] bg-[#0F0F0F] p-1">
         {periods.map((p) => (
           <button
@@ -318,8 +306,6 @@ export function NewCloudServerForm() {
   );
   const continents = useMemo(() => continentsOf(regions), [regions]);
 
-  // Each selection falls back to the first valid option rather than clearing when the
-  // catalog loads, or when switching continent leaves the chosen region out of view.
   const activeOs = availableOsGroups.find((g) => g.id === selectedOsId) ?? availableOsGroups[0];
   const activeContinent = continents.includes(selectedContinent)
     ? selectedContinent
@@ -332,8 +318,6 @@ export function NewCloudServerForm() {
   const activeRegion =
     continentRegions.find((r) => r.id === selectedRegionId) ?? continentRegions[0];
 
-  // The grid picks a family; a quote needs one image, so take the first of that family.
-  // There is no version picker in this design, so the choice has to be deterministic.
   const activeOsImage = activeOs ? operatingSystems.find(activeOs.match) : undefined;
 
   const regionTariffs = useMemo(
@@ -349,9 +333,6 @@ export function NewCloudServerForm() {
     [regionTariffs, activeRegion]
   );
 
-  // The summary needs the catalog record, not the table's pre-formatted row. Like the OS
-  // and region pickers, it falls back to the first option on offer, so the cost panel is
-  // fully priced on load instead of showing dashes until a row is clicked.
   const selectedTariff =
     regionTariffs.find((tariff) => tariff.id === selectedPlanId) ?? regionTariffs[0];
 
@@ -377,7 +358,6 @@ export function NewCloudServerForm() {
     isError: quoteError,
   } = useQuoteTotals(quoteItems);
 
-  /** The API prices from the quote, so provisioning can't start before one exists. */
   const canCreate = Boolean(
     quoteId &&
     activeOsImage &&
@@ -408,7 +388,6 @@ export function NewCloudServerForm() {
   return (
     <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start lg:gap-[30px]">
       <div className="flex flex-col gap-10">
-        {/* 01 Operation System */}
         <section>
           <SectionHeading number="01" title="Operation System" />
           <div className="grid grid-cols-3 items-start gap-3 min-[1300px]:grid-cols-5 min-[1300px]:gap-[10px]">
@@ -446,7 +425,6 @@ export function NewCloudServerForm() {
           </div>
         </section>
 
-        {/* 02 Region */}
         <section>
           <SectionHeading number="02" title="Region" />
           <div className="flex flex-col gap-4 min-[1300px]:flex-row">
@@ -477,7 +455,6 @@ export function NewCloudServerForm() {
                   selected={activeRegion?.id === region.id}
                   onClick={() => {
                     setSelectedRegionId(region.id);
-                    // Plans differ by region, so a held selection may not be on sale here.
                     setSelectedPlanId(null);
                   }}
                 />
@@ -486,7 +463,6 @@ export function NewCloudServerForm() {
           </div>
         </section>
 
-        {/* 03 Configuration */}
         <section>
           <SectionHeading number="03" title="Configuration" />
           <TariffTable
@@ -497,7 +473,6 @@ export function NewCloudServerForm() {
           />
         </section>
 
-        {/* 04 Network */}
         <section>
           <SectionHeading number="04" title="Network" />
           <div>
@@ -511,7 +486,6 @@ export function NewCloudServerForm() {
           </div>
         </section>
 
-        {/* 05 Information about Server */}
         <section>
           <SectionHeading number="05" title="Information about Server" />
           <div className="flex flex-col gap-4">
@@ -539,7 +513,6 @@ export function NewCloudServerForm() {
       </div>
 
       <CostSummary
-        // The exact image, not the family card's label — that's what gets provisioned.
         os={activeOsImage?.name ?? ''}
         region={activeRegion?.city ?? ''}
         tariff={selectedTariff}

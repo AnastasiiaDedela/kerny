@@ -6,9 +6,6 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 
-/** 373px card with a 30px radius on mobile (10px gutters on the 393px design frame), inset 20px
-    horizontally around a 333px content column and 30px top and bottom; 448px with a 24px inset and
-    a 20px radius from lg up. */
 export function ModalShell({
   open,
   onOpenChange,
@@ -52,7 +49,6 @@ export function ModalField({
   inputMode?: 'numeric';
   maxLength?: number;
   type?: 'password' | 'email';
-  /** Renders an unchangeable value (the current e-mail) in the dimmed placeholder tone. */
   readOnly?: boolean;
 }) {
   return (
@@ -80,9 +76,6 @@ export function ModalField({
   );
 }
 
-/** Stacked full-width with a 12px gutter on mobile; from lg up 195 / 195 side by side with a 10px
-    gutter — the two halves of the 400px content column. Grid rather than flex, because the
-    button's own padding otherwise skews an equal `flex-1` split. */
 export function ModalActions({
   submitLabel,
   onCancel,
@@ -91,9 +84,7 @@ export function ModalActions({
 }: {
   submitLabel: string;
   onCancel: () => void;
-  /** Solid red submit, for the irreversible Delete Account confirmation. */
   destructive?: boolean;
-  /** Blocks a double submit while the request is in flight (Button's own `disabled:opacity-50`). */
   pending?: boolean;
 }) {
   return (

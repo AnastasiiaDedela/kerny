@@ -57,7 +57,6 @@ export function Header() {
           <Image src="/logo.svg" alt="Kerny" width={49} height={16} />
         </Link>
 
-        {/* Desktop nav */}
         <nav className="hidden items-center gap-12.5 md:flex">
           {navLinks.map((link) => (
             <Link
@@ -77,7 +76,6 @@ export function Header() {
           </button>
         </nav>
 
-        {/* Desktop actions */}
         <div className="hidden items-center md:flex">
           {isLoggedIn ? (
             <DropdownMenu>
@@ -131,7 +129,6 @@ export function Header() {
           )}
         </div>
 
-        {/* Mobile trigger */}
         <button
           type="button"
           aria-label="Open menu"
@@ -142,7 +139,6 @@ export function Header() {
         </button>
       </div>
 
-      {/* Mobile menu overlay */}
       {open && (
         <div className="bg-background fixed inset-0 z-50 flex flex-col px-5 py-7.5 md:hidden">
           <div className="flex items-center justify-between">

@@ -5,10 +5,6 @@ import { cn } from '@/lib/utils';
 const description =
   'Lorem ipsum dolor sit amet consectetur. Fringilla eu ultrices netus viverra id mauris. Maecenas justo varius turpis lectus ultricies. Donec ullamcorper libero consectetur';
 
-/* Desktop-only copy for the middle-column row cards. From lg: up they sit beside
-   their illustration in a text column roughly twice as wide as a tall card's, and
-   the design fills it with a longer paragraph. Below lg the row cards are stacked
-   like every other card, so they keep the shared `description`. */
 const rowDescription =
   'Lorem ipsum dolor sit amet consectetur. Adipiscing orci in sagittis dui. Aliquam quis volutpat dolor id enim. Magna nulla nulla sollicitudin eu aliquam laoreet cursus vel elementum. Risus risus tincidunt justo amet tristique duis. Lacus volutpat lacinia sed posuere fringilla a vestibulum';
 
@@ -17,10 +13,6 @@ const bodyCopy =
 
 type Illustration = { src: string; alt: string; width: number; height: number };
 
-/* Mobile geometry is fixed by the design: a 346px card with 30px top / 24px side
-   and bottom padding, a 164px-tall illustration band, then 30px to the title and
-   8px to the body copy. Every card — tall or row — shares it; they diverge only
-   from md: up, where the layout turns into an icon-beside-text row. */
 function CardBody({
   title,
   image,
@@ -85,8 +77,6 @@ function RowCard(props: { title: string; image: Illustration }) {
 
 export function WhyOurService() {
   return (
-    /* overflow-hidden prevents the horizontal reveals from producing a scrollbar
-       while their transforms are still mid-transition. */
     <section className="mx-auto w-full max-w-340 overflow-hidden px-5 py-10">
       <Reveal>
         <div className="mx-auto text-left md:text-center">
@@ -101,7 +91,6 @@ export function WhyOurService() {
       </Reveal>
 
       <div className="mt-12 grid items-stretch gap-5 lg:grid-cols-[1fr_2fr_1fr]">
-        {/* Left column — enters from the left on desktop. */}
         <Reveal direction="left" className="h-full">
           <TallCard
             title="DDos Protection"
@@ -109,10 +98,6 @@ export function WhyOurService() {
           />
         </Reveal>
 
-        {/* Middle column — top row card drops in, bottom row card rises up.
-            The Reveals themselves take the flex-1 share of the column so the
-            two cards keep splitting the height evenly (RowCard's own flex-1
-            would be inert inside a block wrapper). */}
         <div className="flex h-full flex-col gap-5 md:gap-6">
           <Reveal direction="down" className="md:flex md:min-h-0 md:flex-1">
             <RowCard
@@ -138,7 +123,6 @@ export function WhyOurService() {
           </Reveal>
         </div>
 
-        {/* Right column — enters from the right on desktop. */}
         <Reveal direction="right" className="h-full">
           <TallCard
             title="Great Diversity Region"

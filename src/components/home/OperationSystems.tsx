@@ -5,8 +5,6 @@ import { Reveal } from '@/components/common/Reveal';
 
 type Os = { name: string; src: string; width: number; height: number };
 
-/* Left and right columns scroll in opposite directions and never share a card;
-   the middle column is static. */
 const leftColumn: Os[] = [
   { name: 'Alma Linux', src: '/images/systems-img/alma.png', width: 160, height: 156 },
   { name: 'CentOS', src: '/images/systems-img/centos.png', width: 158, height: 158 },
@@ -33,8 +31,6 @@ const rightColumn: Os[] = [
 
 function OsCard({ name, src, width, height }: Os) {
   return (
-    /* Bottom padding stands in for the column gap so the track height stays an
-       exact multiple of card+gap — see the marquee keyframes in globals.css. */
     <div className="pb-(--os-row-gap)">
       <div className="flex size-(--os-card) flex-col items-center rounded-[15px] bg-white/[0.04] pt-(--os-inset)">
         <Image
@@ -76,7 +72,6 @@ export function OperationSystems() {
   return (
     <section className="mx-auto w-full max-w-340 px-5 py-10">
       <Reveal className="wide:flex-row wide:items-center wide:gap-16 flex flex-col gap-10">
-        {/* Left — copy */}
         <div className="flex-1">
           <h2 className="text-4xl font-bold md:text-5xl md:leading-[58px]">
             Easy Operation Systems
@@ -94,7 +89,6 @@ export function OperationSystems() {
           </div>
         </div>
 
-        {/* Right — OS columns */}
         <div className="os-systems shrink-0">
           <div className="os-marquee wide:justify-end flex items-start justify-center gap-(--os-gap)">
             <MarqueeColumn items={leftColumn} direction="up" className="[--os-duration:26s]" />
@@ -105,8 +99,6 @@ export function OperationSystems() {
             </div>
             <MarqueeColumn items={rightColumn} direction="down" className="[--os-duration:32s]" />
           </div>
-          {/* Matches the width of the three-column card block above it, which is
-              narrower than the section on the mid tiers. */}
           <div className="wide:hidden mx-auto mt-8 w-[calc(3*var(--os-card)+2*var(--os-gap))]">
             <GetStartedButton size="lg" className="h-14 w-full max-w-88">
               Get Started

@@ -8,18 +8,13 @@ export interface NotificationItem {
   read?: boolean;
 }
 
-/* Unread items carry the brand wash, the 2px right bar and a solid dot; read ones drop all three.
-   The bar is inside the 1050px box, so unread trades 2px of right padding for it and both states
-   keep the same 1010px text column. */
 export function NotificationList({
   items,
   onMarkRead,
   pendingId,
 }: {
   items: NotificationItem[];
-  /** Omit to render the list read-only — the cards then have no click target at all. */
   onMarkRead?: (id: string) => void;
-  /** The id currently being marked read, so only that card dims while its call is in flight. */
   pendingId?: string | null;
 }) {
   return (
@@ -38,9 +33,6 @@ export function NotificationList({
               isPending && 'opacity-50'
             )}
           >
-            {/* The whole card is the target, as an overlay rather than a wrapping button: the
-                card's content includes a heading, which a <button> may not contain. Absolute
-                so it claims no space and the read/unread layout above stays untouched. */}
             {markable && (
               <button
                 type="button"

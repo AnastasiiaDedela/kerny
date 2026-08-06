@@ -15,10 +15,6 @@ import { regionCountry, regionFlagSrc } from '@/lib/catalog';
 import { formatAmount, formatBandwidth, formatCpu, formatDisk, formatRam } from '@/lib/pricing';
 import { formatServerDate, formatServerTimestamp } from '@/lib/servers';
 
-/**
- * Body copy for the IP and backup tabs. The API serves no prose for either, so this stays
- * placeholder text — only the tables and the enable button are wired.
- */
 const paragraph =
   'Lorem ipsum dolor sit amet consectetur. Vel dolor arcu urna eu vestibulum ipsum nulla. Tincidunt tristique tellus massa parturient non. Ultrices mauris ipsum cursus nunc ut leo tempor sed. Lorem nunc elementum auctor senectus. Pharetra laoreet elementum ullamcorper egestas. Gravida amet scelerisque proin at tellus feugiat mattis pulvinar pellentesque. Pretium cursus ultrices fermentum cum tristique.';
 
@@ -41,14 +37,12 @@ function toServerInfo(server: ServerDetail): ServerInfo {
     host: server.hostname,
     flag: regionFlagSrc(server.region),
     flagAlt: regionCountry(server.region),
-    // A server has no address until the provider assigns one.
     ip: server.primaryIp ?? '—',
     login: server.credentials.login ?? '—',
     passwordAvailable: server.credentials.passwordAvailable,
     status: server.status,
     cost: `${formatAmount(server.pricing.monthlyPrice)} € / month`,
     validUntil: formatServerDate(server.validity.validUntil),
-    // `Plan` carries no display name, so the provider's plan code is the only label.
     tariff: server.tariff.providerId,
     system: server.os.name,
     cpu: formatCpu(server.resources.cpuCount),
@@ -74,7 +68,6 @@ export function ServerDetailView({ serverId }: { serverId: string }) {
       amount: entry.amount ? `${entry.amount} ${entry.currency ?? ''}`.trim() : '—',
     })) ?? [];
 
-  // The API returns one flat list; the design shows a table per address family.
   const ipGroups: IpAddressGroup[] = ['v4', 'v6']
     .map((family) => ({
       title: `IP${family.toUpperCase()}`,
@@ -87,13 +80,11 @@ export function ServerDetailView({ serverId }: { serverId: string }) {
           gateway: ip.gateway ?? '—',
           ptr: ip.ptr ?? '-',
           type: ip.type,
-          // The endpoint only returns addresses that are assigned, so all are live.
           active: true,
         })),
     }))
     .filter((group) => group.rows.length > 0);
 
-  // Nothing to render until the detail lands; the two panels both depend on it.
   if (!server) return null;
 
   return (

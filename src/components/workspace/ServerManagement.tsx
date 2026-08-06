@@ -19,7 +19,6 @@ import { ConfirmModal } from '@/components/workspace/ConfirmModal';
 import { isServerActive } from '@/lib/servers';
 import { cn } from '@/lib/utils';
 
-/** The four card icons ship with the primary/16 badge baked into the 30×30 artboard. */
 const cardIcons = {
   status: '/icons/server-info-icons/status.svg',
   renewal: '/icons/server-info-icons/renewal.svg',
@@ -27,7 +26,6 @@ const cardIcons = {
   extend: '/icons/server-info-icons/extend.svg',
 };
 
-/** Actions that charge money or destroy data go behind a confirmation. */
 type Confirmation = 'extend' | 'backups' | 'reinstall' | 'password' | 'delete';
 
 const CONFIRM_COPY: Record<Confirmation, { title: string; description: string }> = {
@@ -183,7 +181,6 @@ export function ServerManagement({ server }: { server: ServerDetail }) {
   const resetPassword = useResetServerPassword(server.id);
   const deleteServer = useDeleteServer(server.id);
 
-  // An operation already in flight means the API will reject a second one.
   const busy = server.operation?.status === 'pending' || server.operation?.status === 'running';
 
   const close = () => setConfirming(null);
@@ -191,7 +188,6 @@ export function ServerManagement({ server }: { server: ServerDetail }) {
   const confirmations: Record<Confirmation, { run: () => void; pending: boolean; error: unknown }> =
     {
       extend: {
-        // Extending renews on the period the server was bought on.
         run: () =>
           extendServer.mutate(
             { billingPeriod: server.pricing.billingPeriod },
@@ -206,7 +202,6 @@ export function ServerManagement({ server }: { server: ServerDetail }) {
         error: enableBackups.error,
       },
       reinstall: {
-        // No OS picker exists on this screen, so reinstall means "same image, fresh".
         run: () =>
           reinstallServer.mutate(
             { operatingSystemId: server.os.id, confirmDataLoss: true },
@@ -271,7 +266,6 @@ export function ServerManagement({ server }: { server: ServerDetail }) {
         </div>
       </div>
 
-      {/* Ticket and Upgrade have no endpoint in the Servers section — left inert. */}
       <div className="mt-4 flex flex-col gap-2">
         <ActionRow
           icon="/icons/server-info-icons/ticket.svg"

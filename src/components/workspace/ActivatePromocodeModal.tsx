@@ -29,7 +29,6 @@ function ActivatePromocodeModal({
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          // The credit lands on the balance immediately; the hook refreshes it.
           activate.mutate({ code: promocode.trim() }, { onSuccess: close });
         }}
         className="mt-5 lg:mt-4"
@@ -51,7 +50,6 @@ function ActivatePromocodeModal({
   );
 }
 
-/** Trigger + dialog in one client island, so the button keeps its place in the layout. */
 export function ActivatePromocodeButton() {
   const [open, setOpen] = useState(false);
 

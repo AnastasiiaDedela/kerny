@@ -9,7 +9,6 @@ import { useAuthModal } from '@/components/layout/AuthModalProvider';
 type Props = VariantProps<typeof buttonVariants> & {
   className?: string;
   children?: ReactNode;
-  /** Where a signed-in visitor lands; anonymous visitors get the log-in modal instead. */
   href?: string;
 };
 

@@ -87,7 +87,6 @@ export function GoogleButton({
   );
 }
 
-/** Message shown above the submit button when a request fails. */
 export function FormError({ children }: { children: ReactNode }) {
   if (!children) return null;
 
@@ -98,7 +97,6 @@ export function FormError({ children }: { children: ReactNode }) {
   );
 }
 
-/** Per-input message from the API's `fieldErrors` map. */
 export function FieldError({ children }: { children: ReactNode }) {
   if (!children) return null;
 

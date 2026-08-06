@@ -44,7 +44,6 @@ const emptyForm: Record<FieldName, string> = {
   companyDetails: '',
 };
 
-/** The profile is a partial patch, so blanks are left out rather than sent as `''`. */
 function toProfileDto(values: Record<FieldName, string>): BillingProfileDto {
   const dto: BillingProfileDto = {};
 
@@ -65,8 +64,6 @@ export function PaymentMethodForm() {
   const { paymentMethod } = useDefaultPaymentMethod();
   const updateProfile = useUpdateBillingProfile();
 
-  // Seed the inputs from the saved profile once, so a background refetch can't
-  // overwrite what the user is in the middle of typing.
   if (profile && !hydrated) {
     setHydrated(true);
     setValues({
@@ -82,8 +79,6 @@ export function PaymentMethodForm() {
     <section className="rounded-[10px] bg-white/[0.04] p-5 lg:p-6">
       <h2 className="text-xl leading-6 font-semibold text-white">Payment Method</h2>
 
-      {/* One line on mobile, as in the design: the label and button drop a step in size and the
-          13px inset runs all the way round. flex-wrap only kicks in on very narrow phones. */}
       <div className="mt-4 flex min-h-[66px] flex-wrap items-center justify-between gap-2.5 rounded-[10px] bg-white/[0.04] p-[13px] lg:gap-4 lg:pr-[13px] lg:pl-6">
         <span className="text-sm leading-[17px] font-medium text-white lg:text-base lg:leading-[19px]">
           {paymentMethod ? formatPaymentMethod(paymentMethod) : 'No Payment Method'}

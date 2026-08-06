@@ -77,7 +77,6 @@ export function OurAudience() {
         <p className="text-foreground mx-auto mt-2.5 text-sm leading-6">
           Lorem ipsum dolor sit amet consectetur. Pellentesque malesuada gravida eget amet cursus
           sagittis. In orci tortor ut tincidunt consectetur
-          {/* Figma trims the intro copy to three lines on mobile */}
           <span className="max-md:hidden">
             {' '}
             elementum suspendisse sed. Auctor maecenas consectetur pharetra ut dui morbi. Elementum

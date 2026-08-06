@@ -22,7 +22,6 @@ const categoryLabels: Record<CookieCategory, string> = {
   targeting: 'Targeting Cookies',
 };
 
-/** 44×24 track with a 20px knob and 2px inset, so the travel is exactly 20px. */
 function ConsentToggle({
   label,
   checked,
@@ -62,7 +61,6 @@ export function CookieSettingsModal({
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  /** Current stored choice, or the defaults when nothing has been decided yet. */
   consent: CookieConsent;
   onConfirm: (consent: CookieConsent) => void;
 }) {
@@ -73,8 +71,6 @@ export function CookieSettingsModal({
         aria-label="Cookies Settings"
         className="bg-background scrollbar-hairline max-h-[calc(100dvh-20px)] max-w-[min(600px,calc(100%-20px))] gap-0 overflow-y-auto rounded-[10px] border-[length:0.5px] border-white/10 p-6 ring-0 sm:max-w-[min(600px,calc(100%-20px))]"
       >
-        {/* Keyed on `open` so every open mounts a fresh draft from what is actually
-            stored — closing the modal discards the edits rather than staging them. */}
         <SettingsForm key={String(open)} consent={consent} onConfirm={onConfirm} />
       </DialogContent>
     </Dialog>

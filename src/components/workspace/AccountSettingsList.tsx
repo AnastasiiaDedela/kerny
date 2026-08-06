@@ -15,9 +15,7 @@ export type AccountSettingModal = 'email' | 'password' | 'signOut' | 'delete';
 type AccountSettingRow = {
   title: string;
   action: string;
-  /** Which dialog the action button opens. */
   modal: AccountSettingModal;
-  /** Renders the action in the red "danger" treatment. */
   destructive?: boolean;
 };
 
@@ -31,18 +29,8 @@ const ROWS: AccountSettingRow[] = [
 const CONFIRM_COPY =
   'Lorem ipsum dolor sit amet consectetur. Interdum amet montes ipsum in molestie quisque. Blandit risus odio a non scelerisque turpis eget. Scelerisque at at sit ipsum montes ornare pulvinar.';
 
-/** Placeholder shown in a row's description slot until `/api/account/settings` answers. */
 const LOADING_DESCRIPTION = '—';
 
-/**
- * STUB — not a real value. `/api/account/settings` leaves `password.changedAt` null
- * until the password is changed for the first time, and no endpoint a non-admin user
- * can call exposes an account-creation date, so there is nothing to count from. The
- * design calls for "Created N days ago" in this state, so we show this fixed age.
- *
- * TODO: delete this and the branch below once the API populates `changedAt` at
- * password creation — the real calculation underneath already handles it.
- */
 const PLACEHOLDER_PASSWORD_AGE_DAYS = 10;
 
 function formatAge(days: number) {
@@ -80,11 +68,9 @@ export function AccountSettingsList() {
   const revokeAll = useRevokeAllSessions();
   const deleteAccount = useDeleteAccount();
 
-  /** Keeps the closing animation intact: only clears the id once the dialog reports it is shut. */
   const closeOn = (modal: AccountSettingModal) => (open: boolean) =>
     setOpenModal(open ? modal : null);
 
-  /** Both confirmations end the session, so the workspace is no longer ours to show. */
   const leaveWorkspace = () => {
     setOpenModal(null);
     router.push('/');
@@ -97,7 +83,6 @@ export function AccountSettingsList() {
           key={item.title}
           className={cn(
             'flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between lg:gap-36',
-            // Rows are separated by a hairline with 16px of air on either side.
             i > 0 && 'mt-4 border-t border-white/10 pt-4'
           )}
         >
@@ -142,8 +127,6 @@ export function AccountSettingsList() {
         title="Delete Account"
         description={CONFIRM_COPY}
         destructive
-        // Eligibility is the API's call (`settings.deletion`); a blocked delete comes
-        // back as a 4xx and surfaces in the dialog rather than being pre-empted here.
         onConfirm={() => deleteAccount.mutate(undefined, { onSuccess: leaveWorkspace })}
         pending={deleteAccount.isPending}
         error={deleteAccount.error}

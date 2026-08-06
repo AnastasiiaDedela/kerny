@@ -3,7 +3,6 @@ import type { NextRequest } from 'next/server';
 const UPSTREAM_URL = process.env.API_UPSTREAM_URL ?? 'https://api.kerny.tech';
 const TRUSTED_ORIGIN = process.env.API_TRUSTED_ORIGIN ?? 'https://kerny.tech';
 
-/** Connection-level headers that must not be copied between hops. */
 const STRIPPED_HEADERS = [
   'connection',
   'keep-alive',
@@ -16,7 +15,6 @@ const STRIPPED_HEADERS = [
 ];
 
 function rewriteSetCookie(cookie: string, isSecureRequest: boolean) {
-  // Drop `Domain=kerny.tech` so the cookie binds to whatever host serves the app.
   const attributes = cookie
     .split(';')
     .map((part) => part.trim())
@@ -24,14 +22,12 @@ function rewriteSetCookie(cookie: string, isSecureRequest: boolean) {
 
   if (isSecureRequest) return attributes.join('; ');
 
-  // Over plain http (dev) a `Secure` / `SameSite=None` cookie would be dropped.
   return attributes
     .filter((part) => !/^secure$/i.test(part))
     .map((part) => (/^samesite=none$/i.test(part) ? 'SameSite=Lax' : part))
     .join('; ');
 }
 
-/** Forwards `request` to `/api/<path>` upstream. An empty `path` targets `/api` itself. */
 export async function proxyToApi(request: NextRequest, path: string[] = []) {
   const upstreamUrl = new URL(['/api', ...path].join('/'), UPSTREAM_URL);
   upstreamUrl.search = request.nextUrl.search;
@@ -47,7 +43,6 @@ export async function proxyToApi(request: NextRequest, path: string[] = []) {
     method: request.method,
     headers,
     body: hasBody ? await request.arrayBuffer() : undefined,
-    // Let the browser follow API redirects (e.g. the Google callback) itself.
     redirect: 'manual',
     cache: 'no-store',
   });

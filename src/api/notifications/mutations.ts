@@ -5,10 +5,6 @@ import { apiClient, unwrap } from '@/api/client';
 import { notificationKeys } from '@/api/notifications/keys';
 import type { NotificationResponse, ReadAllNotificationsResponse } from '@/api/notifications/types';
 
-/**
- * Both writes move the unread count, and the shell reads that count from `GET /api/me`
- * rather than from the list — so refresh both or the badge keeps the stale number.
- */
 function useNotificationInvalidation() {
   const queryClient = useQueryClient();
 
@@ -18,10 +14,6 @@ function useNotificationInvalidation() {
   };
 }
 
-/**
- * PATCH /api/notifications/{notificationId}/read — marks one notification read and
- * returns it in its new state. No body.
- */
 export function useMarkNotificationRead() {
   const invalidate = useNotificationInvalidation();
 
@@ -36,10 +28,6 @@ export function useMarkNotificationRead() {
   });
 }
 
-/**
- * POST /api/notifications/read-all — clears the whole backlog, not just the loaded page.
- * The response's `updatedCount` is how many were actually still unread.
- */
 export function useMarkAllNotificationsRead() {
   const invalidate = useNotificationInvalidation();
 

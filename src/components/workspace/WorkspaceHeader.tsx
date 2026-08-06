@@ -43,7 +43,6 @@ const profileLinks = [
   },
 ];
 
-/** Shown in the balance slot until `/api/me` answers. */
 const LOADING_BALANCE = '—';
 
 export function WorkspaceHeader() {
@@ -52,8 +51,6 @@ export function WorkspaceHeader() {
   const { logOut } = useAuthModal();
   const activeHref = useActiveNavHref();
 
-  // `/api/me` carries the balance the header shows; the billing summary is the balance
-  // page's own source, and both are refreshed after a deposit or promocode.
   const { balance } = useAccountBalance();
   const balanceLabel = balance ? formatBalance(balance.amount) : LOADING_BALANCE;
 
@@ -125,7 +122,6 @@ export function WorkspaceHeader() {
         </button>
       </div>
 
-      {/* Mobile menu overlay */}
       {open && (
         <div className="bg-background fixed inset-0 z-50 flex flex-col overflow-y-auto px-5 py-7.5 lg:hidden">
           <div className="flex items-center justify-between">

@@ -10,19 +10,8 @@ import type {
   ServerListResponse,
 } from '@/api/servers/types';
 
-/**
- * A server's state moves without the user touching it — provisioning finishes, a power
- * operation settles, the provider drifts — so these read short and refetch on focus,
- * unlike the catalog.
- */
 const SERVER_STALE_TIME = 15 * 1000;
 
-/**
- * GET /api/servers — the signed-in user's servers. 401s when signed out, and the shared
- * retry predicate gives up on 4xx, so an unauthenticated caller fails fast.
- *
- * Returns the first page only; `pageInfo.nextCursor` is not followed yet.
- */
 export function useServers() {
   return useQuery({
     queryKey: serverKeys.list(),
@@ -32,7 +21,6 @@ export function useServers() {
   });
 }
 
-/** The list as a plain array, for components that don't care about paging. */
 export function useServerList() {
   const { data, isPending, isError } = useServers();
 
@@ -43,7 +31,6 @@ export function useServerList() {
   };
 }
 
-/** GET /api/servers/{serverId} — the full detail record behind the server page. */
 export function useServer(serverId: string | undefined) {
   return useQuery({
     queryKey: serverKeys.detail(serverId ?? ''),
@@ -59,7 +46,6 @@ export function useServer(serverId: string | undefined) {
   });
 }
 
-/** GET /api/servers/{serverId}/history — billing and action log, newest page first. */
 export function useServerHistory(serverId: string | undefined) {
   return useQuery({
     queryKey: serverKeys.history(serverId ?? ''),
@@ -73,7 +59,6 @@ export function useServerHistory(serverId: string | undefined) {
   });
 }
 
-/** GET /api/servers/{serverId}/ip-addresses — both the v4 and v6 pools in one list. */
 export function useServerIpAddresses(serverId: string | undefined) {
   return useQuery({
     queryKey: serverKeys.ipAddresses(serverId ?? ''),
@@ -87,7 +72,6 @@ export function useServerIpAddresses(serverId: string | undefined) {
   });
 }
 
-/** GET /api/servers/{serverId}/backups — whether the paid backup add-on is on. */
 export function useServerBackups(serverId: string | undefined) {
   return useQuery({
     queryKey: serverKeys.backups(serverId ?? ''),

@@ -1,6 +1,5 @@
 'use client';
 
-// components/layout/Footer.tsx
 import Image from 'next/image';
 import Link from 'next/link';
 import { useContactModal } from '@/components/layout/ContactModalProvider';
@@ -104,20 +103,15 @@ export function Footer({ variant = 'legal' }: { variant?: FooterVariant }) {
             )}
           </div>
 
-          {/* Right — nav columns */}
           <div className="flex flex-col gap-7.5 md:flex-row md:gap-12.5">
             <NavColumn title="Services" items={services} />
             <NavColumn title="Company" items={company} />
           </div>
         </div>
 
-        {/* Mobile puts the policy links above the copyright line (col-reverse) */}
         <div className="flex flex-col-reverse items-start justify-between gap-6 border-t-[0.5px] border-white/16 pt-6 md:flex-row md:items-center md:gap-4">
           <p className="text-muted-foreground text-sm">© Kerny 2026. All Right Reserved</p>
           <div className="flex w-full flex-wrap justify-between gap-x-6 gap-y-2 md:w-auto md:justify-center md:gap-12.5">
-            {/* Cookie Policy reopens the consent settings — the only way back to them once
-                the banner has been dismissed. Same label/button swap NavColumn does for
-                Contact Us. */}
             {policies[variant].map(({ label, href }) =>
               label === 'Cookie Policy' ? (
                 <button

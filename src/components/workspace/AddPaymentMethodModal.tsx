@@ -10,14 +10,6 @@ import { parseExpiry } from '@/lib/billing';
 
 const emptyCard = { cardNumber: '', expiry: '', cvv: '', cardholder: '' };
 
-/**
- * The card dialog opens straight from "Add Method"; the provider handshake happens on
- * submit, so a provider that refuses the setup fails here rather than on the page.
- *
- * Saving is two calls: `payment-method-setup` opens a session — a redirect to the
- * provider's own page, or a hosted session whose `clientToken` is the token the card is
- * then saved against. The API keeps only the safe metadata, never the number.
- */
 export function AddPaymentMethodModal({
   open,
   onOpenChange,
@@ -41,13 +33,11 @@ export function AddPaymentMethodModal({
     createSetup.mutate(undefined, {
       onSuccess: ({ setup, action }) => {
         if (action.kind === 'redirect') {
-          // The provider collects the card itself; a full navigation, not the router.
           window.location.assign(action.redirectUrl);
           return;
         }
 
         const cardNumber = values.cardNumber.replace(/\s/g, '');
-        // A half-typed MM/YY is left off rather than sent as a broken date.
         const expiry = parseExpiry(values.expiry);
 
         createMethod.mutate(
@@ -87,7 +77,6 @@ export function AddPaymentMethodModal({
           />
           <FieldError>{fieldError(createMethod.error, 'cardNumber')}</FieldError>
 
-          {/* 192 / 192 with a 16px gutter fills the 400px content column. */}
           <div className="grid grid-cols-2 gap-4">
             <ModalField
               id="expiry"

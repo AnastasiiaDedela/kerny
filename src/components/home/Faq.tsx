@@ -18,7 +18,6 @@ export function Faq() {
   return (
     <section className="mx-auto w-full max-w-340 px-5 py-10">
       <Reveal className="flex flex-col gap-10 min-[1121px]:flex-row min-[1121px]:justify-between min-[1121px]:gap-[125px]">
-        {/* Left — copy */}
         <div className="max-w-[495px] min-[1121px]:w-2/5">
           <h2 className="text-4xl font-bold min-[1121px]:text-5xl min-[1121px]:leading-[58px]">
             Questions,
@@ -35,7 +34,6 @@ export function Faq() {
           </div>
         </div>
 
-        {/* Right — accordion */}
         <div className="flex flex-col align-bottom">
           <Accordion
             defaultValue={[1]}
@@ -53,7 +51,11 @@ export function Faq() {
             ))}
           </Accordion>
           <div className="mt-8 min-[1121px]:hidden">
-            <Button size="lg" className="h-14 w-full max-w-88 md:max-w-none" onClick={openContactModal}>
+            <Button
+              size="lg"
+              className="h-14 w-full max-w-88 md:max-w-none"
+              onClick={openContactModal}
+            >
               Contact Us
             </Button>
           </div>

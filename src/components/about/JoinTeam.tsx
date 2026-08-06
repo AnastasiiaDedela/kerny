@@ -2,8 +2,6 @@ import Image from 'next/image';
 import { GetStartedButton } from '@/components/common/GetStartedButton';
 
 const headlineClasses =
-  // Below md the headline is locked to two lines, so it scales with the viewport
-  // (30px at the 393px design frame) instead of clipping on narrower phones.
   'text-[clamp(1.875rem,5.21vw,100px)] leading-[1.21] font-extrabold uppercase max-md:text-[min(30px,7.63vw)] max-md:leading-[1.2] max-md:whitespace-nowrap';
 
 function Headline() {
@@ -16,14 +14,6 @@ function Headline() {
   );
 }
 
-// Two squares skewed by matrix(0.87, ±0.48, ∓0.83, 0.56) so their corners point at
-// each other. Figma reports each layer's *visual* bounding box, while the transform
-// runs from the untransformed origin, so the offsets below are pre-corrected by the
-// bbox delta (0.48 * side vertically for the left wedge, 0.83 * side horizontally
-// for the right one).
-
-// Desktop: sizes and offsets are ratios of the side length, so the pair keeps the
-// design proportions at any width; it is exact at the 1920px design frame.
 const WEDGE = 'clamp(280px, 34.98vw, 671.68px)';
 
 function DesktopWedges() {
@@ -59,8 +49,6 @@ function DesktopWedges() {
   );
 }
 
-// Mobile: 254.28px squares placed so their visual boxes land at Figma's
-// (-307, 0) and (277, 97) within the 362px block of the 393px frame.
 const WEDGE_SM = '254.28px';
 
 function MobileWedges() {
@@ -99,12 +87,10 @@ function MobileWedges() {
 export function JoinTeam() {
   return (
     <section className="relative w-full overflow-hidden py-10">
-      {/* Mobile drops the gutter so the 363px headline can sit centred in the 393px frame */}
       <div className="relative mx-auto flex h-[362px] w-full max-w-340 flex-col items-center justify-center px-5 max-md:justify-start max-md:px-0 max-md:pt-[145px] md:h-[560px] lg:h-[702px]">
         <DesktopWedges />
         <MobileWedges />
 
-        {/* Server rack — above the solid headline, below the outlined copy */}
         <Image
           src="/images/about-us-img/team-server.png"
           alt=""
@@ -118,7 +104,6 @@ export function JoinTeam() {
           <h2 className={`${headlineClasses} text-white`}>
             <Headline />
           </h2>
-          {/* Outlined duplicate rendered over the server image */}
           <div
             aria-hidden
             className={`${headlineClasses} absolute inset-0 z-20 text-transparent [-webkit-text-stroke:1px_#ffffff]`}

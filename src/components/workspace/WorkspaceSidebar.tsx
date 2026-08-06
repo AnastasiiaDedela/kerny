@@ -39,7 +39,6 @@ export const navItems = [
   },
 ];
 
-/** Longest matching href wins, so /workspace/balance doesn't also light up /workspace. */
 export function useActiveNavHref() {
   const pathname = usePathname();
 
@@ -49,8 +48,6 @@ export function useActiveNavHref() {
     .sort((a, b) => b.length - a.length)[0];
 }
 
-/* The mobile nav tints the active item's icon primary, which <Image> can't do — the fill is
-   baked into the SVG — so the icon is painted as a mask of a background colour instead. */
 function NavIcon({ item, className }: { item: (typeof navItems)[number]; className?: string }) {
   const url = `url("${encodeURI(item.icon)}")`;
 
@@ -66,7 +63,6 @@ function NavIcon({ item, className }: { item: (typeof navItems)[number]; classNa
   );
 }
 
-/** Mobile counterpart of the sidebar: the same nav as full-width cards above the page content. */
 export function WorkspaceMobileNav({ className }: { className?: string }) {
   const activeHref = useActiveNavHref();
 
@@ -117,10 +113,7 @@ export function WorkspaceSidebar() {
                 : 'font-normal text-white/50 hover:text-white'
             )}
           >
-            <NavIcon
-              item={item}
-              className={item.href === activeHref ? 'bg-primary' : 'bg-white'}
-            />
+            <NavIcon item={item} className={item.href === activeHref ? 'bg-primary' : 'bg-white'} />
             {item.label}
           </Link>
         ))}

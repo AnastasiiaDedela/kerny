@@ -14,7 +14,6 @@ export interface IpAddress {
   mask: string;
   gateway: string;
   ptr: string;
-  /** Only the IPv4 pool carries a type; its presence adds the Type column. */
   type?: string;
   active: boolean;
 }
@@ -52,8 +51,6 @@ const ptr = columnHelper.accessor('ptr', { header: 'PTR', cell: (info) => info.g
 
 const type = columnHelper.accessor('type', { header: 'Type', cell: (info) => info.getValue() });
 
-/* `size` is the column's share of the 638px row content box, taken from the Figma
-   x-offsets, so the grid keeps the design proportions at any card width. */
 const columnsWithoutType = [
   { ...subnet, size: 218 },
   { ...mask, size: 124 },
@@ -71,7 +68,6 @@ const columnsWithType = [
 
 const rightAligned = new Set(['ptr', 'type']);
 
-/* Narrow layout stacks one field per line, except PTR and Type, which share the last line. */
 const inlineIds = new Set(['ptr', 'type']);
 
 function Card({ title, children }: { title: string; children: React.ReactNode }) {
@@ -110,7 +106,6 @@ function IpTable({ title, rows }: IpAddressGroup) {
     .map((column) => `${column.getSize()}fr`)
     .join(' ');
 
-  /* The stacked layout has no header row, so each field repeats its column header as its label. */
   const labels = new Map(
     headerGroup.headers.map((header) => [
       header.column.id,
@@ -123,7 +118,6 @@ function IpTable({ title, rows }: IpAddressGroup) {
 
   return (
     <Card title={title}>
-      {/* Wide: rows keep the design's 662px width, which needs a 702px card. */}
       <div className="mt-2.5 hidden overflow-x-auto @min-[702px]:block">
         <div className="flex min-w-[662px] flex-col gap-2.5">
           <div className={cn(rowClass, 'text-white/30')} style={{ gridTemplateColumns }}>
@@ -156,7 +150,6 @@ function IpTable({ title, rows }: IpAddressGroup) {
         </div>
       </div>
 
-      {/* Narrow: the row's cells stack as labelled fields inside one bordered box. */}
       <div className="mt-3 flex flex-col gap-3 @min-[702px]:hidden">
         {table.getRowModel().rows.map((row) => {
           const cells = row.getVisibleCells();
@@ -179,7 +172,6 @@ function IpTable({ title, rows }: IpAddressGroup) {
                   <Field
                     key={cell.id}
                     label={labels.get(cell.column.id)}
-                    /* PTR keeps its 24px design column so Type starts at a fixed offset. */
                     className={cn(index < inline.length - 1 && 'w-6 shrink-0')}
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -201,7 +193,6 @@ export function ServerIpAddresses({
   groups: IpAddressGroup[];
   instruction: string[];
 }) {
-  // Keyed to the card, not the viewport — the lg two-column layout squeezes it below 702px too.
   return (
     <div className="@container mt-5 flex flex-col gap-3">
       {groups.map((group) => (

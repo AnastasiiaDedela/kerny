@@ -24,31 +24,18 @@ import { Button } from '@/components/ui/button';
 import { useAuthModal } from '@/components/layout/AuthModalProvider';
 import { TariffTable, toTariffRow } from './TariffTable';
 
-// ── Types ─────────────────────────────────────────────────────────────────────
-
 interface Server {
   id: number;
-  /** Catalog ids, empty until the catalog answers; the first option stands in. */
   osId: string;
   regionId: string;
   planId: string | null;
   addonIds: Set<string>;
 }
 
-/**
- * The plans a region actually sells. The first one is what a card preselects, so the
- * cost panel prices the basket without waiting for a click.
- */
 function tariffsIn(tariffs: PricingTariff[], regionId: string) {
   return tariffs.filter((tariff) => tariff.supportedRegionIds.includes(regionId));
 }
 
-/**
- * The catalog ships no add-ons yet (`addons: []`), which would leave the card without the
- * two toggle rows the design ends on. These stand in until it does — and only then, real
- * add-ons replace them. The prefix marks them unpriceable: a quote carrying an id the API
- * doesn't know is rejected, so `CloudServerBuilder` strips these before quoting.
- */
 const PLACEHOLDER_ADDON_PREFIX = 'placeholder:';
 
 const placeholderAddons: AddonRow[] = [
@@ -56,17 +43,12 @@ const placeholderAddons: AddonRow[] = [
   { id: `${PLACEHOLDER_ADDON_PREFIX}service2`, label: 'Name of Service', monthlyPrice: '10.00' },
 ];
 
-/** What a toggle row needs, whether it came from the catalog or the placeholder above. */
 interface AddonRow {
   id: string;
   label: string;
   monthlyPrice: string;
 }
 
-/**
- * Amounts are decimal strings and must never round-trip through a float, so the
- * placeholder surcharge is summed in whole cents and formatted back at the end.
- */
 function toCents(amount: string): number {
   const [whole, fraction = ''] = amount.split('.');
   return Number(whole) * 100 + Number(fraction.padEnd(2, '0').slice(0, 2));
@@ -75,8 +57,6 @@ function toCents(amount: string): number {
 function fromCents(cents: number): string {
   return `${Math.trunc(cents / 100)}.${String(cents % 100).padStart(2, '0')}`;
 }
-
-// ── Sub-components ────────────────────────────────────────────────────────────
 
 function Dropdown<T extends string>({
   value,
@@ -196,7 +176,6 @@ function ServerCard({
   onRemove: () => void;
   canRemove: boolean;
 }) {
-  // The catalog arrives after first paint, so fall back to whatever loaded first.
   const osId = server.osId || operatingSystems[0]?.id || '';
   const regionId = server.regionId || regions[0]?.id || '';
 
@@ -211,7 +190,6 @@ function ServerCard({
     return regions.find((r) => r.id === id);
   }
 
-  // A plan is only offered where the provider actually has stock.
   const regionTariffs = useMemo(() => tariffsIn(tariffs, regionId), [tariffs, regionId]);
   const rows = useMemo(
     () => regionTariffs.map((tariff) => toTariffRow(tariff, regionId)),
@@ -227,7 +205,6 @@ function ServerCard({
 
   return (
     <div className="rounded-[15px] bg-white/[0.04] p-6 md:p-[30px]">
-      {/* Header */}
       <div className="mb-5 flex items-center justify-between">
         <span className="text-2xl font-bold text-white">Cloud Server #{index + 1}</span>
         <button type="button" onClick={onRemove} className="group">
@@ -248,7 +225,6 @@ function ServerCard({
         </button>
       </div>
 
-      {/* OS + Region */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5">
         <div>
           <p className="mb-2.5 text-base font-medium text-white/50">Operation System</p>
@@ -265,8 +241,6 @@ function ServerCard({
           <Dropdown
             value={regionId}
             options={regionIds}
-            // Switching region can drop the chosen plan, so clear it rather than quote
-            // a plan the new region doesn't sell.
             onChange={(id) => onUpdate({ ...server, regionId: id, planId: null })}
             renderOption={(id) => (
               <>
@@ -284,7 +258,6 @@ function ServerCard({
         </div>
       </div>
 
-      {/* Tariff table */}
       <div className="mt-4 md:mt-5">
         <p className="mb-2.5 text-base font-medium text-white/50">Tariff</p>
         <TariffTable
@@ -294,7 +267,6 @@ function ServerCard({
         />
       </div>
 
-      {/* Addons */}
       <div className="mt-4 flex flex-col gap-4">
         {addons.map((addon) => (
           <div key={addon.id} className="flex items-center gap-3">
@@ -333,7 +305,6 @@ function CostPanel({
 
   return (
     <div className="flex flex-col gap-5">
-      {/* Cost card */}
       <div className="rounded-[15px] bg-white/[0.04] p-6 md:p-[30px]">
         <p className="mb-3 text-base font-medium text-white/50">Total cost with VAT</p>
 
@@ -369,7 +340,6 @@ function CostPanel({
         )}
       </div>
 
-      {/* Servers list */}
       <div className="rounded-[15px] bg-white/[0.04] p-6 md:p-[30px]">
         <p className="mb-3 text-base font-medium text-white/50">Cloud Servers</p>
         <div className="flex flex-col gap-2">
@@ -389,8 +359,6 @@ function CostPanel({
     </div>
   );
 }
-
-// ── Main export ───────────────────────────────────────────────────────────────
 
 const emptyServer = (id: number): Server => ({
   id,
@@ -417,8 +385,6 @@ export function CloudServerBuilder() {
 
   const addonRows: AddonRow[] = addons.length ? addons : placeholderAddons;
 
-  // Every selection has to be resolved (not just the ones the user touched) before the
-  // API will price the basket, so apply the same first-option fallback the cards render.
   const quoteItems = useMemo<QuoteItem[]>(
     () =>
       servers
@@ -440,12 +406,6 @@ export function CloudServerBuilder() {
 
   const { total } = useQuoteTotals(quoteItems);
 
-  /**
-   * The quote can't price placeholder add-ons, so their cost is added here instead — the
-   * toggles would otherwise move nothing. `monthlyPrice` is per month, so scale it by the
-   * selected period's length. Real add-ons never reach this: the quote already prices
-   * them, and their ids can't carry the placeholder prefix.
-   */
   const placeholderMonthlyCents = useMemo(
     () =>
       servers.reduce(
@@ -481,7 +441,6 @@ export function CloudServerBuilder() {
       <h2 className="mb-8 text-center text-4xl font-bold md:text-5xl">Build Your Perfect Server</h2>
 
       <div className="grid grid-cols-1 gap-[60px] lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] lg:gap-5">
-        {/* Left – server cards */}
         <div className="flex flex-col gap-5">
           {servers.map((s, i) => (
             <ServerCard
@@ -532,7 +491,6 @@ export function CloudServerBuilder() {
           </button>
         </div>
 
-        {/* Right – cost panel */}
         <div className="self-start md:top-6">
           <CostPanel
             servers={servers}

@@ -19,26 +19,16 @@ const description =
 
 const sentDescription = 'Thanks — we have your message and will get back to you by email shortly.';
 
-/**
- * `CreateContactRequestDto` has no phone field, but the design asks for one, so the
- * number rides along at the top of the free-text body. Drop this once the API grows a
- * dedicated `phone` field.
- */
 function withPhone(question: string, phone: string) {
   return phone.trim() ? `Phone: ${phone.trim()}\n\n${question}` : question;
 }
 
-/** Icon and label are ours; the value comes from `/api/public/contact-info`. */
 const contactRows = [
   { icon: '/icons/mail.svg', width: 26, height: 20, label: 'Email' },
   { icon: '/icons/address.svg', width: 26, height: 26, label: 'Address' },
   { icon: '/icons/calendar.svg', width: 26, height: 26, label: 'Schedule' },
 ] as const;
 
-/**
- * Decorative brand icons. The API's `socialLinks` is empty and carries no icon, so these
- * stay local — give them hrefs once the endpoint returns any.
- */
 const socials = [
   { name: 'X', icon: '/icons/x.svg', width: 27, height: 24 },
   { name: 'TikTok', icon: '/icons/tiktok.svg', width: 21, height: 24 },
@@ -86,8 +76,6 @@ export function ContactModal({
     <Dialog
       open={open}
       onOpenChange={(next) => {
-        // Closing discards the draft, so the next open starts clean rather than on the
-        // old success screen or a stale validation error.
         if (!next) reset();
         onOpenChange(next);
       }}

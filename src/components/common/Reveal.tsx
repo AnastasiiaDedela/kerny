@@ -13,13 +13,6 @@ const DIR_CLASS: Record<Direction, string> = {
   'up-sm': 'reveal-up-sm',
 };
 
-/**
- * Fades and slides its children into place when scrolled into view. Consumers
- * can stay as server components — only this wrapper is client-side. Direction
- * picks which side the content enters from; on narrow viewports the horizontal
- * directions fall back to a fade-up (see globals.css) so nothing pokes past
- * the section padding.
- */
 export function Reveal({
   direction = 'up',
   delay = 0,
@@ -53,9 +46,7 @@ export function Reveal({
     return () => observer.disconnect();
   }, [threshold]);
 
-  const style: CSSProperties | undefined = delay
-    ? { transitionDelay: `${delay}ms` }
-    : undefined;
+  const style: CSSProperties | undefined = delay ? { transitionDelay: `${delay}ms` } : undefined;
 
   return (
     <div

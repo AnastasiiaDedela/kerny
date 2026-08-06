@@ -7,11 +7,6 @@ import { fieldError, formError } from '@/api/auth';
 import { FieldError, FormError } from '@/components/layout/auth/shared';
 import { ModalActions, ModalField, ModalShell } from '@/components/workspace/modal-parts';
 
-/**
- * Two API calls behind one dialog: `change-request` mails a code to the new address,
- * then `confirm` swaps the address over. The second step reuses the same fields, so
- * the dialog swaps its inputs rather than opening a second modal.
- */
 export function ChangeEmailModal({
   open,
   onOpenChange,
@@ -81,7 +76,6 @@ export function ChangeEmailModal({
             </>
           ) : (
             <>
-              {/* Kept visible and locked: `confirm` sends `newEmail` back alongside the code. */}
               <ModalField
                 id="newEmail"
                 label="New Email"
