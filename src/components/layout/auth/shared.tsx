@@ -46,7 +46,7 @@ export function SecondaryButton({
       type="button"
       onClick={onClick}
       className={cn(
-        'text-foreground hover:text-foreground flex h-10 w-full items-center justify-center rounded-lg bg-white/[0.04] text-sm text-white/50 transition-colors',
+        'hover:text-foreground flex h-10 w-full items-center justify-center rounded-[8px] bg-white/[0.04] px-4 py-[7px] text-sm leading-[17px] text-white/50 transition-colors',
         className
       )}
     >
@@ -79,7 +79,7 @@ export function GoogleButton({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className="hover:text-foreground flex h-10 w-full items-center justify-center gap-2.5 rounded-lg bg-white/[0.04] text-xs leading-[15px] text-white/50 transition-colors disabled:opacity-50"
+      className="hover:text-foreground flex h-10 w-full items-center justify-center gap-2.5 rounded-[8px] bg-white/[0.04] px-4 py-[7px] text-sm leading-[17px] text-white/50 transition-colors disabled:opacity-50"
     >
       <Image src="/google.svg" alt="" width={16} height={16} />
       {children}

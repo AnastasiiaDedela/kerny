@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { Button } from '@/components/ui/button';
+import { GetStartedButton } from '@/components/common/GetStartedButton';
 import { cn } from '@/lib/utils';
 import { Reveal } from '@/components/common/Reveal';
 
@@ -35,7 +35,7 @@ function OsCard({ name, src, width, height }: Os) {
   return (
     /* Bottom padding stands in for the column gap so the track height stays an
        exact multiple of card+gap — see the marquee keyframes in globals.css. */
-    <div className="pb-(--os-gap)">
+    <div className="pb-(--os-row-gap)">
       <div className="flex size-(--os-card) flex-col items-center rounded-[15px] bg-white/[0.04] pt-(--os-inset)">
         <Image
           src={src}
@@ -44,7 +44,7 @@ function OsCard({ name, src, width, height }: Os) {
           height={height}
           className="h-(--os-logo) w-auto max-w-full object-contain"
         />
-        <span className="wide:text-xs mt-(--os-label-gap) px-1 text-center text-[11px] leading-[15px] font-normal">
+        <span className="mt-(--os-label-gap) px-1 text-center text-xs leading-[15px] font-normal">
           {name}
         </span>
       </div>
@@ -62,12 +62,7 @@ function MarqueeColumn({
   className?: string;
 }) {
   return (
-    <div
-      className={cn(
-        'h-[calc(3*var(--os-card)+3*var(--os-gap))] overflow-hidden [mask-image:linear-gradient(to_bottom,transparent_0,#000_var(--os-fade),#000_calc(100%-var(--os-fade)),transparent_100%)]',
-        className
-      )}
-    >
+    <div className={cn('os-column', className)}>
       <div className={direction === 'up' ? 'os-marquee-up' : 'os-marquee-down'}>
         {[...items, ...items].map((os, i) => (
           <OsCard key={`${os.name}-${i}`} {...os} />
@@ -95,23 +90,27 @@ export function OperationSystems() {
             elementum. Maecenas sem arcu purus ipsum accumsan sit.
           </p>
           <div className="wide:block mt-8 hidden">
-            <Button size="lg">Get Started</Button>
+            <GetStartedButton size="lg">Get Started</GetStartedButton>
           </div>
         </div>
 
         {/* Right — OS columns */}
         <div className="os-systems shrink-0">
-          <div className="os-marquee wide:justify-end flex justify-center gap-(--os-gap)">
+          <div className="os-marquee wide:justify-end flex items-start justify-center gap-(--os-gap)">
             <MarqueeColumn items={leftColumn} direction="up" className="[--os-duration:26s]" />
-            <div>
+            <div className="os-column-static">
               {centerColumn.map((os) => (
                 <OsCard key={os.name} {...os} />
               ))}
             </div>
             <MarqueeColumn items={rightColumn} direction="down" className="[--os-duration:32s]" />
           </div>
-          <div className="wide:hidden mt-8 flex justify-center">
-            <Button size="lg">Get Started</Button>
+          {/* Matches the width of the three-column card block above it, which is
+              narrower than the section on the mid tiers. */}
+          <div className="wide:hidden mx-auto mt-8 w-[calc(3*var(--os-card)+2*var(--os-gap))]">
+            <GetStartedButton size="lg" className="h-14 w-full max-w-88">
+              Get Started
+            </GetStartedButton>
           </div>
         </div>
       </Reveal>

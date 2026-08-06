@@ -336,18 +336,24 @@ export function NewCloudServerForm() {
   // There is no version picker in this design, so the choice has to be deterministic.
   const activeOsImage = activeOs ? operatingSystems.find(activeOs.match) : undefined;
 
-  const rows = useMemo(
+  const regionTariffs = useMemo(
     () =>
       activeRegion
-        ? tariffs
-            .filter((tariff) => tariff.supportedRegionIds.includes(activeRegion.id))
-            .map((tariff) => toTariffRow(tariff, activeRegion.id))
+        ? tariffs.filter((tariff) => tariff.supportedRegionIds.includes(activeRegion.id))
         : [],
     [tariffs, activeRegion]
   );
 
-  // The summary needs the catalog record, not the table's pre-formatted row.
-  const selectedTariff = tariffs.find((tariff) => tariff.id === selectedPlanId);
+  const rows = useMemo(
+    () => regionTariffs.map((tariff) => toTariffRow(tariff, activeRegion?.id)),
+    [regionTariffs, activeRegion]
+  );
+
+  // The summary needs the catalog record, not the table's pre-formatted row. Like the OS
+  // and region pickers, it falls back to the first option on offer, so the cost panel is
+  // fully priced on load instead of showing dashes until a row is clicked.
+  const selectedTariff =
+    regionTariffs.find((tariff) => tariff.id === selectedPlanId) ?? regionTariffs[0];
 
   const quoteItems = useMemo<QuoteItem[]>(() => {
     if (!activeOsImage || !activeRegion || !selectedTariff) return [];
@@ -485,7 +491,7 @@ export function NewCloudServerForm() {
           <SectionHeading number="03" title="Configuration" />
           <TariffTable
             data={rows}
-            selectedId={selectedPlanId}
+            selectedId={selectedTariff?.id ?? null}
             onSelect={setSelectedPlanId}
             showHourly
           />

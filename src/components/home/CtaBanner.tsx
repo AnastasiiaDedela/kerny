@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { GetStartedButton } from '@/components/common/GetStartedButton';
 import { Reveal } from '@/components/common/Reveal';
 
 export function CtaBanner() {
@@ -32,13 +32,13 @@ export function CtaBanner() {
           </Reveal>
 
           <Reveal direction="right" className="md:shrink-0">
-            <Button
+            <GetStartedButton
               variant="default"
               size="lg"
               className="min-w-[150px] shrink-0 text-sm font-medium max-md:w-[200px]"
             >
               Get Started <ArrowRight className="size-4" />
-            </Button>
+            </GetStartedButton>
           </Reveal>
         </div>
       </div>

@@ -78,6 +78,13 @@ const GRID = 'grid grid-cols-[163fr_164fr_174fr_141fr_minmax(90px,1fr)] items-ce
 // columns, since the month/hour gap isn't uniform with the others.
 const HOURLY_CELL = 'shrink-0 whitespace-nowrap text-sm';
 
+// Stacked-card cells: a fixed 36px row, so a card lands on the mock's 200px height
+// (16 padding + 4 rows of 36 + 3 gaps of 8 + 16 padding).
+const CELL =
+  'flex h-9 items-center justify-between gap-2.5 rounded-[5px] border-[0.5px] border-white/30 px-3';
+const CELL_LABEL = 'text-sm leading-[17px] font-normal text-white/50';
+const CELL_VALUE = 'text-right text-sm leading-[17px] font-medium text-white';
+
 export function TariffTable({ data, selectedId, onSelect, showHourly = false }: TariffTableProps) {
   const table = useReactTable({ data, columns, getCoreRowModel: getCoreRowModel() });
 
@@ -86,55 +93,60 @@ export function TariffTable({ data, selectedId, onSelect, showHourly = false }: 
       {/* Mobile/tablet: stacked cards */}
       <div
         className={cn(
-          'flex flex-col gap-3 rounded-[8px] bg-[#0F0F0F]',
+          'rounded-[8px] bg-[#0F0F0F] p-4',
           showHourly ? 'min-[1380px]:hidden' : 'lg:hidden'
         )}
       >
-        {data.map((row) => {
-          const selected = row.id === selectedId;
-          return (
-            <div
-              key={row.id}
-              onClick={() => onSelect(row.id)}
-              style={selected ? { backgroundColor: 'rgba(67, 76, 247, 0.1)' } : undefined}
-              className={cn(
-                'flex cursor-pointer flex-col gap-2 rounded-[8px] p-4 transition-colors',
-                selected
-                  ? 'ring-primary ring-1 ring-inset'
-                  : 'bg-white/[0.04] hover:bg-white/[0.06]'
-              )}
-            >
-              {/* CPU */}
-              <div className="flex items-center justify-between rounded-[5px] border-[0.5px] border-white/30 px-3 py-2.5">
-                <span className="text-sm text-white/50">CPU</span>
-                <span className="text-sm font-medium text-white">{row.cpu}</span>
-              </div>
-              {/* RAM + NVME */}
-              <div className="flex gap-[9px]">
-                <div className="flex flex-1 items-center justify-between rounded-[5px] border-[0.5px] border-white/30 px-3 py-2.5">
-                  <span className="text-sm text-white/50">RAM</span>
-                  <span className="text-sm font-medium text-white">{row.ram}</span>
+        {/* The list caps at three cards (200 + 12 gap each) and scrolls; the negative
+            margin pulls the hairline thumb into the 16px padding so it sits 9px off
+            the panel edge, with pr-1.5 keeping the cards clear of it. */}
+        <div className="scrollbar-hairline -mr-[7px] flex max-h-[624px] flex-col gap-3 overflow-y-auto pr-1.5">
+          {data.map((row) => {
+            const selected = row.id === selectedId;
+            return (
+              <div
+                key={row.id}
+                onClick={() => onSelect(row.id)}
+                style={selected ? { backgroundColor: 'rgba(67, 76, 247, 0.1)' } : undefined}
+                className={cn(
+                  'flex shrink-0 cursor-pointer flex-col gap-2 rounded-[8px] p-4 transition-colors',
+                  selected
+                    ? 'ring-primary ring-1 ring-inset'
+                    : 'bg-white/[0.04] hover:bg-white/[0.06]'
+                )}
+              >
+                {/* CPU */}
+                <div className={CELL}>
+                  <span className={CELL_LABEL}>CPU</span>
+                  <span className={CELL_VALUE}>{row.cpu}</span>
                 </div>
-                <div className="flex flex-1 items-center justify-between rounded-[5px] border-[0.5px] border-white/30 px-3 py-2.5">
-                  <span className="text-sm text-white/50">NVME</span>
-                  <span className="text-sm font-medium text-white">{row.nvme}</span>
+                {/* RAM + NVME */}
+                <div className="flex gap-[9px]">
+                  <div className={cn(CELL, 'flex-1')}>
+                    <span className={CELL_LABEL}>RAM</span>
+                    <span className={CELL_VALUE}>{row.ram}</span>
+                  </div>
+                  <div className={cn(CELL, 'flex-1')}>
+                    <span className={CELL_LABEL}>NVME</span>
+                    <span className={CELL_VALUE}>{row.nvme}</span>
+                  </div>
+                </div>
+                {/* Channel */}
+                <div className={CELL}>
+                  <span className={CELL_LABEL}>Channel</span>
+                  <span className={CELL_VALUE}>{row.channel}</span>
+                </div>
+                {/* Cost */}
+                <div className={CELL}>
+                  <span className={CELL_LABEL}>Cost</span>
+                  <span className={CELL_VALUE}>
+                    {row.costPerMonth} € <span className="font-normal text-white/50">/ month</span>
+                  </span>
                 </div>
               </div>
-              {/* Channel */}
-              <div className="flex items-center justify-between rounded-[5px] border-[0.5px] border-white/30 px-3 py-2.5">
-                <span className="text-sm text-white/50">Channel</span>
-                <span className="text-sm font-medium text-white">{row.channel}</span>
-              </div>
-              {/* Cost */}
-              <div className="flex items-center justify-between rounded-[5px] border-[0.5px] border-white/30 px-3 py-2.5">
-                <span className="text-sm text-white/50">Cost</span>
-                <span className="text-sm font-medium text-white">
-                  {row.costPerMonth} € <span className="text-white/50">/ month</span>
-                </span>
-              </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
 
       {/* Desktop: horizontal table */}

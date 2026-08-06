@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ChevronDown, Menu, X } from 'lucide-react';
+import { ChevronDown, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -53,11 +53,8 @@ export function Header() {
   return (
     <header className="bg-background py-7.5">
       <div className="mx-auto flex w-full max-w-340 items-center justify-between px-5">
-        <Link
-          href="/"
-          className="text-foreground font-logo text-lg font-extrabold max-md:text-xl max-md:leading-6"
-        >
-          Kerny
+        <Link href="/">
+          <Image src="/logo.svg" alt="Kerny" width={49} height={16} />
         </Link>
 
         {/* Desktop nav */}
@@ -141,7 +138,7 @@ export function Header() {
           onClick={() => setOpen(true)}
           className="text-foreground md:hidden"
         >
-          <Menu className="size-7" />
+          <Image src="/burger.svg" alt="" width={22} height={12} />
         </button>
       </div>
 
@@ -149,12 +146,8 @@ export function Header() {
       {open && (
         <div className="bg-background fixed inset-0 z-50 flex flex-col px-5 py-7.5 md:hidden">
           <div className="flex items-center justify-between">
-            <Link
-              href="/"
-              onClick={() => setOpen(false)}
-              className="text-foreground font-logo text-xl leading-6 font-extrabold"
-            >
-              Kerny
+            <Link href="/" onClick={() => setOpen(false)}>
+              <Image src="/logo.svg" alt="Kerny" width={49} height={16} />
             </Link>
             <button
               type="button"

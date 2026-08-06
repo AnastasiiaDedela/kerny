@@ -100,10 +100,10 @@ export function DataCenterRegions() {
         </div>
 
         {/* Australia / South America / Africa */}
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-5 lg:gap-4">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-3 lg:grid-cols-5 lg:gap-4">
           <div className="lg:col-span-2">
             <GroupHeader title="Australia" />
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2">
               {australia.map((r, i) => (
                 <RegionCard key={r.id} region={r} index={i} />
               ))}
@@ -111,7 +111,7 @@ export function DataCenterRegions() {
           </div>
           <div className="lg:col-span-2">
             <GroupHeader title="South America" />
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2">
               {southAmerica.map((r, i) => (
                 <RegionCard key={r.id} region={r} index={i} />
               ))}

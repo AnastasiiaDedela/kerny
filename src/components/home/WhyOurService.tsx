@@ -1,54 +1,71 @@
 import Image from 'next/image';
 import { Reveal } from '@/components/common/Reveal';
+import { cn } from '@/lib/utils';
 
 const description =
   'Lorem ipsum dolor sit amet consectetur. Fringilla eu ultrices netus viverra id mauris. Maecenas justo varius turpis lectus ultricies. Donec ullamcorper libero consectetur';
 
-const rowDescription =
-  'Lorem ipsum dolor sit amet consectetur. Adipiscing orci in sagittis dui. Aliquam quis volutpat dolor id enim. Magna lectus nulla sollicitudin eu aliquam laoreet cursus vel elementum. Risus risus tincidunt justo amet tristique duis. Lacus volutpat lacinia sed posuere fringilla a vestibulum';
-
 type Illustration = { src: string; alt: string; width: number; height: number };
 
-function TallCard({ title, image }: { title: string; image: Illustration }) {
+/* Mobile geometry is fixed by the design: a 346px card with 30px top / 24px side
+   and bottom padding, a 164px-tall illustration band, then 30px to the title and
+   8px to the body copy. Every card — tall or row — shares it; they diverge only
+   from md: up, where the layout turns into an icon-beside-text row. */
+function CardBody({
+  title,
+  image,
+  mediaClassName,
+  imageClassName,
+}: {
+  title: string;
+  image: Illustration;
+  mediaClassName?: string;
+  imageClassName?: string;
+}) {
   return (
-    <div className="flex h-full w-full flex-col rounded-[15px] bg-[#161616] p-6 ring-1 ring-white/5">
-      <div className="relative flex min-h-0 flex-1 items-center justify-center p-7">
+    <>
+      <div
+        className={cn(
+          'flex h-[164px] shrink-0 items-center justify-center md:h-[115px] md:w-[120px] md:flex-none',
+          mediaClassName
+        )}
+      >
         <Image
           src={image.src}
           alt={image.alt}
           width={image.width}
           height={image.height}
-          className="relative h-37.5 w-auto object-contain"
+          className={cn('h-[164px] w-auto max-w-full object-contain md:h-[115px]', imageClassName)}
         />
       </div>
-      <div>
-        <h3 className="text-base font-bold">{title}</h3>
-        <p className="text-muted-foreground mt-3 text-left text-sm leading-tight font-normal">
+      <div className="mt-[30px] md:mt-0">
+        <h3 className="text-[18px] leading-[22px] font-semibold md:text-base md:leading-normal md:font-bold">
+          {title}
+        </h3>
+        <p className="text-muted-foreground mt-2 text-left text-[14px] leading-[17px] font-normal md:mt-3 md:text-sm md:leading-tight">
           {description}
         </p>
       </div>
+    </>
+  );
+}
+
+function TallCard(props: { title: string; image: Illustration }) {
+  return (
+    <div className="flex h-[346px] w-full flex-col rounded-[15px] bg-white/[0.04] px-6 pt-[30px] pb-6 md:h-full md:flex-row md:items-center md:gap-[31px] md:bg-[#161616] md:p-6 md:ring-1 md:ring-white/5 lg:flex-col lg:items-stretch lg:gap-4">
+      <CardBody
+        {...props}
+        mediaClassName="md:p-0 lg:h-auto lg:w-auto lg:flex-1 lg:p-7"
+        imageClassName="lg:h-37.5"
+      />
     </div>
   );
 }
 
-function RowCard({ title, image }: { title: string; image: Illustration }) {
+function RowCard(props: { title: string; image: Illustration }) {
   return (
-    <div className="flex min-h-0 flex-1 flex-col items-center gap-4 rounded-[15px] bg-[#161616] p-6 ring-1 ring-white/5 md:flex-row md:gap-[23px] md:pl-9.5">
-      <div className="relative flex h-[115px] w-[120px] shrink-0 items-center justify-center">
-        <Image
-          src={image.src}
-          alt={image.alt}
-          width={image.width}
-          height={image.height}
-          className="relative h-[115px] w-auto max-w-full object-contain"
-        />
-      </div>
-      <div className="w-full md:w-auto">
-        <h3 className="text-base font-bold">{title}</h3>
-        <p className="text-muted-foreground mt-2 text-left text-sm leading-tight font-normal">
-          {rowDescription}
-        </p>
-      </div>
+    <div className="flex h-[346px] w-full flex-col rounded-[15px] bg-white/[0.04] px-6 pt-[30px] pb-6 md:h-auto md:min-h-0 md:w-auto md:flex-1 md:flex-row md:items-center md:gap-[31px] md:bg-[#161616] md:p-6 md:ring-1 md:ring-white/5">
+      <CardBody {...props} />
     </div>
   );
 }
@@ -70,7 +87,7 @@ export function WhyOurService() {
         </div>
       </Reveal>
 
-      <div className="mt-12 grid items-stretch gap-5 md:grid-cols-[1fr_2fr_1fr]">
+      <div className="mt-12 grid items-stretch gap-5 lg:grid-cols-[1fr_2fr_1fr]">
         {/* Left column — enters from the left on desktop. */}
         <Reveal direction="left" className="h-full">
           <TallCard
@@ -83,8 +100,8 @@ export function WhyOurService() {
             The Reveals themselves take the flex-1 share of the column so the
             two cards keep splitting the height evenly (RowCard's own flex-1
             would be inert inside a block wrapper). */}
-        <div className="flex h-full flex-col gap-6">
-          <Reveal direction="down" className="flex min-h-0 flex-1">
+        <div className="flex h-full flex-col gap-5 md:gap-6">
+          <Reveal direction="down" className="md:flex md:min-h-0 md:flex-1">
             <RowCard
               title="Premium Equipment"
               image={{
@@ -95,7 +112,7 @@ export function WhyOurService() {
               }}
             />
           </Reveal>
-          <Reveal direction="up" className="flex min-h-0 flex-1">
+          <Reveal direction="up" className="md:flex md:min-h-0 md:flex-1">
             <RowCard
               title="Round-The-Clock Support"
               image={{

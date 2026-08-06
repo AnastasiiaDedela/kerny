@@ -16,6 +16,7 @@ const SHIPPED_FLAGS = new Set([
   'gb',
   'il',
   'in',
+  'it',
   'jp',
   'kr',
   'mx',
