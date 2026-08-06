@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -118,7 +117,10 @@ export function WorkspaceSidebar() {
                 : 'font-normal text-white/50 hover:text-white'
             )}
           >
-            <Image src={item.icon} alt="" width={item.width} height={item.height} />
+            <NavIcon
+              item={item}
+              className={item.href === activeHref ? 'bg-primary' : 'bg-white'}
+            />
             {item.label}
           </Link>
         ))}

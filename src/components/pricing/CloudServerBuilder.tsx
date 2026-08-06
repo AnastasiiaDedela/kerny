@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useMemo } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { CirclePlus, ChevronDown } from 'lucide-react';
 import {
   useDeployableOperatingSystems,
@@ -21,6 +22,7 @@ import { regionCountry, regionFlagSrc } from '@/lib/catalog';
 import { formatAmount } from '@/lib/pricing';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { useAuthModal } from '@/components/layout/AuthModalProvider';
 import { TariffTable, toTariffRow } from './TariffTable';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -288,6 +290,7 @@ function CostPanel({
   onRemove: (id: number) => void;
 }) {
   const periodLabel = periods.find((p) => p.id === period)?.label ?? '';
+  const { isLoggedIn, openLogIn } = useAuthModal();
 
   return (
     <div className="flex flex-col gap-5">
@@ -316,9 +319,15 @@ function CostPanel({
           <span className="text-base font-normal text-white/70">{periodLabel}</span>
         </p>
 
-        <Button className="w-full" size="lg">
-          Proceed to Payment
-        </Button>
+        {isLoggedIn ? (
+          <Button className="w-full" size="lg" render={<Link href="/workspace/balance" />}>
+            Proceed to Payment
+          </Button>
+        ) : (
+          <Button className="w-full" size="lg" onClick={openLogIn}>
+            Proceed to Payment
+          </Button>
+        )}
       </div>
 
       {/* Servers list */}
